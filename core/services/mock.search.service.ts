@@ -15,14 +15,7 @@
 import { AbstractSearchService, FilterClause, QueryGroup, QueryPayload } from './abstract.search.service';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
 import { RequestWrapper } from './connection.service';
-import { Injectable } from '@angular/core';
 
-/**
- * Saves filter clauses and query payloads as JSON objects.
- */
-@Injectable({
-    providedIn: 'root'
-})
 export class SearchServiceMock extends AbstractSearchService {
     public buildCompoundFilterClause(filterClauses: FilterClause[], type: CompoundFilterType = CompoundFilterType.AND): FilterClause {
         return filterClauses.length ? (filterClauses.length === 1 ? filterClauses[0] : {

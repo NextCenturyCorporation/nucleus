@@ -7,16 +7,23 @@
   },
   "description": "The Core Components, Models, and Services for the Next Century Component Library",
   "homepage": "https://github.com/NextCenturyCorporation/neon-dash-internal/tree/THOR-1180#readme",
-  "keywords": ["search", "filter", "aggregate", "query", "visualization", "big data"],
+  "keywords": [
+    "search",
+    "filter",
+    "aggregate",
+    "query",
+    "visualization",
+    "big data"
+  ],
   "license": "Apache-2.0",
   "main": "dist/index.js",
-  "prepublish": "tsc",
+  "prepublish": "npx tsc",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NextCenturyCorporation/neon-dash-internal.git#THOR-1180"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "types": "dist/index.d.ts",
   "dependencies": {
@@ -49,7 +56,6 @@
     "karma-verbose-reporter": "0.0.6",
     "protractor": "~5.4.2",
     "sass-lint": "^1.13.1",
-    "sass-lint-auto-fix": "^0.17.0",
     "ts-node": "^8.3.0",
     "typescript": "~3.2.0"
   }
