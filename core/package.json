@@ -1,0 +1,56 @@
+{
+  "name": "next-century-component-library-core",
+  "version": "0.0.1",
+  "author": "Next Century Corporation (https://nextcentury.com)",
+  "bugs": {
+    "url": "https://github.com/NextCenturyCorporation/neon-dash-internal/issues"
+  },
+  "description": "The Core Components, Models, and Services for the Next Century Component Library",
+  "homepage": "https://github.com/NextCenturyCorporation/neon-dash-internal/tree/THOR-1180#readme",
+  "keywords": ["search", "filter", "aggregate", "query", "visualization", "big data"],
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "prepublish": "tsc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NextCenturyCorporation/neon-dash-internal.git#THOR-1180"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "core-js": "~2.6.8",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "neon-framework": "git+https://github.com/NextCenturyCorporation/neon-framework.git",
+    "npx": "^10.2.0"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.2.10",
+    "eslint": "^5.16.0",
+    "eslint-plugin-header": "^3.0.0",
+    "eslint-plugin-jasmine": "^2.10.1",
+    "jasmine-core": "~2.5.2",
+    "jasmine-reporters": "^2.3.2",
+    "jasmine-spec-reporter": "~3.2.0",
+    "js-beautify": "^1.10.0",
+    "karma": "~1.7.1",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-cli": "~1.0.1",
+    "karma-coverage": "~1.1.1",
+    "karma-coverage-istanbul-reporter": "^0.2.0",
+    "karma-firefox-launcher": "~1.0.0",
+    "karma-jasmine": "~1.1.0",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-remap-istanbul": "^0.6.0",
+    "karma-verbose-reporter": "0.0.6",
+    "protractor": "~5.4.2",
+    "sass-lint": "^1.13.1",
+    "sass-lint-auto-fix": "^0.17.0",
+    "ts-node": "^8.3.0",
+    "typescript": "~3.2.0"
+  }
+}

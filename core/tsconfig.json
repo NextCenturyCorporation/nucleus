@@ -1,0 +1,19 @@
+{
+  "exclude": [
+      "node_modules"
+  ],
+  "compilerOptions": {
+      "outDir": "./dist/",
+      "sourceMap": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "target": "es5",
+      "declaration": true,
+      "lib": [
+          "es2017",
+          "dom"
+      ],
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true
+  }
+}
