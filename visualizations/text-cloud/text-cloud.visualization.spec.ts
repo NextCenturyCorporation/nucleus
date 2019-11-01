@@ -249,21 +249,21 @@ describe('Text Cloud Visualization', () => {
         expect(elementA.style['font-size']).toEqual('140%');
         expect(elementA.title).toEqual('4');
         expect(elementA.querySelector('.key').innerHTML).toEqual('a');
-        expect(elementA.querySelector('.value').innerHTML).toEqual('4');
+        expect(elementA.querySelector('.value').innerHTML).toEqual('(4)');
         let elementB = textElements.item(1) as HTMLElement;
         expect(elementB.className).toEqual('text');
         expect(elementB.style.color).toEqual(color2);
         expect(elementB.style['font-size']).toEqual('100%');
         expect(elementB.title).toEqual('2');
         expect(elementB.querySelector('.key').innerHTML).toEqual('b');
-        expect(elementB.querySelector('.value').innerHTML).toEqual('2');
+        expect(elementB.querySelector('.value').innerHTML).toEqual('(2)');
         let elementC = textElements.item(2) as HTMLElement;
         expect(elementC.className).toEqual('text');
         expect(elementC.style.color).toEqual(color3);
         expect(elementC.style['font-size']).toEqual('80%');
         expect(elementC.title).toEqual('1');
         expect(elementC.querySelector('.key').innerHTML).toEqual('c');
-        expect(elementC.querySelector('.value').innerHTML).toEqual('1');
+        expect(elementC.querySelector('.value').innerHTML).toEqual('(1)');
     });
 
     it('drawData does redraw the text cloud with previously filtered data', () => {

@@ -43,6 +43,8 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
             <style>
                 :host .text-cloud {
                     display: inline-block;
+                    height: 100%;
+                    width: 100%;
                     overflow-wrap: break-word;
                 }
 
@@ -63,6 +65,14 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
 
                 :host .text-cloud .paragraphs {
                     display: block;
+                }
+
+                :host .text-cloud .value {
+                    margin-left: 10px;
+                }
+
+                :host .text-cloud .paragraphs .value {
+                    float: right;
                 }
 
                 :host([hidden]) {
@@ -137,8 +147,8 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
      */
     public redraw(): void {
         const aggregationLabel = this.getAttribute('aggregation-label');
-        const showCounts = !!this.getAttribute('enable-show-values');
-        const showParagraphs = !!this.getAttribute('enable-show-paragraphs');
+        const showParagraphs = !!this.hasAttribute('enable-show-paragraphs');
+        const showValues = !!this.hasAttribute('enable-show-values');
 
         let newElement = document.createElement('div');
         newElement.className = 'text-cloud';
@@ -163,10 +173,10 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
             keyElement.innerHTML = item.key;
             itemElement.appendChild(keyElement);
 
-            if (showCounts) {
+            if (showValues) {
                 let valueElement = document.createElement('span');
                 valueElement.className = 'value';
-                valueElement.innerHTML = item.value;
+                valueElement.innerHTML = '(' + item.value + ')';
                 itemElement.appendChild(valueElement);
             }
 
