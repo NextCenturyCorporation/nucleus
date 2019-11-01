@@ -107,13 +107,17 @@ The **ConnectionService** facilitates the connections and communication between 
 
 ### Datasets
 
-A **Dataset** contains the datastores, databases, tables, and fields that you want to show in your frontend application.  A simple Dataset may have just a single datastore, database, and table.  Each Dataset should have the **datastores object** needed for your application, the [ConnectionService](#connectionService) for your application, the URL for your deployment of the [NCCL Data Server](#the-data-server), and, optionally, a **relations array** of [relations](#relation) for your data.
+A **Dataset** contains the datastores, databases, tables, and fields that you want to show in your frontend application.  A simple Dataset may have just a single datastore, database, and table.  Each Dataset should have the **datastores object** needed for your application, the [ConnectionService](#connectionService) for your application, the [URL](#data-server-url) for your deployment of the [NCCL Data Server](#the-data-server), and, optionally, a **relations array** of [relations](#relation) for your data.
 
 The **datastores object** contains **datastore IDs** as keys and **datastore objects** as values.  Each **datastore object** must have a `host` string property containing the `hostname` or `hostname:port` of the datastore WITHOUT the `http` prefix; a `type` string property containing the [datastore type](#datastore-type); and a `databases` object property containing **database names** as keys and **database objects** as values.  Each **database object** must have a `tables` object property containing **table names** as keys and **table objects** as values.  Each **table object** may optionally have a `fields` array property of **field objects**.  Each **field object** must have a `columnName` string property containing the field name and may optionally have a `type` string property containing the [field type](#field-type).  A database object, table object, or field object may optionally have a `prettyName` string property containing the object's user-friendly name.
 
 The **relations array** contains one or more nested **relation arrays**; each **relation array** contains one or more strings or nested string arrays; each string, or each individual nested string array, is a **set of relation fields**.  A **relation array** must have more than one **set of relation fields**, and each **set of relation fields** must have the same number of array elements (or must all be single strings).  Creating a filter containing a combination of fields exactly matching one **set of relation fields** will automatically generate additional filters with the same operators and [type](#filter-type) but substituting each other **set of relation fields** (one filter per set).  See [Relation Examples](#relation-examples) below.
 
 Note that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  See the [NCCL Data Server's README file](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) on more information regarding Elasticsearch datastore configuration.
+
+#### Data Server URL
+
+The **data server URL** should be the hostname of your deployed [NCCL Data Server](#the-data-server) WITH the `http` or `https` prefix if needed.  It should also have an endpoint matching the `server.servlet.context-path` set in the Data Server's [`application.properties`](https://github.com/NextCenturyCorporation/neon-server/blob/master/server/src/main/resources/application.properties) file, WITHOUT the `/services` part.  For example, if your Data Server is deployed at `http://my_server.com:1234` and its `server.servlet.context-path` is set to `/abcd/services`, then your Dataset's data server URL should be `http://my_server.com:1234/abcd`.
 
 #### Dataset Examples
 
@@ -214,7 +218,7 @@ The NCCL [**Data Server**](https://github.com/NextCenturyCorporation/neon-server
 * Import the NCCL core components / models / services and the Web Component polyfills into your frontend application.
 * Define a [**Search Component**](#search-component) and zero or more [**Filter Components**](#filter-component) for each of your application's data visualizations (or import and use NCCL [**Visualization Components**](#visualizations)).
 * Create [**Dataset**](#datasets), [**FilterService**](#filterservice), and [**SearchService**](#searchservice) objects and use them to initialize your Search and Filter Components.
-* Separately, deploy the [**NCCL Data Server**](#the-data-server) so that it can communicate with your frontend application and your datastores.
+* Separately, deploy the [**NCCL Data Server**](#the-data-server) so that it can communicate with your frontend application and your datastores.  You may want to change its default configuration; see [Data Server URL](#data-server-url) for information.
 
 ### Runtime
 
@@ -298,8 +302,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 1. Define your **Visualization element** and give it an `id` attribute.
 2. Define a **[Search Component](#search-component)** and give it an `id` attribute.
 3. This Search Component will be querying one or more fields in a specific datastore/database/table.  Give the Search element a `search-field-keys` attribute containing the [field-key](#field-key) of the specific query field, or replace the field in the field key with a `*` (wildcard symbol) if querying multiple fields in the table.
-4. Give the Search Component a `server` attribute containing the hostname of your deployed [NCCL Data Server](#the-data-server) WITH the `http` prefix if needed.
-5. Unless your Visualization element does not have an applicable "draw data" function (see [Using My Visualization Elements](#using-my-visualization-elements) below), give the Search Component a `vis-element-id` attribute containing the `id` of your Visualization element and a `vis-draw-function` attribute containing the name of the Visualization's"draw data" function.
+4. Unless your Visualization element does not have an applicable "draw data" function (see [Using My Visualization Elements](#using-my-visualization-elements) below), give the Search Component a `vis-element-id` attribute containing the `id` of your Visualization element and a `vis-draw-function` attribute containing the name of the Visualization's"draw data" function.
 
 ```html
 <visualization-element id="vis1"></visualization-element>
@@ -581,7 +584,9 @@ To use your own Visualization Elements:
 4. Initialize the Search Component as normal ([see above](#initializing-nccl-core-services-and-components)).
 
 ```js
-const transformSearchDataArray = function(searchDataArray) {
+const transformSearchDataArray = function(event) {
+    const searchDataArray = event.detail.data;
+
     // Transform the searchDataArray into your visualization-element's expected data format.
     const yourData = searchDataArray.reduce((searchDataObject) => { ... }, []);
     
@@ -656,7 +661,9 @@ vis1.addEventListener('yourFilterEvent', transformFilterEventData);
 4. Initialize the Filter and Search Components as normal ([see above](#initializing-nccl-core-services-and-components)).
 
 ```js
-const transformFilterDataArray = function(filterDataArray) {
+const transformFilterDataArray = function(event) {
+    const filterDataArray = event.detail.values;
+
     // Transform the filterDataArray into your visualization-element's expected data format.
     const yourData = filterDataArray.reduce((filterData) => { ... }, []);
     

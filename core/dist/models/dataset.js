@@ -95,8 +95,8 @@ var Dataset = /** @class */ (function () {
         this._dataServer = _dataServer;
         this.tableKeyCollection = tableKeyCollection;
         this.fieldKeyCollection = fieldKeyCollection;
-        this._datastores = this._updateDatastores(this._datastores);
         this._handleDataServer(this._dataServer);
+        this._datastores = this._updateDatastores(this._datastores);
         this._relations = this._validateRelations(relations);
     }
     Object.defineProperty(Dataset.prototype, "datastores", {
