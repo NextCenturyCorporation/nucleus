@@ -1,11 +1,11 @@
 {
-  "name": "next-century-component-library",
-  "version": "0.0.3",
+  "name": "next-century-component-library-wrappers",
+  "version": "0.0.1",
   "author": "Next Century Corporation (https://nextcentury.com)",
   "bugs": {
     "url": "https://github.com/NextCenturyCorporation/component-library/issues"
   },
-  "description": "The Next Century Component Library",
+  "description": "The Wrappers for the Next Century Component Library",
   "homepage": "https://github.com/NextCenturyCorporation/component-library",
   "keywords": [
     "search",
@@ -16,7 +16,7 @@
     "big data"
   ],
   "license": "Apache-2.0",
-  "main": "core/dist/index.js",
+  "main": "dist/index.js",
   "prepublish": "npx tsc",
   "repository": {
     "type": "git",
@@ -25,8 +25,20 @@
   "scripts": {
     "build": "npx tsc"
   },
-  "types": "core/dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "dependencies": {
+    "@angular/animations": "~7.2.15",
+    "@angular/cdk": "~7.3.7",
+    "@angular/common": "~7.2.15",
+    "@angular/compiler": "~7.2.15",
+    "@angular/core": "~7.2.15",
+    "@angular/forms": "~7.2.15",
+    "@angular/http": "~7.2.15",
+    "@angular/material": "~7.3.7",
+    "@angular/platform-browser": "~7.2.15",
+    "@angular/platform-browser-dynamic": "~7.2.15",
+    "@angular/platform-server": "~7.2.15",
+    "@angular/router": "~7.2.15",
     "core-js": "~2.6.8",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
@@ -35,6 +47,13 @@
     "npx": "^10.2.0"
   },
   "devDependencies": {
+    "@angular-devkit/architect": "~0.13.9",
+    "@angular-devkit/build-angular": "~0.13.9",
+    "@angular-devkit/core": "~7.3.9",
+    "@angular-devkit/schematics": "~7.3.9",
+    "@angular/cli": "~7.3.9",
+    "@angular/compiler-cli": "~7.2.15",
+    "@angular/upgrade": "~7.2.15",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "eslint": "^5.16.0",
     "eslint-plugin-header": "^3.0.0",
