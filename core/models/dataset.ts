@@ -160,8 +160,8 @@ export class Dataset {
         public tableKeyCollection: Record<string, string> = {},
         public fieldKeyCollection: Record<string, string> = {}
     ) {
-        this._datastores = this._updateDatastores(this._datastores);
         this._handleDataServer(this._dataServer);
+        this._datastores = this._updateDatastores(this._datastores);
         this._relations = this._validateRelations(relations);
     }
 
