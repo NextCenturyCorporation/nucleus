@@ -103,8 +103,8 @@ export class NextCenturyTextCloud extends NextCenturyElement {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(attributes['aggregation-field-key']);
             if (fieldKey && fieldKey.field) {
                 const datasetFieldKey: DatasetFieldKey = this._dataset.retrieveDatasetFieldKey(fieldKey);
-                return aggregationType.substring(0, 1).toUpperCase() + aggregationType.substring(1) + ' of ' +
-                    datasetFieldKey.field.prettyName;
+                return aggregationType.substring(0, 1).toUpperCase() + aggregationType.substring(1) +
+                    (datasetFieldKey.field ? (' of ' + datasetFieldKey.field.prettyName) : '');
             }
         }
         return undefined;
