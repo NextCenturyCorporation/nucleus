@@ -133,11 +133,12 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         }
     };
     /**
-     * Initializes this filter element with the given dataset and services.
+     * Initializes this filter element with the given dataset and services (and optional visualization element).
      */
-    NextCenturyFilter.prototype.init = function (dataset, filterService) {
+    NextCenturyFilter.prototype.init = function (dataset, filterService, visElement) {
         this._dataset = dataset;
         this._filterService = filterService;
+        this._visElement = visElement;
         core_util_1.CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'), this.getAttribute('vis-filter-output-event'));
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
@@ -334,7 +335,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         if (!this._isReady()) {
             return;
         }
-        var visElement = this.parentElement.querySelector('#' + this.getAttribute('vis-element-id'));
+        var visElement = this._visElement || (this.parentElement.querySelector('#' + this.getAttribute('vis-element-id')));
         var filterFunction = this.getAttribute('vis-filter-input-function');
         var filterCollection = this._filterService.retrieveCompatibleFilterCollection(this._filterDesigns);
         var filters = filterCollection.getFilters();

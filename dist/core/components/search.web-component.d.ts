@@ -26,6 +26,7 @@ export declare class NextCenturySearch extends NextCenturyElement {
     private _idsToFilterDesigns;
     private _runningQuery;
     private _searchService;
+    private _visElement;
     static readonly observedAttributes: string[];
     static readonly optionalAttributes: string[];
     static readonly requiredAttributes: string[];
@@ -44,9 +45,10 @@ export declare class NextCenturySearch extends NextCenturyElement {
         data: any;
     }[];
     /**
-     * Initializes this search element with the given dataset and services and starts a new search query if possible.
+     * Initializes this search element with the given dataset and services and starts a new search query if possible (and optional
+     * visualization element).
      */
-    init(dataset: Dataset, filterService: FilterService, searchService: AbstractSearchService): void;
+    init(dataset: Dataset, filterService: FilterService, searchService: AbstractSearchService, visElement?: any): void;
     /**
      * Updates the unshared filters of this search element with the given filters.
      */

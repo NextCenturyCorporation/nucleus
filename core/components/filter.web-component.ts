@@ -41,6 +41,7 @@ export class NextCenturyFilter extends NextCenturyElement {
     private _dataset: Dataset;
     private _filterDesigns: AbstractFilterDesign[] = [];
     private _filterService: FilterService;
+    private _visElement: any;
 
     private _handleFilterEventFromVisualizationCallback: (event: any) => void;
 
@@ -151,11 +152,12 @@ export class NextCenturyFilter extends NextCenturyElement {
     }
 
     /**
-     * Initializes this filter element with the given dataset and services.
+     * Initializes this filter element with the given dataset and services (and optional visualization element).
      */
-    public init(dataset: Dataset, filterService: FilterService): void {
+    public init(dataset: Dataset, filterService: FilterService, visElement?: any): void {
         this._dataset = dataset;
         this._filterService = filterService;
+        this._visElement = visElement;
 
         CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'),
             this.getAttribute('vis-filter-output-event'));
@@ -377,7 +379,7 @@ export class NextCenturyFilter extends NextCenturyElement {
             return;
         }
 
-        const visElement = this.parentElement.querySelector('#' + this.getAttribute('vis-element-id'));
+        const visElement = this._visElement || (this.parentElement.querySelector('#' + this.getAttribute('vis-element-id')));
         const filterFunction = this.getAttribute('vis-filter-input-function');
 
         const filterCollection: FilterCollection = this._filterService.retrieveCompatibleFilterCollection(this._filterDesigns);

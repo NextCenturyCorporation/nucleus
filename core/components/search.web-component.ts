@@ -54,6 +54,7 @@ export class NextCenturySearch extends NextCenturyElement {
     private _idsToFilterDesigns: Map<string, AbstractFilterDesign[]> = new Map<string, AbstractFilterDesign[]>();
     private _runningQuery: RequestWrapper;
     private _searchService: AbstractSearchService;
+    private _visElement: any;
 
     static get observedAttributes(): string[] {
         return ['id'].concat(NextCenturySearch.requiredAttributes).concat(NextCenturySearch.optionalAttributes);
@@ -145,12 +146,14 @@ export class NextCenturySearch extends NextCenturyElement {
     }
 
     /**
-     * Initializes this search element with the given dataset and services and starts a new search query if possible.
+     * Initializes this search element with the given dataset and services and starts a new search query if possible (and optional
+     * visualization element).
      */
-    public init(dataset: Dataset, filterService: FilterService, searchService: AbstractSearchService): void {
+    public init(dataset: Dataset, filterService: FilterService, searchService: AbstractSearchService, visElement?: any): void {
         this._dataset = dataset;
         this._filterService = filterService;
         this._searchService = searchService;
+        this._visElement = visElement;
 
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
@@ -345,7 +348,8 @@ export class NextCenturySearch extends NextCenturyElement {
 
         let size = data.length;
 
-        const visElement = this.parentElement ? this.parentElement.querySelector('#' + this.getAttribute('vis-element-id')) : null;
+        const visElement = this._visElement || (this.parentElement ? this.parentElement.querySelector('#' +
+            this.getAttribute('vis-element-id')) : null);
         const drawFunction = this.getAttribute('vis-draw-function');
         if (visElement && drawFunction) {
             size = visElement[drawFunction](data);
