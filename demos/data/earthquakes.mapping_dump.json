@@ -1,0 +1,38 @@
+{
+    "earthquakes": {
+        "mappings": {
+            "quakedata": {
+                "properties": {
+                    "depth": {
+                        "type": "double"
+                    },
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "latitude": {
+                        "type": "double"
+                    },
+                    "longitude": {
+                        "type": "double"
+                    },
+                    "mag": {
+                        "type": "double"
+                    },
+                    "magType": {
+                        "type": "keyword"
+                    },
+                    "net": {
+                        "type": "keyword"
+                    },
+                    "time": {
+                        "type": "date",
+                        "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd'T'hh:mm:ss'Z'"
+                    },
+                    "type": {
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    }
+}
