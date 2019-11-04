@@ -1,9 +1,9 @@
-# Sample Angular Demo App (Next Century Component Library)
+# Sample Angular Demo App (NCCL)
 
 ## What Have We Changed?
 
-- Added the Next Century Component Library (NCCL) and `@webcomponents/custom-elements` to the `dependencies` in the [`package.json`](./package.json) file
-- Added `@webcomponents/custom-elements` imports to [`src/polyfills.ts`](./src/polyfills.ts)
+- Added the [Next Century Component Library](https://github.com/NextCenturyCorporation/component-library) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L22-L23) file
+- Added `@webcomponents/custom-elements` imports to [`src/polyfills.ts`](./src/polyfills.ts#L65-L71)
 - Added the CUSTOM_ELEMENTS_SCHEMA and NCCL Angular modules to [`src/app/app.module.ts`](./src/app/app.module.ts)
 - Added NCCL components to [`src/app/app.component.html`](./src/app/app.component.html)
 - Added NCCL initialization to [`src/app/app.component.ts`](./src/app/app.component.ts)
