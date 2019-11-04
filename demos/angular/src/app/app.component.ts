@@ -47,23 +47,23 @@ import 'component-library/dist/visualizations/example.web-component';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements AfterViewInit {
-    @ViewChild('textCloudSearch1') textCloudSearch1;
-    @ViewChild('textCloudFilter1') textCloudFilter1;
+    @ViewChild('textCloudSearch1', { static: false }) textCloudSearch1;
+    @ViewChild('textCloudFilter1', { static: false }) textCloudFilter1;
 
-    @ViewChild('textCloudSearch2') textCloudSearch2;
-    @ViewChild('textCloudFilter2') textCloudFilter2;
+    @ViewChild('textCloudSearch2', { static: false }) textCloudSearch2;
+    @ViewChild('textCloudFilter2', { static: false }) textCloudFilter2;
 
-    @ViewChild('textCloudSearch3') textCloudSearch3;
-    @ViewChild('textCloudFilter3A') textCloudFilter3A;
-    @ViewChild('textCloudFilter3B') textCloudFilter3B;
+    @ViewChild('textCloudSearch3', { static: false }) textCloudSearch3;
+    @ViewChild('textCloudFilter3A', { static: false }) textCloudFilter3A;
+    @ViewChild('textCloudFilter3B', { static: false }) textCloudFilter3B;
 
-    @ViewChild('textCloud2') textCloud2;
-    @ViewChild('textCloud3') textCloud3;
+    @ViewChild('textCloud2', { static: false }) textCloud2;
+    @ViewChild('textCloud3', { static: false }) textCloud3;
 
-    @ViewChild('exampleSearch1') exampleSearch1;
+    @ViewChild('exampleSearch1', { static: false }) exampleSearch1;
 
-    @ViewChild('exampleSearch2') exampleSearch2;
-    @ViewChild('exampleFilter2') exampleFilter2;
+    @ViewChild('exampleSearch2', { static: false }) exampleSearch2;
+    @ViewChild('exampleFilter2', { static: false }) exampleFilter2;
 
     public filterService: FilterService;
     public searchService: SearchService;
