@@ -22,22 +22,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
-var text_cloud_angular_component_1 = require("./text-cloud.angular-component");
-var NextCenturyTextCloudAngularModule = /** @class */ (function () {
-    function NextCenturyTextCloudAngularModule() {
+var filter_angular_component_1 = require("./filter.angular-component");
+var NextCenturyFilterAngularModule = /** @class */ (function () {
+    function NextCenturyFilterAngularModule() {
     }
-    NextCenturyTextCloudAngularModule = __decorate([
+    NextCenturyFilterAngularModule = __decorate([
         core_1.NgModule({
-            declarations: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
-            exports: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
-            entryComponents: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
+            declarations: [filter_angular_component_1.NextCenturyFilterAngularComponent],
+            exports: [filter_angular_component_1.NextCenturyFilterAngularComponent],
+            entryComponents: [filter_angular_component_1.NextCenturyFilterAngularComponent],
             imports: [
                 common_1.CommonModule
             ],
             schemas: [core_1.CUSTOM_ELEMENTS_SCHEMA]
         })
-    ], NextCenturyTextCloudAngularModule);
-    return NextCenturyTextCloudAngularModule;
+    ], NextCenturyFilterAngularModule);
+    return NextCenturyFilterAngularModule;
 }());
-exports.NextCenturyTextCloudAngularModule = NextCenturyTextCloudAngularModule;
-//# sourceMappingURL=text-cloud.angular-module.js.map
+exports.NextCenturyFilterAngularModule = NextCenturyFilterAngularModule;
+//# sourceMappingURL=filter.angular-module.js.map

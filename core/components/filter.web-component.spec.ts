@@ -255,7 +255,7 @@ describe('Filter Component', () => {
         expect(spy.calls.count()).toEqual(2);
     });
 
-    it('visualization element filter event does call updateFilters with filter values', () => {
+    it('visualization element filter event does call updateFilteredValues with filter values', () => {
         let visElement = new NextCenturyElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
@@ -264,7 +264,7 @@ describe('Filter Component', () => {
         filterComponent.setAttribute('vis-filter-output-event', 'filtered');
         filterComponent.init(dataset, filterService);
 
-        let spy = spyOn(filterComponent, 'updateFilters');
+        let spy = spyOn(filterComponent, 'updateFilteredValues');
 
         visElement.dispatchEvent(new CustomEvent('filtered', {
             detail: {
@@ -294,7 +294,7 @@ describe('Filter Component', () => {
         expect(spy.calls.argsFor(2)).toEqual([null]);
     });
 
-    it('visualization element filter event does not call updateFilters if filter values are not defined', () => {
+    it('visualization element filter event does not call updateFilteredValues if filter values are not defined', () => {
         let visElement = new NextCenturyElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
@@ -303,7 +303,7 @@ describe('Filter Component', () => {
         filterComponent.setAttribute('vis-filter-output-event', 'filtered');
         filterComponent.init(dataset, filterService);
 
-        let spy = spyOn(filterComponent, 'updateFilters');
+        let spy = spyOn(filterComponent, 'updateFilteredValues');
 
         visElement.dispatchEvent(new CustomEvent('filtered', {
             detail: {}
@@ -420,7 +420,7 @@ describe('Filter Component init should call updateFilterDesigns in searchCompone
     });
 });
 
-describe('Filter Component updateFilters should', () => {
+describe('Filter Component updateFilteredValues should', () => {
     let dataset: Dataset;
     let filterComponent: NextCenturyFilter;
     let filterService: FilterService;
@@ -446,7 +446,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('bounds-field-key-y', 'datastore1.testDatabase1.testTable1.testYField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters([10, 20, 30, 40]);
+        filterComponent.updateFilteredValues([10, 20, 30, 40]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -462,7 +462,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('bounds-field-key-y', 'datastore1.testDatabase1.testTable1.testYField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters([[10, 20, 30, 40], [50, 60, 70, 80]]);
+        filterComponent.updateFilteredValues([[10, 20, 30, 40], [50, 60, 70, 80]]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -479,7 +479,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('domain-field-key', 'datastore1.testDatabase1.testTable1.testXField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters([10, 20]);
+        filterComponent.updateFilteredValues([10, 20]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -493,7 +493,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('domain-field-key', 'datastore1.testDatabase1.testTable1.testXField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters([[10, 20], [30, 40]]);
+        filterComponent.updateFilteredValues([[10, 20], [30, 40]]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -509,7 +509,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters('type1');
+        filterComponent.updateFilteredValues('type1');
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -525,7 +525,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters('type1');
+        filterComponent.updateFilteredValues('type1');
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -540,7 +540,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(['type1', 'type2']);
+        filterComponent.updateFilteredValues(['type1', 'type2']);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -556,7 +556,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(['type1', 'type2']);
+        filterComponent.updateFilteredValues(['type1', 'type2']);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -571,7 +571,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(['type1', ['type2', 'type3']]);
+        filterComponent.updateFilteredValues(['type1', ['type2', 'type3']]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -589,7 +589,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('pair-operator-2', 'not contains');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(['name1', 'type1']);
+        filterComponent.updateFilteredValues(['name1', 'type1']);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -608,7 +608,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('pair-operator-2', 'not contains');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(['name1', 'type1']);
+        filterComponent.updateFilteredValues(['name1', 'type1']);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -626,7 +626,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('pair-operator-2', 'not contains');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters([['name1', 'type1'], ['name2', 'type2']]);
+        filterComponent.updateFilteredValues([['name1', 'type1'], ['name2', 'type2']]);
 
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -644,7 +644,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('bounds-field-key-y', 'datastore1.testDatabase1.testTable1.testYField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(null);
+        filterComponent.updateFilteredValues(null);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(1);
         expect(spyOnDeleteFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -653,7 +653,7 @@ describe('Filter Component updateFilters should', () => {
         ]]);
         expect(spyOnChangeFilters.calls.count()).toEqual(0);
 
-        filterComponent.updateFilters([]);
+        filterComponent.updateFilteredValues([]);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(2);
         expect(spyOnDeleteFilters.calls.argsFor(1)).toEqual(['testSearchElementId', [
@@ -668,7 +668,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('domain-field-key', 'datastore1.testDatabase1.testTable1.testXField');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(null);
+        filterComponent.updateFilteredValues(null);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(1);
         expect(spyOnDeleteFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -676,7 +676,7 @@ describe('Filter Component updateFilters should', () => {
         ]]);
         expect(spyOnChangeFilters.calls.count()).toEqual(0);
 
-        filterComponent.updateFilters([]);
+        filterComponent.updateFilteredValues([]);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(2);
         expect(spyOnDeleteFilters.calls.argsFor(1)).toEqual(['testSearchElementId', [
@@ -691,7 +691,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('list-operator', '!=');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(null);
+        filterComponent.updateFilteredValues(null);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(1);
         expect(spyOnDeleteFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -699,7 +699,7 @@ describe('Filter Component updateFilters should', () => {
         ]]);
         expect(spyOnChangeFilters.calls.count()).toEqual(0);
 
-        filterComponent.updateFilters([]);
+        filterComponent.updateFilteredValues([]);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(2);
         expect(spyOnDeleteFilters.calls.argsFor(1)).toEqual(['testSearchElementId', [
@@ -716,7 +716,7 @@ describe('Filter Component updateFilters should', () => {
         filterComponent.setAttribute('pair-operator-2', 'not contains');
         filterComponent.init(dataset, filterService);
 
-        filterComponent.updateFilters(null);
+        filterComponent.updateFilteredValues(null);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(1);
         expect(spyOnDeleteFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
@@ -725,7 +725,7 @@ describe('Filter Component updateFilters should', () => {
         ]]);
         expect(spyOnChangeFilters.calls.count()).toEqual(0);
 
-        filterComponent.updateFilters([]);
+        filterComponent.updateFilteredValues([]);
 
         expect(spyOnDeleteFilters.calls.count()).toEqual(2);
         expect(spyOnDeleteFilters.calls.argsFor(1)).toEqual(['testSearchElementId', [

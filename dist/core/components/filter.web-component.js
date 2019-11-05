@@ -133,16 +133,17 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         }
     };
     /**
-     * Initializes this filter element with the given dataset and services (and optional visualization element).
+     * Initializes this filter element with the given dataset and services (and optional visualization and search elements).
      */
-    NextCenturyFilter.prototype.init = function (dataset, filterService, visElement) {
+    NextCenturyFilter.prototype.init = function (dataset, filterService, visElement, searchElement) {
         this._dataset = dataset;
         this._filterService = filterService;
+        this._searchElement = searchElement;
         this._visElement = visElement;
         core_util_1.CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'), this.getAttribute('vis-filter-output-event'));
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
-            if (this.getAttribute('filter-type') && this.getAttribute('search-element-id')) {
+            if (this.getAttribute('filter-type') && (this._searchElement || this.getAttribute('search-element-id'))) {
                 this._updateFilterDesigns();
             }
             else {
@@ -156,7 +157,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
-    NextCenturyFilter.prototype.updateFilters = function (values) {
+    NextCenturyFilter.prototype.updateFilteredValues = function (values) {
         if (values === null || (Array.isArray(values) && !values.length)) {
             this._handleDeleteFilters();
         }
@@ -361,7 +362,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
      */
     NextCenturyFilter.prototype._handleFilterEventFromVisualization = function (event) {
         if (event && event.detail && typeof event.detail.values !== 'undefined') {
-            this.updateFilters(event.detail.values);
+            this.updateFilteredValues(event.detail.values);
         }
     };
     /**
@@ -452,7 +453,8 @@ var NextCenturyFilter = /** @class */ (function (_super) {
      */
     NextCenturyFilter.prototype._updateFilterDesigns = function () {
         if (this._isReady() && this.parentElement) {
-            var searchElement = this.parentElement.querySelector('#' + this.getAttribute('search-element-id'));
+            var searchElement = this._searchElement || this.parentElement.querySelector('#' +
+                this.getAttribute('search-element-id'));
             this._filterDesigns = this._createFilterDesigns(this._generateFilterDesignValues(this._retrieveFilterType()));
             if (searchElement && this._filterDesigns.length) {
                 this._handleFilterChangeFromServices(this.getAttribute('search-element-id'));

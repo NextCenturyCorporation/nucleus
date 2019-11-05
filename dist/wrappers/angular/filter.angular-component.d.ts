@@ -12,21 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AbstractSearchService } from '../../core/services/abstract.search.service';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyTextCloud } from '../../visualizations/text-cloud/text-cloud.web-component';
-export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
-    searchService: AbstractSearchService;
-    /**
-     * Creates and returns the export data for the visualization.
-     */
-    createExportData(exportFields: {
-        columnName: string;
-        prettyName: string;
-    }[], filename: string): {
-        name: string;
-        data: any;
-    }[];
+import { NextCenturyFilter } from '../../core/components/filter.web-component';
+export declare class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularComponent {
+    searchElement: any;
+    visElement: any;
     /**
      * @override
      */
@@ -34,21 +24,21 @@ export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCom
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyTextCloud;
+    protected findWrappedElement(): NextCenturyFilter;
     /**
      * @override
      */
-    protected initWrappedElement(visElement: NextCenturyTextCloud): void;
+    protected initWrappedElement(filterElement: NextCenturyFilter): void;
     /**
      * @override
      */
     protected onWrapperAfterViewInit(): void;
     /**
-     * Redraws the visualization.
-     */
-    redraw(): void;
-    /**
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[];
+    /**
+     * Updates filters (creates and/or deletes) using the given values.
+     */
+    updateFilteredValues(values: any | any[]): void;
 }

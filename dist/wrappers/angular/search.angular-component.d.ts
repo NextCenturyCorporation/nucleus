@@ -12,21 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { AbstractFilter, AbstractFilterDesign } from '../../core/models/filters';
 import { AbstractSearchService } from '../../core/services/abstract.search.service';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyTextCloud } from '../../visualizations/text-cloud/text-cloud.web-component';
-export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
+import { NextCenturySearch } from '../../core/components/search.web-component';
+export declare class NextCenturySearchAngularComponent extends NextCenturyCommonAngularComponent {
+    aggregations: Record<string, any>[];
+    groups: Record<string, any>[];
+    options: Record<string, any>;
     searchService: AbstractSearchService;
-    /**
-     * Creates and returns the export data for the visualization.
-     */
-    createExportData(exportFields: {
-        columnName: string;
-        prettyName: string;
-    }[], filename: string): {
-        name: string;
-        data: any;
-    }[];
+    visElement: any;
     /**
      * @override
      */
@@ -34,21 +29,29 @@ export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCom
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyTextCloud;
+    protected findWrappedElement(): NextCenturySearch;
     /**
      * @override
      */
-    protected initWrappedElement(visElement: NextCenturyTextCloud): void;
+    protected initWrappedElement(searchElement: NextCenturySearch): void;
     /**
      * @override
      */
     protected onWrapperAfterViewInit(): void;
     /**
-     * Redraws the visualization.
+     * @override
      */
-    redraw(): void;
+    protected onWrapperChanges(): void;
     /**
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[];
+    /**
+     * Updates the unshared filters of this search element with the given filters.
+     */
+    updateFilters(id: string, filters: AbstractFilter[]): void;
+    /**
+     * Updates the filter designs of this search element (used to find shared filters) with the given filter designs.
+     */
+    updateFilterDesigns(id: string, filterDesigns: AbstractFilterDesign[]): void;
 }

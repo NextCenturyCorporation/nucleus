@@ -20,6 +20,7 @@ export declare class NextCenturyFilter extends NextCenturyElement {
     private _dataset;
     private _filterDesigns;
     private _filterService;
+    private _searchElement;
     private _visElement;
     private _handleFilterEventFromVisualizationCallback;
     static readonly observedAttributes: string[];
@@ -31,13 +32,13 @@ export declare class NextCenturyFilter extends NextCenturyElement {
     connectedCallback(): void;
     disconnectedCallback(): void;
     /**
-     * Initializes this filter element with the given dataset and services (and optional visualization element).
+     * Initializes this filter element with the given dataset and services (and optional visualization and search elements).
      */
-    init(dataset: Dataset, filterService: FilterService, visElement?: any): void;
+    init(dataset: Dataset, filterService: FilterService, visElement?: any, searchElement?: any): void;
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
-    updateFilters(values: any | any[]): void;
+    updateFilteredValues(values: any | any[]): void;
     /**
      * Returns a copy of the given array or, if not an array, the given value itself.
      */

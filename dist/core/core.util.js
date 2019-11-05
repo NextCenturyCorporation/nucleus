@@ -247,14 +247,19 @@ var CoreUtil = /** @class */ (function () {
         return [];
     };
     /**
-     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     * Updates the given attributes of the given element.
      */
-    CoreUtil.updateValuesFromListFilters = function (fields, filters, fieldsToValues, createListFilterDesign) {
-        fields.filter(function (field) { return !!field.columnName; }).forEach(function (field) {
-            var listFilters = filters.getCompatibleFilters(createListFilterDesign(field));
-            fieldsToValues.set(field.columnName, CoreUtil.retrieveValuesFromListFilters(listFilters));
+    CoreUtil.updateElementAttributes = function (element, observedAttributes, configuredAttributes) {
+        observedAttributes.forEach(function (attribute) {
+            if (typeof configuredAttributes[attribute] === 'undefined') {
+                if (element.hasAttribute(attribute)) {
+                    element.removeAttribute(attribute);
+                }
+            }
+            else if (('' + configuredAttributes[attribute]) !== element.getAttribute(attribute)) {
+                element.setAttribute(attribute, configuredAttributes[attribute]);
+            }
         });
-        return fieldsToValues;
     };
     /**
      * Removes the given listener of the given old event on the element with the given old ID and adds the listener of
@@ -263,6 +268,16 @@ var CoreUtil = /** @class */ (function () {
     CoreUtil.updateListener = function (listener, parentElement, oldElementId, oldEventName, newElementId, newEventName) {
         CoreUtil.removeListener(listener, parentElement, oldElementId, oldEventName);
         CoreUtil.addListener(listener, parentElement, newElementId, newEventName);
+    };
+    /**
+     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     */
+    CoreUtil.updateValuesFromListFilters = function (fields, filters, fieldsToValues, createListFilterDesign) {
+        fields.filter(function (field) { return !!field.columnName; }).forEach(function (field) {
+            var listFilters = filters.getCompatibleFilters(createListFilterDesign(field));
+            fieldsToValues.set(field.columnName, CoreUtil.retrieveValuesFromListFilters(listFilters));
+        });
+        return fieldsToValues;
     };
     // eslint-disable-next-line max-len
     CoreUtil.URL_PATTERN = /(?:(?:http:\/\/)|(?:https:\/\/)|(?:ftp:\/\/)|(?:file:\/\/)|(?:www\.).)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b[-a-zA-Z0-9@:%_+.~#?&\\/=]*/g;

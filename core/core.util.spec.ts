@@ -553,6 +553,28 @@ describe('CoreUtil', () => {
         expect(CoreUtil.retrieveValuesFromListFilters([])).toEqual([]);
     });
 
+    it('updateElementAttributes does set attributes on element', () => {
+        const element = document.createElement('div');
+        element.setAttribute('a', '0');
+        CoreUtil.updateElementAttributes(element, ['a', 'b'], {
+            a: 1,
+            b: 2
+        });
+        expect(element.getAttribute('a')).toEqual('1');
+        expect(element.getAttribute('b')).toEqual('2');
+    });
+
+    it('updateElementAttributes does remove attributes from element', () => {
+        const element = document.createElement('div');
+        element.setAttribute('a', '1');
+        element.setAttribute('b', '2');
+        CoreUtil.updateElementAttributes(element, ['a', 'b'], {
+            a: undefined
+        });
+        expect(element.getAttribute('a')).toEqual(null);
+        expect(element.getAttribute('b')).toEqual(null);
+    });
+
     it('updateValuesFromListFilters does return expected Map', () => {
         let fields = [FieldConfig.get({ columnName: 'field1' })];
         let filters = new FilterCollection();

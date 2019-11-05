@@ -96,12 +96,16 @@ export declare class CoreUtil {
      */
     static transformToStringArray(input: any, delimiter: string): any;
     /**
-     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     * Updates the given attributes of the given element.
      */
-    static updateValuesFromListFilters(fields: FieldConfig[], filters: FilterCollection, fieldsToValues: Map<string, any[]>, createListFilterDesign: (field: FieldConfig, values?: any[]) => ListFilterDesign): Map<string, any>;
+    static updateElementAttributes(element: HTMLElement, observedAttributes: string[], configuredAttributes: Record<string, any>): void;
     /**
      * Removes the given listener of the given old event on the element with the given old ID and adds the listener of
      * the given new event on the element with the given new ID.
      */
     static updateListener(listener: (event: any) => void, parentElement: HTMLElement, oldElementId: string, oldEventName: string, newElementId: string, newEventName: string): void;
+    /**
+     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     */
+    static updateValuesFromListFilters(fields: FieldConfig[], filters: FilterCollection, fieldsToValues: Map<string, any[]>, createListFilterDesign: (field: FieldConfig, values?: any[]) => ListFilterDesign): Map<string, any>;
 }

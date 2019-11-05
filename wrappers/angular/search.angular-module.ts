@@ -15,15 +15,15 @@
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NextCenturyTextCloudAngularComponent } from './text-cloud.angular-component';
+import { NextCenturySearchAngularComponent } from './search.angular-component';
 
 @NgModule({
-    declarations: [NextCenturyTextCloudAngularComponent],
-    exports: [NextCenturyTextCloudAngularComponent],
-    entryComponents: [NextCenturyTextCloudAngularComponent],
+    declarations: [NextCenturySearchAngularComponent],
+    exports: [NextCenturySearchAngularComponent],
+    entryComponents: [NextCenturySearchAngularComponent],
     imports: [
         CommonModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class NextCenturyTextCloudAngularModule { }
+export class NextCenturySearchAngularModule { }

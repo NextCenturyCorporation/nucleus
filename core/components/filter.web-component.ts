@@ -41,6 +41,7 @@ export class NextCenturyFilter extends NextCenturyElement {
     private _dataset: Dataset;
     private _filterDesigns: AbstractFilterDesign[] = [];
     private _filterService: FilterService;
+    private _searchElement: any;
     private _visElement: any;
 
     private _handleFilterEventFromVisualizationCallback: (event: any) => void;
@@ -152,11 +153,12 @@ export class NextCenturyFilter extends NextCenturyElement {
     }
 
     /**
-     * Initializes this filter element with the given dataset and services (and optional visualization element).
+     * Initializes this filter element with the given dataset and services (and optional visualization and search elements).
      */
-    public init(dataset: Dataset, filterService: FilterService, visElement?: any): void {
+    public init(dataset: Dataset, filterService: FilterService, visElement?: any, searchElement?: any): void {
         this._dataset = dataset;
         this._filterService = filterService;
+        this._searchElement = searchElement;
         this._visElement = visElement;
 
         CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'),
@@ -165,7 +167,7 @@ export class NextCenturyFilter extends NextCenturyElement {
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
 
-            if (this.getAttribute('filter-type') && this.getAttribute('search-element-id')) {
+            if (this.getAttribute('filter-type') && (this._searchElement || this.getAttribute('search-element-id'))) {
                 this._updateFilterDesigns();
             } else {
                 console.error('Filter component must have the filter-type and search-element-id attributes!');
@@ -178,7 +180,7 @@ export class NextCenturyFilter extends NextCenturyElement {
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
-    public updateFilters(values: any|any[]): void {
+    public updateFilteredValues(values: any|any[]): void {
         if (values === null || (Array.isArray(values) && !values.length)) {
             this._handleDeleteFilters();
         } else {
@@ -410,7 +412,7 @@ export class NextCenturyFilter extends NextCenturyElement {
      */
     private _handleFilterEventFromVisualization(event: any) {
         if (event && event.detail && typeof event.detail.values !== 'undefined') {
-            this.updateFilters(event.detail.values);
+            this.updateFilteredValues(event.detail.values);
         }
     }
 
@@ -509,7 +511,8 @@ export class NextCenturyFilter extends NextCenturyElement {
      */
     private _updateFilterDesigns(): void {
         if (this._isReady() && this.parentElement) {
-            const searchElement: NextCenturySearch = this.parentElement.querySelector('#' + this.getAttribute('search-element-id'));
+            const searchElement: NextCenturySearch = this._searchElement || this.parentElement.querySelector('#' +
+                this.getAttribute('search-element-id'));
             this._filterDesigns = this._createFilterDesigns(this._generateFilterDesignValues(this._retrieveFilterType()));
             if (searchElement && this._filterDesigns.length) {
                 this._handleFilterChangeFromServices(this.getAttribute('search-element-id'));

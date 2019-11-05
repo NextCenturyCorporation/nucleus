@@ -262,19 +262,18 @@ export class CoreUtil {
     }
 
     /**
-     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     * Updates the given attributes of the given element.
      */
-    static updateValuesFromListFilters(
-        fields: FieldConfig[],
-        filters: FilterCollection,
-        fieldsToValues: Map<string, any[]>,
-        createListFilterDesign: (field: FieldConfig, values?: any[]) => ListFilterDesign
-    ): Map<string, any> {
-        fields.filter((field) => !!field.columnName).forEach((field) => {
-            const listFilters: ListFilter[] = filters.getCompatibleFilters(createListFilterDesign(field)) as ListFilter[];
-            fieldsToValues.set(field.columnName, CoreUtil.retrieveValuesFromListFilters(listFilters));
+    static updateElementAttributes(element: HTMLElement, observedAttributes: string[], configuredAttributes: Record<string, any>): void {
+        observedAttributes.forEach((attribute) => {
+            if (typeof configuredAttributes[attribute] === 'undefined') {
+                if (element.hasAttribute(attribute)) {
+                    element.removeAttribute(attribute);
+                }
+            } else if (('' + configuredAttributes[attribute]) !== element.getAttribute(attribute)) {
+                element.setAttribute(attribute, configuredAttributes[attribute]);
+            }
         });
-        return fieldsToValues;
     }
 
     /**
@@ -291,6 +290,22 @@ export class CoreUtil {
     ): void {
         CoreUtil.removeListener(listener, parentElement, oldElementId, oldEventName);
         CoreUtil.addListener(listener, parentElement, newElementId, newEventName);
+    }
+
+    /**
+     * Updates the filtered values of all the given filter fields in the given Map using the filters in the given filter collection.
+     */
+    static updateValuesFromListFilters(
+        fields: FieldConfig[],
+        filters: FilterCollection,
+        fieldsToValues: Map<string, any[]>,
+        createListFilterDesign: (field: FieldConfig, values?: any[]) => ListFilterDesign
+    ): Map<string, any> {
+        fields.filter((field) => !!field.columnName).forEach((field) => {
+            const listFilters: ListFilter[] = filters.getCompatibleFilters(createListFilterDesign(field)) as ListFilter[];
+            fieldsToValues.set(field.columnName, CoreUtil.retrieveValuesFromListFilters(listFilters));
+        });
+        return fieldsToValues;
     }
 }
 

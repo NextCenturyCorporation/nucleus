@@ -12,18 +12,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NextCenturyTextCloudAngularComponent } from './text-cloud.angular-component';
-
-@NgModule({
-    declarations: [NextCenturyTextCloudAngularComponent],
-    exports: [NextCenturyTextCloudAngularComponent],
-    entryComponents: [NextCenturyTextCloudAngularComponent],
-    imports: [
-        CommonModule
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-export class NextCenturyTextCloudAngularModule { }
+export declare class NextCenturyFilterAngularModule {
+}
