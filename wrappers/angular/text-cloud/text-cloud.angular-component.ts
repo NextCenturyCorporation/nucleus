@@ -15,10 +15,10 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { AbstractSearchService } from '../../core/services/abstract.search.service';
-import { CoreUtil } from '../../core/core.util';
-import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyTextCloud } from '../../visualizations/text-cloud/text-cloud.web-component';
+import { AbstractSearchService } from '../../../core/services/abstract.search.service';
+import { CoreUtil } from '../../../core/core.util';
+import { NextCenturyCommonAngularComponent } from '../core/common.angular-component';
+import { NextCenturyTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
 
 const VISUALZIATON_COMPONENT_TEMPLATE = `
 <next-century-text-cloud [attr.id]="id + '-angular'"></next-century-text-cloud>

@@ -15,13 +15,13 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { AbstractFilter, AbstractFilterDesign } from '../../core/models/filters';
-import { AbstractSearchService } from '../../core/services/abstract.search.service';
-import { CoreUtil } from '../../core/core.util';
-import { NextCenturyAggregation } from '../../core/components/aggregation.web-component';
+import { AbstractFilter, AbstractFilterDesign } from '../../../core/models/filters';
+import { AbstractSearchService } from '../../../core/services/abstract.search.service';
+import { CoreUtil } from '../../../core/core.util';
+import { NextCenturyAggregation } from '../../../core/components/aggregation.web-component';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyGroup } from '../../core/components/group.web-component';
-import { NextCenturySearch } from '../../core/components/search.web-component';
+import { NextCenturyGroup } from '../../../core/components/group.web-component';
+import { NextCenturySearch } from '../../../core/components/search.web-component';
 
 const SEARCH_COMPONENT_TEMPLATE = `
 <next-century-search [attr.id]="id + '-search'">

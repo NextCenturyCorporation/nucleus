@@ -15,9 +15,9 @@
 
 import { AfterViewInit, ElementRef, Input, OnChanges } from '@angular/core';
 
-import { CoreUtil } from '../../core/core.util';
-import { Dataset } from '../../core/models/dataset';
-import { FilterService } from '../../core/services/filter.service';
+import { CoreUtil } from '../../../core/core.util';
+import { Dataset } from '../../../core/models/dataset';
+import { FilterService } from '../../../core/services/filter.service';
 
 export abstract class NextCenturyCommonAngularComponent implements AfterViewInit, OnChanges {
     @Input() dataset: Dataset;

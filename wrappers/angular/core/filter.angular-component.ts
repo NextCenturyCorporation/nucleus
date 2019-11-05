@@ -15,9 +15,9 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { CoreUtil } from '../../core/core.util';
+import { CoreUtil } from '../../../core/core.util';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyFilter } from '../../core/components/filter.web-component';
+import { NextCenturyFilter } from '../../../core/components/filter.web-component';
 
 const FILTER_COMPONENT_TEMPLATE = `
 <next-century-filter [attr.id]="id + '-filter'"></next-century-filter>
