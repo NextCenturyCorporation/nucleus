@@ -301,6 +301,13 @@ export class ConnectionService {
         return null;
     }
 
+    /**
+     * Returns the server status.
+     */
+    public getServerStatus(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
+        return query.getServerStatus(onSuccess, onError);
+    }
+
     private neonConnection(): query.Connection {
         return new query.Connection();
     }

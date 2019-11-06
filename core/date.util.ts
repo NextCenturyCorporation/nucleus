@@ -27,6 +27,7 @@ export enum DateFormat {
 
 export class DateUtil {
     static STANDARD_FORMAT: DateFormat = DateFormat.ISO;
+    static USE_LOCAL_TIME: boolean = false;
 
     /**
      * Add one of the given interval (minute/hour/day/month/year) to the given date object, subtract one second, and
@@ -44,6 +45,10 @@ export class DateUtil {
      * formatted using the given output date format (or the standard date format if no date format is given).
      */
     static fromDateToString(input: Date|string, outputFormat: DateFormat = DateUtil.STANDARD_FORMAT): string {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().format(outputFormat as string);
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).format(outputFormat as string);
     }
 
@@ -51,6 +56,10 @@ export class DateUtil {
      * Returns the date object for the given formatted date string.
      */
     static fromStringToDate(input: string): Date {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().toDate();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).toDate();
     }
 
@@ -58,6 +67,10 @@ export class DateUtil {
      * Returns the day of month (integer) for the given formatted date string.
      */
     static fromStringToDay(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().date();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).date();
     }
 
@@ -65,6 +78,10 @@ export class DateUtil {
      * Returns the hours (integer) for the given formatted date string.
      */
     static fromStringToHour(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().hour();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).hour();
     }
 
@@ -72,6 +89,10 @@ export class DateUtil {
      * Returns the minutes (integer) for the given formatted date string.
      */
     static fromStringToMinute(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().minute();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).minute();
     }
 
@@ -79,6 +100,10 @@ export class DateUtil {
      * Returns the zero-indexed month (integer) for the given formatted date string.
      */
     static fromStringToMonth(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().month();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).month();
     }
 
@@ -86,6 +111,10 @@ export class DateUtil {
      * Returns the seconds (integer) for the given formatted date string.
      */
     static fromStringToSecond(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().second();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).second();
     }
 
@@ -93,6 +122,10 @@ export class DateUtil {
      * Returns the unix timestamp in milliseconds for the given formatted date string.
      */
     static fromStringToTimestamp(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().valueOf();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).valueOf();
     }
 
@@ -100,6 +133,10 @@ export class DateUtil {
      * Returns the year (integer) for the given formatted date string.
      */
     static fromStringToYear(input: string): number {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().year();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string).year();
     }
 
@@ -107,6 +144,13 @@ export class DateUtil {
      * Returns the date string for the given date object as "X seconds/minutes/hours/days ago".
      */
     static retrievePastTime(input: Date|string, outputFormat?: DateFormat): string {
+        if (this.USE_LOCAL_TIME) {
+            if (moment.parseZone(input).local().diff(Date.now(), 'd', true) < -3) {
+                return DateUtil.fromDateToString(input, outputFormat);
+            }
+            return moment.parseZone(input).local().fromNow();
+        }
+
         if (moment.utc(input, DateUtil.STANDARD_FORMAT as string).diff(Date.now(), 'd', true) < -3) {
             return DateUtil.fromDateToString(input, outputFormat);
         }
@@ -117,6 +161,10 @@ export class DateUtil {
      * Returns if the given date string is a valid date.
      */
     static verifyDateStringStrict(input: string): boolean {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().isValid();
+        }
+
         return moment.utc(input, DateUtil.STANDARD_FORMAT as string, true).isValid();
     }
 }
