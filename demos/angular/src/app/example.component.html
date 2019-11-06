@@ -1,0 +1,21 @@
+<div class="block title">
+    <div>{{ visTitle }}</div>
+
+    <div>Total: {{ data.length }}</div>
+
+    <div>Filters: {{ filterText }}</div>
+</div>
+
+<div class="container">
+    <div class="block" *ngFor="let item of data" [class.highlight]="item.isHighlighted" [class.clickable]="item.isClickable"
+        (click)="filterDataItem(item)">
+
+        <div *ngIf="item.aggregationArray.length" class="title">Aggregations:</div>
+        <div *ngFor="let aggregation of item.aggregationArray" class="row">{{ aggregation.key + ': ' + aggregation.value }}</div>
+
+        <div class="title">Fields:</div>
+        <div *ngFor="let field of item.fieldArray" class="row">{{ field.key + ': ' + field.value }}</div>
+
+        <div class="title">Filtered: {{ item.isHighlighted ? 'Yes' : 'No' }}</div>
+    </div>
+</div>

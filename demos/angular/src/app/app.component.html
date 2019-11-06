@@ -2,240 +2,157 @@
 
 <!-- Column 1 -->
 <div class="column">
-    <div class="column-header">Show IDs, Filter on ID (Top 100)</div>
+    <div class="column-header">Show Each Field (Top 100), Sort by Time, No Filter</div>
 
     <div class="column-body">
-        <next-century-visualization-text-cloud #textCloud1
-            id="textCloud1"
-            aggregation-field="aggregations._records"
-            enable-show-paragraphs
-            enable-show-values
-            text-field="fields.id"
-        >
-        </next-century-visualization-text-cloud>
+        <app-example #vis1 id="vis1" [visTitle]="''"></app-example>
 
-        <next-century-search #textCloudSearch1
-            id="textCloudSearch1"
-            search-field-keys="es1.earthquakes.quakedata.id"
-            search-limit=100
-            sort-aggregation="_records"
-            sort-order="descending"
-            vis-draw-function="drawData"
-            vis-element-id="textCloud1"
+        <app-next-century-angular-search #search1
+            id="search1"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="searchOptions1"
+            [searchService]="searchService"
+            [visInputElement]="vis1"
         >
-            <next-century-aggregation
-                aggregation-field-key="es1.earthquakes.quakedata.id"
-                aggregation-name="_records"
-            ></next-century-aggregation>
-            <next-century-group
-                group-field-key="es1.earthquakes.quakedata.id"
-            ></next-century-group>
-        </next-century-search>
-
-        <next-century-filter #textCloudFilter1
-            id="textCloudFilter1"
-            list-field-key="es1.earthquakes.quakedata.id"
-            list-operator="="
-            filter-type="list"
-            search-element-id="textCloudSearch1"
-            vis-element-id="textCloud1"
-            vis-filter-input-function="changeFilteredText"
-            vis-filter-output-event="filter"
-        ></next-century-filter>
+        </app-next-century-angular-search>
     </div>
 </div>
 
 <!-- Column 2 -->
 <div class="column">
-    <div class="column-header">Show Timestamps, Filter on Day (Top 100)</div>
+    <div class="column-header">Show Field Subset (Top 100), Sort by ID, Filter on ID</div>
 
     <div class="column-body">
-        <next-century-visualization-text-cloud #textCloud2
-            id="textCloud2"
-            enable-show-paragraphs
-            enable-show-values
-            text-field="aggregations._timeline"
-        >
-        </next-century-visualization-text-cloud>
+        <app-example #vis2 id="vis2" [filterProperty]="'fields.id'" [visTitle]="''"></app-example>
 
-        <next-century-search #textCloudSearch2
-            id="textCloudSearch2"
-            search-field-keys="es1.earthquakes.quakedata.time"
-            search-limit=100
-            sort-aggregation="_timeline"
-            sort-order="ascending"
-            vis-draw-function="drawData"
-            vis-element-id="textCloud2"
+        <app-next-century-angular-search #search2
+            id="search2"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="searchOptions2"
+            [searchService]="searchService"
+            [visInputElement]="vis2"
         >
-            <next-century-aggregation
-                aggregation-field-key="es1.earthquakes.quakedata.time"
-                aggregation-name="_timeline"
-                aggregation-type="min"
-            ></next-century-aggregation>
-            <next-century-aggregation
-                aggregation-group="_dayOfMonth"
-            ></next-century-aggregation>
-            <next-century-group
-                group-field-key="es1.earthquakes.quakedata.time"
-                group-type="dayOfMonth"
-            ></next-century-group>
-        </next-century-search>
+        </app-next-century-angular-search>
 
-        <next-century-filter #textCloudFilter2
-            id="textCloudFilter2"
-            domain-field-key="es1.earthquakes.quakedata.time"
-            filter-type="domain"
-            search-element-id="textCloudSearch2"
-        ></next-century-filter>
+        <app-next-century-angular-filter #filter2
+            id="filter2"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="filterOptions2"
+            [searchElement]="search2"
+            [visInputElement]="vis2"
+            [visOutputElement]="vis2.elementRef.nativeElement"
+        >
+        </app-next-century-angular-filter>
     </div>
 </div>
 
 <!-- Column 3 -->
 <div class="column">
-    <div class="column-header">Show Lat/Lon, Filter on Bounds and Point (Top 100)</div>
+    <div class="column-header">Aggregate on Count of Network, Filter on Network</div>
 
     <div class="column-body">
-        <next-century-visualization-text-cloud #textCloud3
-            id="textCloud3"
-            aggregation-field="aggregations._records"
-            enable-show-paragraphs
-            enable-show-values
-            text-field="fields.latlon"
+        <app-example #vis3 id="vis3" [filterProperty]="'fields.net'" [visTitle]="''"></app-example>
+
+        <app-next-century-angular-search #search3
+            id="search3"
+            [aggregations]="searchAggregations3"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [groups]="searchGroups3"
+            [options]="searchOptions3"
+            [searchService]="searchService"
+            [visInputElement]="vis3"
         >
-        </next-century-visualization-text-cloud>
+        </app-next-century-angular-search>
 
-        <next-century-search #textCloudSearch3
-            id="textCloudSearch3"
-            search-field-keys="es1.earthquakes.quakedata.latitude,es1.earthquakes.quakedata.longitude,es1.earthquakes.quakedata.net"
-            search-limit=100
-            sort-aggregation="_records"
-            sort-order="descending"
+        <app-next-century-angular-filter #filter3
+            id="filter3"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="filterOptions3"
+            [searchElement]="search3"
+            [visInputElement]="vis3"
+            [visOutputElement]="vis3.elementRef.nativeElement"
         >
-            <next-century-aggregation
-                aggregation-field-key="es1.earthquakes.quakedata.net"
-                aggregation-name="_records"
-            ></next-century-aggregation>
-            <next-century-group
-                group-field-key="es1.earthquakes.quakedata.latitude"
-            ></next-century-group>
-            <next-century-group
-                group-field-key="es1.earthquakes.quakedata.longitude"
-            ></next-century-group>
-            <next-century-group
-                group-field-key="es1.earthquakes.quakedata.net"
-            ></next-century-group>
-        </next-century-search>
-
-        <next-century-filter #textCloudFilter3A
-            id="textCloudFilter3A"
-            list-field-key="es1.earthquakes.quakedata.net"
-            list-operator="="
-            filter-type="list"
-            search-element-id="textCloudSearch3"
-        ></next-century-filter>
-
-        <next-century-filter #textCloudFilter3B
-            id="textCloudFilter3B"
-            filter-type="pair"
-            pair-field-key-1="es1.earthquakes.quakedata.longitude"
-            pair-field-key-2="es1.earthquakes.quakedata.latitude"
-            pair-intersection
-            pair-operator-1="="
-            pair-operator-2="="
-            search-element-id="textCloudSearch3"
-        ></next-century-filter>
+        </app-next-century-angular-filter>
     </div>
 </div>
 
 <!-- Column 4 -->
 <div class="column">
-    <div class="column-header">Show Locations by Count, Filter on Location (Top 100)</div>
+    <div class="column-header">Aggregate on Count of Day, Filter on Day</div>
 
     <div class="column-body">
-        <app-next-century-angular-text-cloud
-            id="textCloudAngularWrapper1"
+        <app-example #vis4 id="vis4" [filterProperty]="'day'" [visTitle]="''"></app-example>
+
+        <app-next-century-angular-search #search4
+            id="search4"
+            [aggregations]="searchAggregations4"
             [dataset]="dataset"
             [filterService]="filterService"
-            [options]="textCloudAngularWrapperOptions1"
+            [groups]="searchGroups4"
+            [options]="searchOptions4"
             [searchService]="searchService"
+            [visInputElement]="vis4"
         >
-        </app-next-century-angular-text-cloud>
+        </app-next-century-angular-search>
+
+        <app-next-century-angular-filter #filter4
+            id="filter4"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="filterOptions4"
+            [searchElement]="search4"
+            [visInputElement]="vis4"
+            [visOutputElement]="vis4.elementRef.nativeElement"
+        >
+        </app-next-century-angular-filter>
     </div>
 </div>
 
 <!-- Column 5 -->
 <div class="column">
-    <div class="column-header">Show Locations by Average Magnitude, Filter on Location (Top 100)</div>
+    <div class="column-header">Aggregate on Count of Network / Lon / Lat (Top 100), Filter on Network and Lon / Lat Point</div>
 
     <div class="column-body">
-        <app-next-century-angular-text-cloud
-            id="textCloudAngularWrapper2"
+        <app-example #vis5 id="vis5" [filterProperty]="'netLonLat'" [visTitle]="''"></app-example>
+
+        <app-next-century-angular-search #search5
+            id="search5"
+            [aggregations]="searchAggregations5"
             [dataset]="dataset"
             [filterService]="filterService"
-            [options]="textCloudAngularWrapperOptions2"
+            [groups]="searchGroups5"
+            [options]="searchOptions5"
             [searchService]="searchService"
+            [visInputElement]="vis5"
         >
-        </app-next-century-angular-text-cloud>
-    </div>
-</div>
+        </app-next-century-angular-search>
 
-<!-- Row 2 -->
-
-<!-- Column 1 -->
-<div class="column">
-    <div class="column-header">Show All Fields, No Filter (Top 100)</div>
-
-    <div class="column-body">
-        <next-century-example #example1
-            id="example1"
+        <app-next-century-angular-filter #filter5A
+            id="filter5A"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="filterOptions5A"
+            [searchElement]="search5"
+            [visInputElement]="vis5"
+            [visOutputElement]="vis5.elementRef.nativeElement"
         >
-        </next-century-example>
+        </app-next-century-angular-filter>
 
-        <next-century-search #exampleSearch1
-            id="exampleSearch1"
-            search-field-keys="es1.earthquakes.quakedata.*"
-            search-limit=100
-            sort-field-key="es1.ldc_uyg_jul_18.ui_out.time"
-            sort-order="descending"
-            vis-draw-function="drawData"
-            vis-element-id="example1"
+        <app-next-century-angular-filter #filter5B
+            id="filter5B"
+            [dataset]="dataset"
+            [filterService]="filterService"
+            [options]="filterOptions5B"
+            [searchElement]="search5"
+            [visInputElement]="vis5"
+            [visOutputElement]="vis5.elementRef.nativeElement"
         >
-        </next-century-search>
-    </div>
-</div>
-
-<!-- Column 2 -->
-<div class="column">
-    <div class="column-header">Show All Fields, Filter on ID (Top 100)</div>
-
-    <div class="column-body">
-        <next-century-example #example2
-            id="example2"
-            selection-field="fields.id"
-        >
-        </next-century-example>
-
-        <next-century-search #exampleSearch2
-            id="exampleSearch2"
-            search-field-keys="es1.earthquakes.quakedata.*"
-            search-limit=100
-            sort-field-key="es1.ldc_uyg_jul_18.ui_out.time"
-            sort-order="descending"
-            vis-draw-function="drawData"
-            vis-element-id="example2"
-        >
-        </next-century-search>
-
-        <next-century-filter #exampleFilter2
-            id="exampleFilter2"
-            filter-type="list"
-            list-field-key="es1.earthquakes.quakedata.id"
-            list-operator="="
-            search-element-id="exampleSearch2"
-            vis-element-id="example2"
-            vis-filter-input-function="changeSelectedText"
-            vis-filter-output-event="dataSelected"
-        ></next-century-filter>
+        </app-next-century-angular-filter>
     </div>
 </div>
 

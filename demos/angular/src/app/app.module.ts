@@ -3,7 +3,10 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import { NextCenturyAngularTextCloudModule } from 'component-library/dist/wrappers/angular/text-cloud.angular-module';
+import { ExampleModule } from './example.module';
+
+import { NextCenturyFilterAngularModule } from 'component-library/dist/wrappers/angular/core/filter.angular-module';
+import { NextCenturySearchAngularModule } from 'component-library/dist/wrappers/angular/core/search.angular-module';
 
 @NgModule({
     declarations: [
@@ -11,7 +14,9 @@ import { NextCenturyAngularTextCloudModule } from 'component-library/dist/wrappe
     ],
     imports: [
         BrowserModule,
-        NextCenturyAngularTextCloudModule
+        ExampleModule,
+        NextCenturyFilterAngularModule,
+        NextCenturySearchAngularModule
     ],
     providers: [],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
