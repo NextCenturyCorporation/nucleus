@@ -43,14 +43,16 @@ var filter_web_component_1 = require("../../../core/components/filter.web-compon
 var FILTER_COMPONENT_TEMPLATE = "\n<next-century-filter [attr.id]=\"id + '-filter'\"></next-century-filter>\n";
 var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
     __extends(NextCenturyFilterAngularComponent, _super);
-    function NextCenturyFilterAngularComponent() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function NextCenturyFilterAngularComponent(elementRef) {
+        var _this = _super.call(this) || this;
+        _this.elementRef = elementRef;
+        return _this;
     }
     /**
      * @override
      */
     NextCenturyFilterAngularComponent.prototype.doesHaveSubclassInputs = function () {
-        return !!(this.searchElement && this.visElement);
+        return !!(this.searchElement && this.visInputElement && this.visOutputElement);
     };
     /**
      * @override
@@ -62,7 +64,11 @@ var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
      * @override
      */
     NextCenturyFilterAngularComponent.prototype.initWrappedElement = function (filterElement) {
-        filterElement.init(this.dataset, this.filterService, this.visElement, this.searchElement);
+        filterElement.init(this.dataset, this.filterService, {
+            search: this.searchElement,
+            visInput: this.visInputElement,
+            visOutput: this.visOutputElement
+        });
     };
     /**
      * @override
@@ -92,14 +98,19 @@ var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturyFilterAngularComponent.prototype, "visElement", void 0);
+    ], NextCenturyFilterAngularComponent.prototype, "visInputElement", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Object)
+    ], NextCenturyFilterAngularComponent.prototype, "visOutputElement", void 0);
     NextCenturyFilterAngularComponent = __decorate([
         core_1.Component({
             selector: 'app-next-century-angular-filter',
             template: FILTER_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
-        })
+        }),
+        __metadata("design:paramtypes", [core_1.ElementRef])
     ], NextCenturyFilterAngularComponent);
     return NextCenturyFilterAngularComponent;
 }(common_angular_component_1.NextCenturyCommonAngularComponent));

@@ -28,8 +28,7 @@ var core_util_1 = require("../../../core/core.util");
 var dataset_1 = require("../../../core/models/dataset");
 var filter_service_1 = require("../../../core/services/filter.service");
 var NextCenturyCommonAngularComponent = /** @class */ (function () {
-    function NextCenturyCommonAngularComponent(elementRef) {
-        this.elementRef = elementRef;
+    function NextCenturyCommonAngularComponent() {
         this._visualizationIsInitialized = false;
     }
     NextCenturyCommonAngularComponent.prototype.doesHaveSubclassInputs = function () {

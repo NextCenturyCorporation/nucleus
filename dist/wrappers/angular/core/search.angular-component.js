@@ -46,14 +46,16 @@ var search_web_component_1 = require("../../../core/components/search.web-compon
 var SEARCH_COMPONENT_TEMPLATE = "\n<next-century-search [attr.id]=\"id + '-search'\">\n    <next-century-aggregation *ngFor=\"let aggregation of aggregations; let i = index\" [attr.id]=\"id + '-aggregation-' + i\">\n    </next-century-aggregation>\n    <next-century-group *ngFor=\"let group of groups; let i = index\" [attr.id]=\"id + '-group-' + i\"></next-century-group>\n</next-century-search>\n";
 var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     __extends(NextCenturySearchAngularComponent, _super);
-    function NextCenturySearchAngularComponent() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function NextCenturySearchAngularComponent(elementRef) {
+        var _this = _super.call(this) || this;
+        _this.elementRef = elementRef;
+        return _this;
     }
     /**
      * @override
      */
     NextCenturySearchAngularComponent.prototype.doesHaveSubclassInputs = function () {
-        return !!(this.searchService && this.visElement);
+        return !!(this.searchService && this.visInputElement);
     };
     /**
      * @override
@@ -65,7 +67,9 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
      * @override
      */
     NextCenturySearchAngularComponent.prototype.initWrappedElement = function (searchElement) {
-        searchElement.init(this.dataset, this.filterService, this.searchService, this.visElement);
+        searchElement.init(this.dataset, this.filterService, this.searchService, {
+            visInput: this.visInputElement
+        });
     };
     /**
      * @override
@@ -141,14 +145,15 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturySearchAngularComponent.prototype, "visElement", void 0);
+    ], NextCenturySearchAngularComponent.prototype, "visInputElement", void 0);
     NextCenturySearchAngularComponent = __decorate([
         core_1.Component({
             selector: 'app-next-century-angular-search',
             template: SEARCH_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
-        })
+        }),
+        __metadata("design:paramtypes", [core_1.ElementRef])
     ], NextCenturySearchAngularComponent);
     return NextCenturySearchAngularComponent;
 }(common_angular_component_1.NextCenturyCommonAngularComponent));

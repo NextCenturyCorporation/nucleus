@@ -12,11 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElementRef } from '@angular/core';
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
 import { NextCenturyCommonAngularComponent } from '../core/common.angular-component';
 import { NextCenturyTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
 export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
+    elementRef: ElementRef;
     searchService: AbstractSearchService;
+    constructor(elementRef: ElementRef);
     /**
      * Creates and returns the export data for the visualization.
      */

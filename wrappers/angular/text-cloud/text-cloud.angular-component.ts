@@ -33,6 +33,10 @@ const VISUALZIATON_COMPONENT_TEMPLATE = `
 export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
     @Input() searchService: AbstractSearchService;
 
+    constructor(public elementRef: ElementRef) {
+        super();
+    }
+
     /**
      * Creates and returns the export data for the visualization.
      */

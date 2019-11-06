@@ -28,7 +28,8 @@ export class NextCenturyStubAngularComponent {
     public data: any[] = [];
     public filteredValues: any[] = [];
 
-    constructor(protected elementRef: ElementRef) {
+    // Define a public ElementRef so that parent components may call addEventListener on this visualization's elementRef.nativeElement.
+    constructor(public elementRef: ElementRef) {
         // TODO Update constructor as needed.
     }
 
@@ -50,12 +51,17 @@ export class NextCenturyStubAngularComponent {
         // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
 
         // TODO Set this.data to the searchData array, transformed as needed by this visualization.
+
+        // Note:  You may need to add a ChangeDetectorRef to your constructor and call detectChanges() on it here.
     }
 
+    /**
+     * Creates or changes the filtered values based on the given item from the visualization's data array.  Invoked by user interaction.
+     */
     public filterDataItem(item: any): void {
         // TODO Update this.filteredValues based on the given item from this.data
 
-        // Dispatch an event to update the filter components corresponding to this visualization.
+        // Dispatch an event to notify this visualization's Filter Components of the new filtered values.
         this.elementRef.nativeElement.dispatchEvent(new CustomEvent('dataFiltered', {
             bubbles: true,
             detail: {

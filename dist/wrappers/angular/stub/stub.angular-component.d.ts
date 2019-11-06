@@ -14,7 +14,7 @@
  */
 import { ElementRef } from '@angular/core';
 export declare class NextCenturyStubAngularComponent {
-    protected elementRef: ElementRef;
+    elementRef: ElementRef;
     data: any[];
     filteredValues: any[];
     constructor(elementRef: ElementRef);
@@ -26,5 +26,8 @@ export declare class NextCenturyStubAngularComponent {
      * Draws the given search data as HTML elements in this visualization.  Invoked by a Search Component.
      */
     drawData(searchData: any[]): void;
+    /**
+     * Creates or changes the filtered values based on the given item from the visualization's data array.  Invoked by user interaction.
+     */
     filterDataItem(item: any): void;
 }

@@ -42,13 +42,17 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
     @Input() groups: Record<string, any>[];
     @Input() options: Record<string, any>;
     @Input() searchService: AbstractSearchService;
-    @Input() visElement: any;
+    @Input() visInputElement: any;
+
+    constructor(public elementRef: ElementRef) {
+        super();
+    }
 
     /**
      * @override
      */
     protected doesHaveSubclassInputs(): boolean {
-        return !!(this.searchService && this.visElement);
+        return !!(this.searchService && this.visInputElement);
     }
 
     /**
@@ -62,7 +66,9 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected initWrappedElement(searchElement: NextCenturySearch): void {
-        searchElement.init(this.dataset, this.filterService, this.searchService, this.visElement);
+        searchElement.init(this.dataset, this.filterService, this.searchService, {
+            visInput: this.visInputElement
+        });
     }
 
     /**

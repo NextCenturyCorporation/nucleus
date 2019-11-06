@@ -12,17 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AfterViewInit, ElementRef, OnChanges } from '@angular/core';
+import { AfterViewInit, OnChanges } from '@angular/core';
 import { Dataset } from '../../../core/models/dataset';
 import { FilterService } from '../../../core/services/filter.service';
 export declare abstract class NextCenturyCommonAngularComponent implements AfterViewInit, OnChanges {
-    protected elementRef: ElementRef;
     dataset: Dataset;
     filterService: FilterService;
     id: string;
     options: Record<string, any>;
     private _visualizationIsInitialized;
-    constructor(elementRef: ElementRef);
+    constructor();
     protected doesHaveSubclassInputs(): boolean;
     protected abstract findWrappedElement(): HTMLElement;
     protected abstract initWrappedElement(element: HTMLElement): void;

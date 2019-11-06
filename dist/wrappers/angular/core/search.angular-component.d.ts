@@ -12,16 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElementRef } from '@angular/core';
 import { AbstractFilter, AbstractFilterDesign } from '../../../core/models/filters';
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
 import { NextCenturySearch } from '../../../core/components/search.web-component';
 export declare class NextCenturySearchAngularComponent extends NextCenturyCommonAngularComponent {
+    elementRef: ElementRef;
     aggregations: Record<string, any>[];
     groups: Record<string, any>[];
     options: Record<string, any>;
     searchService: AbstractSearchService;
-    visElement: any;
+    visInputElement: any;
+    constructor(elementRef: ElementRef);
     /**
      * @override
      */

@@ -27,7 +27,7 @@ export abstract class NextCenturyCommonAngularComponent implements AfterViewInit
 
     private _visualizationIsInitialized: boolean = false;
 
-    constructor(protected elementRef: ElementRef) { }
+    constructor() {}
 
     protected doesHaveSubclassInputs(): boolean {
         return true;

@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 // TODO Change your visualization's filenames, selector, and class name.
 var NextCenturyStubAngularComponent = /** @class */ (function () {
+    // Define a public ElementRef so that parent components may call addEventListener on this visualization's elementRef.nativeElement.
     function NextCenturyStubAngularComponent(elementRef) {
         this.elementRef = elementRef;
         this.data = [];
@@ -46,10 +47,14 @@ var NextCenturyStubAngularComponent = /** @class */ (function () {
     NextCenturyStubAngularComponent.prototype.drawData = function (searchData) {
         // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
         // TODO Set this.data to the searchData array, transformed as needed by this visualization.
+        // Note:  You may need to add a ChangeDetectorRef to your constructor and call detectChanges() on it here.
     };
+    /**
+     * Creates or changes the filtered values based on the given item from the visualization's data array.  Invoked by user interaction.
+     */
     NextCenturyStubAngularComponent.prototype.filterDataItem = function (item) {
         // TODO Update this.filteredValues based on the given item from this.data
-        // Dispatch an event to update the filter components corresponding to this visualization.
+        // Dispatch an event to notify this visualization's Filter Components of the new filtered values.
         this.elementRef.nativeElement.dispatchEvent(new CustomEvent('dataFiltered', {
             bubbles: true,
             detail: {

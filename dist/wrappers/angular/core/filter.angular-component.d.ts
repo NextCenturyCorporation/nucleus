@@ -12,11 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ElementRef } from '@angular/core';
 import { NextCenturyCommonAngularComponent } from './common.angular-component';
 import { NextCenturyFilter } from '../../../core/components/filter.web-component';
 export declare class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularComponent {
+    elementRef: ElementRef;
     searchElement: any;
-    visElement: any;
+    visInputElement: any;
+    visOutputElement: any;
+    constructor(elementRef: ElementRef);
     /**
      * @override
      */

@@ -31,13 +31,18 @@ const FILTER_COMPONENT_TEMPLATE = `
 })
 export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularComponent {
     @Input() searchElement: any;
-    @Input() visElement: any;
+    @Input() visInputElement: any;
+    @Input() visOutputElement: any;
+
+    constructor(public elementRef: ElementRef) {
+        super();
+    }
 
     /**
      * @override
      */
     protected doesHaveSubclassInputs(): boolean {
-        return !!(this.searchElement && this.visElement);
+        return !!(this.searchElement && this.visInputElement && this.visOutputElement);
     }
 
     /**
@@ -51,7 +56,11 @@ export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected initWrappedElement(filterElement: NextCenturyFilter): void {
-        filterElement.init(this.dataset, this.filterService, this.visElement, this.searchElement);
+        filterElement.init(this.dataset, this.filterService, {
+            search: this.searchElement,
+            visInput: this.visInputElement,
+            visOutput: this.visOutputElement
+        });
     }
 
     /**

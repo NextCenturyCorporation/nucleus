@@ -128,11 +128,19 @@ var NextCenturySearch = /** @class */ (function (_super) {
      * Initializes this search element with the given dataset and services and starts a new search query if possible (and optional
      * visualization element).
      */
-    NextCenturySearch.prototype.init = function (dataset, filterService, searchService, visElement) {
+    NextCenturySearch.prototype.init = function (dataset, filterService, searchService, options) {
         this._dataset = dataset;
         this._filterService = filterService;
         this._searchService = searchService;
-        this._visElement = visElement;
+        if (options && typeof options === 'object') {
+            if (options.visInput) {
+                this._visInputElement = options.visInput;
+            }
+            else {
+                // Backwards compatibility
+                this._visInputElement = options;
+            }
+        }
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
             if (this.getAttribute('search-field-keys')) {
@@ -309,7 +317,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
             return item;
         });
         var size = data.length;
-        var visElement = this._visElement || (this.parentElement ? this.parentElement.querySelector('#' +
+        var visElement = this._visInputElement || (this.parentElement ? this.parentElement.querySelector('#' +
             this.getAttribute('vis-element-id')) : null);
         var drawFunction = this.getAttribute('vis-draw-function');
         if (visElement && drawFunction) {

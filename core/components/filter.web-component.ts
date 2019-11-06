@@ -42,7 +42,8 @@ export class NextCenturyFilter extends NextCenturyElement {
     private _filterDesigns: AbstractFilterDesign[] = [];
     private _filterService: FilterService;
     private _searchElement: any;
-    private _visElement: any;
+    private _visInputElement: any;
+    private _visOutputElement: any;
 
     private _handleFilterEventFromVisualizationCallback: (event: any) => void;
 
@@ -120,6 +121,10 @@ export class NextCenturyFilter extends NextCenturyElement {
                 CoreUtil.updateListener(this._handleFilterEventFromVisualizationCallback, this.parentElement,
                     this.getAttribute('vis-element-id'), oldValue, this.getAttribute('vis-element-id'), newValue);
             }
+            if (this._visOutputElement) {
+                this._visOutputElement.removeEventListener(oldValue, this._handleFilterEventFromVisualizationCallback);
+                this._visOutputElement.addEventListener(newValue, this._handleFilterEventFromVisualizationCallback);
+            }
             return;
         }
 
@@ -144,8 +149,15 @@ export class NextCenturyFilter extends NextCenturyElement {
     public disconnectedCallback(): void {
         super.disconnectedCallback();
 
-        CoreUtil.removeListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'),
-            this.getAttribute('vis-filter-output-event'));
+        if (this.getAttribute('vis-element-id') && this.getAttribute('vis-filter-output-event')) {
+            CoreUtil.removeListener(this._handleFilterEventFromVisualizationCallback, this.parentElement,
+                this.getAttribute('vis-element-id'), this.getAttribute('vis-filter-output-event'));
+        }
+
+        if (this._visOutputElement && this.getAttribute('vis-filter-output-event')) {
+            this._visOutputElement.removeEventListener(this.getAttribute('vis-filter-output-event'),
+                this._handleFilterEventFromVisualizationCallback);
+        }
 
         if (this.getAttribute('id')) {
             this._registerWithFilterService(this.getAttribute('id'), null);
@@ -155,14 +167,31 @@ export class NextCenturyFilter extends NextCenturyElement {
     /**
      * Initializes this filter element with the given dataset and services (and optional visualization and search elements).
      */
-    public init(dataset: Dataset, filterService: FilterService, visElement?: any, searchElement?: any): void {
+    public init(dataset: Dataset, filterService: FilterService, options?: any): void {
         this._dataset = dataset;
         this._filterService = filterService;
-        this._searchElement = searchElement;
-        this._visElement = visElement;
 
-        CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'),
-            this.getAttribute('vis-filter-output-event'));
+        if (options && typeof options === 'object') {
+            if (options.search || options.visInput || options.visOutput) {
+                this._searchElement = options.search;
+                this._visInputElement = options.visInput;
+                this._visOutputElement = options.visOutput;
+            } else {
+                // Backwards compatibility
+                this._visInputElement = options;
+                this._visOutputElement = options;
+            }
+        }
+
+        if (this.getAttribute('vis-element-id') && this.getAttribute('vis-filter-output-event')) {
+            CoreUtil.addListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'),
+                this.getAttribute('vis-filter-output-event'));
+        }
+
+        if (this._visOutputElement && this.getAttribute('vis-filter-output-event')) {
+            this._visOutputElement.addEventListener(this.getAttribute('vis-filter-output-event'),
+                this._handleFilterEventFromVisualizationCallback);
+        }
 
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
@@ -381,7 +410,7 @@ export class NextCenturyFilter extends NextCenturyElement {
             return;
         }
 
-        const visElement = this._visElement || (this.parentElement.querySelector('#' + this.getAttribute('vis-element-id')));
+        const visElement = this._visInputElement || (this.parentElement.querySelector('#' + this.getAttribute('vis-element-id')));
         const filterFunction = this.getAttribute('vis-filter-input-function');
 
         const filterCollection: FilterCollection = this._filterService.retrieveCompatibleFilterCollection(this._filterDesigns);
@@ -450,9 +479,9 @@ export class NextCenturyFilter extends NextCenturyElement {
      */
     private _isReady(): boolean {
         const filterType = this._retrieveFilterType();
-        return !!(this._dataset && this._filterService && this.getAttribute('id') && this.getAttribute('search-element-id') &&
-            filterType && (this._isFilterTypeBounds(filterType) || this._isFilterTypeDomain(filterType) ||
-                this._isFilterTypeList(filterType) || this._isFilterTypePair(filterType)));
+        return !!(this._dataset && this._filterService && this.getAttribute('id') && (this._searchElement ||
+            this.getAttribute('search-element-id')) && filterType && (this._isFilterTypeBounds(filterType) ||
+                this._isFilterTypeDomain(filterType) || this._isFilterTypeList(filterType) || this._isFilterTypePair(filterType)));
     }
 
     /**

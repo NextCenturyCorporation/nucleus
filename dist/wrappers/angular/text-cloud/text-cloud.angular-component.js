@@ -44,8 +44,10 @@ var text_cloud_web_component_1 = require("../../../visualizations/text-cloud/tex
 var VISUALZIATON_COMPONENT_TEMPLATE = "\n<next-century-text-cloud [attr.id]=\"id + '-angular'\"></next-century-text-cloud>\n";
 var NextCenturyTextCloudAngularComponent = /** @class */ (function (_super) {
     __extends(NextCenturyTextCloudAngularComponent, _super);
-    function NextCenturyTextCloudAngularComponent() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function NextCenturyTextCloudAngularComponent(elementRef) {
+        var _this = _super.call(this) || this;
+        _this.elementRef = elementRef;
+        return _this;
     }
     /**
      * Creates and returns the export data for the visualization.
@@ -107,7 +109,8 @@ var NextCenturyTextCloudAngularComponent = /** @class */ (function (_super) {
             template: VISUALZIATON_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
-        })
+        }),
+        __metadata("design:paramtypes", [core_1.ElementRef])
     ], NextCenturyTextCloudAngularComponent);
     return NextCenturyTextCloudAngularComponent;
 }(common_angular_component_1.NextCenturyCommonAngularComponent));
