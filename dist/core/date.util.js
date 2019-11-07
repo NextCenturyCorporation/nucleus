@@ -44,60 +44,93 @@ var DateUtil = /** @class */ (function () {
      */
     DateUtil.fromDateToString = function (input, outputFormat) {
         if (outputFormat === void 0) { outputFormat = DateUtil.STANDARD_FORMAT; }
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().format(outputFormat);
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).format(outputFormat);
     };
     /**
      * Returns the date object for the given formatted date string.
      */
     DateUtil.fromStringToDate = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().toDate();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).toDate();
     };
     /**
      * Returns the day of month (integer) for the given formatted date string.
      */
     DateUtil.fromStringToDay = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().date();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).date();
     };
     /**
      * Returns the hours (integer) for the given formatted date string.
      */
     DateUtil.fromStringToHour = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().hour();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).hour();
     };
     /**
      * Returns the minutes (integer) for the given formatted date string.
      */
     DateUtil.fromStringToMinute = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().minute();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).minute();
     };
     /**
      * Returns the zero-indexed month (integer) for the given formatted date string.
      */
     DateUtil.fromStringToMonth = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().month();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).month();
     };
     /**
      * Returns the seconds (integer) for the given formatted date string.
      */
     DateUtil.fromStringToSecond = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().second();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).second();
     };
     /**
      * Returns the unix timestamp in milliseconds for the given formatted date string.
      */
     DateUtil.fromStringToTimestamp = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().valueOf();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).valueOf();
     };
     /**
      * Returns the year (integer) for the given formatted date string.
      */
     DateUtil.fromStringToYear = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().year();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT).year();
     };
     /**
      * Returns the date string for the given date object as "X seconds/minutes/hours/days ago".
      */
     DateUtil.retrievePastTime = function (input, outputFormat) {
+        if (this.USE_LOCAL_TIME) {
+            if (moment.parseZone(input).local().diff(Date.now(), 'd', true) < -3) {
+                return DateUtil.fromDateToString(input, outputFormat);
+            }
+            return moment.parseZone(input).local().fromNow();
+        }
         if (moment.utc(input, DateUtil.STANDARD_FORMAT).diff(Date.now(), 'd', true) < -3) {
             return DateUtil.fromDateToString(input, outputFormat);
         }
@@ -107,9 +140,13 @@ var DateUtil = /** @class */ (function () {
      * Returns if the given date string is a valid date.
      */
     DateUtil.verifyDateStringStrict = function (input) {
+        if (this.USE_LOCAL_TIME) {
+            return moment.parseZone(input).local().isValid();
+        }
         return moment.utc(input, DateUtil.STANDARD_FORMAT, true).isValid();
     };
     DateUtil.STANDARD_FORMAT = DateFormat.ISO;
+    DateUtil.USE_LOCAL_TIME = false;
     return DateUtil;
 }());
 exports.DateUtil = DateUtil;

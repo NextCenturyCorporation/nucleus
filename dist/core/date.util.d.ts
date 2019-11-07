@@ -23,6 +23,7 @@ export declare enum DateFormat {
 }
 export declare class DateUtil {
     static STANDARD_FORMAT: DateFormat;
+    static USE_LOCAL_TIME: boolean;
     /**
      * Add one of the given interval (minute/hour/day/month/year) to the given date object, subtract one second, and
      * return the new date.

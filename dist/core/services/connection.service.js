@@ -156,6 +156,12 @@ var ConnectionService = /** @class */ (function () {
         }
         return null;
     };
+    /**
+     * Returns the server status.
+     */
+    ConnectionService.prototype.getServerStatus = function (onSuccess, onError) {
+        return neon_framework_1.query.getServerStatus(onSuccess, onError);
+    };
     ConnectionService.prototype.neonConnection = function () {
         return new neon_framework_1.query.Connection();
     };

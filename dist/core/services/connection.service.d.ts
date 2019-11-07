@@ -224,5 +224,9 @@ export declare class ConnectionService {
     } = {
         query: any;
     }>(datastoreType: string, datastoreHost: string, ignoreUpdates?: boolean): CoreConnection<T>;
+    /**
+     * Returns the server status.
+     */
+    getServerStatus(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     private neonConnection;
 }
