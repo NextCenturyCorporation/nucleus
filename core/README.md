@@ -2,7 +2,7 @@
 
 ## Summary
 
-This standalone package includes the core components, models, and services for the Next Century Component Library.  For more information, please see the [README page](https://github.com/NextCenturyCorporation/neon-dash-internal/tree/THOR-1180#readme).
+This standalone package includes the core components, models, and services for the Next Century Component Library.  For more information, please see the [README page](../README.md).
 
 ## Build
 
