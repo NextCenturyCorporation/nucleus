@@ -170,8 +170,7 @@ export class ConfigOptionDatabase extends ConfigOption {
 export class ConfigOptionDatastore extends ConfigOption {
     constructor() {
         // Value default and choices are set elsewhere.
-        // TODO THOR-1047 Show datastore in widget option menu
-        super(OptionType.DATASTORE, true, 'datastore', 'Datastore', undefined, undefined, true);
+        super(OptionType.DATASTORE, true, 'datastore', 'Datastore', undefined, undefined, false);
     }
 
     /**
