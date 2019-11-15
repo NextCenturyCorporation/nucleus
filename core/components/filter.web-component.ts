@@ -172,6 +172,7 @@ export class NextCenturyFilter extends NextCenturyElement {
         this._filterService = filterService;
 
         if (options && typeof options === 'object') {
+            // If options is not an object with at least one of the expected properties, assume it is an HTMLElement itself.
             if (options.search || options.visInput || options.visOutput) {
                 this._searchElement = options.search;
                 this._visInputElement = options.visInput;
@@ -230,7 +231,7 @@ export class NextCenturyFilter extends NextCenturyElement {
     private _createFilterDesigns(values: any|any[]): AbstractFilterDesign[] {
         const filterType = this._retrieveFilterType();
         if (this._isFilterTypeList(filterType)) {
-            return this._createFilterDesignsOnList(!!this.hasAttribute('list-intersection'), this.getAttribute('list-field-key'),
+            return this._createFilterDesignsOnList(this.hasAttribute('list-intersection'), this.getAttribute('list-field-key'),
                 this.getAttribute('list-operator'), values);
         }
         if (this._isFilterTypeBounds(filterType)) {
@@ -241,7 +242,7 @@ export class NextCenturyFilter extends NextCenturyElement {
             return this._createFilterDesignsOnDomain(this.getAttribute('domain-field-key'), values);
         }
         if (this._isFilterTypePair(filterType)) {
-            return this._createFilterDesignsOnPair(!!this.hasAttribute('pair-intersection'), this.getAttribute('pair-field-key-1'),
+            return this._createFilterDesignsOnPair(this.hasAttribute('pair-intersection'), this.getAttribute('pair-field-key-1'),
                 this.getAttribute('pair-field-key-2'), this.getAttribute('pair-operator-1'), this.getAttribute('pair-operator-2'), values);
         }
         console.warn('Filter component ' + this.getAttribute('id') + ' has unexpected filter type:', filterType);

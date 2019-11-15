@@ -147,8 +147,8 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
      */
     public redraw(): void {
         const aggregationLabel = this.getAttribute('aggregation-label');
-        const showParagraphs = !!this.hasAttribute('enable-show-paragraphs');
-        const showValues = !!this.hasAttribute('enable-show-values');
+        const showParagraphs = this.hasAttribute('enable-show-paragraphs');
+        const showValues = this.hasAttribute('enable-show-values');
 
         let newElement = document.createElement('div');
         newElement.className = 'text-cloud';
