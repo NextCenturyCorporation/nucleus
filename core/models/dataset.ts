@@ -258,7 +258,7 @@ export class Dataset {
             Object.keys(validated).forEach((datastoreId) => {
                 const connection = this._connectionService.connect(validated[datastoreId].type, validated[datastoreId].host);
                 if (connection) {
-                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId]);
+                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId], {});
                 }
             });
         }
@@ -366,40 +366,19 @@ export class DatasetUtil {
     static updateDatastoreFromDataServer(
         connection: Connection,
         datastore: DatastoreConfig,
-        onFinish?: (failedDatabases: DatabaseConfig[]) => void
+        previouslyFinishedUpdates: Record<string, string[]>,
+        onFinish?: (failedDatabases: string[]) => void
     ): Promise<void> {
-        return Promise.all(Object.values(datastore.databases).map((database: DatabaseConfig) =>
-            DatasetUtil.updateTableNamesFromDataServer(connection, database))).then((databases: DatabaseConfig[]) => {
+        return Promise.all(Object.values(datastore.databases).reduce((promises: Promise<string>[], database: DatabaseConfig) =>
+            promises.concat(Object.values(database.tables)
+                .filter((table: TableConfig) => (previouslyFinishedUpdates[database.name] || []).indexOf(table.name) < 0)
+                .map((table: TableConfig) => DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, datastore, database, table))
+            ),
+            [] as Promise<string>[]
+        )).then((tableKeys: string[]) => {
             if (onFinish) {
-                onFinish(databases.filter((database) => !!database));
+                onFinish(tableKeys.filter((tableKey) => !!tableKey));
             }
-        });
-    }
-
-    /**
-     * Retrieves the field names from the data server for the tables in the given database and updates the fields in the table objects.
-     */
-    static updateTableNamesFromDataServer(connection: Connection, database: DatabaseConfig): Promise<DatabaseConfig> {
-        return new Promise<DatabaseConfig>((resolve) => {
-            connection.getTableNames(database.name, (tableNames: string[]) => {
-                let promisesOnFields = [];
-
-                tableNames.forEach((tableName: string) => {
-                    let table = database.tables[tableName];
-
-                    if (table) {
-                        promisesOnFields.push(DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, database, table));
-                    }
-                });
-
-                Promise.all(promisesOnFields).then((tables: TableConfig[]) => {
-                    // Don't return this database if it and all its tables didn't error.
-                    resolve(tables.filter((table) => !!table).length ? database : null);
-                });
-            }, (__error) => {
-                // Return this database if it errors.
-                resolve(database);
-            });
         });
     }
 
@@ -408,10 +387,11 @@ export class DatasetUtil {
      */
     static updateFieldNamesAndTypesFromDataServer(
         connection: Connection,
+        datastore: DatastoreConfig,
         database: DatabaseConfig,
         table: TableConfig
-    ): Promise<TableConfig> {
-        return new Promise<TableConfig>((resolve) =>
+    ): Promise<string> {
+        return new Promise<string>((resolve) =>
             connection.getFieldTypes(database.name, table.name, (fieldNamesAndTypes: Record<string, string>) => {
                 if (fieldNamesAndTypes) {
                     let existingFieldNames = new Set(table.fields.map((field) => field.columnName));
@@ -434,7 +414,7 @@ export class DatasetUtil {
                 resolve(null);
             }, (__error) => {
                 // Return this table if it errors.
-                resolve(table);
+                resolve(datastore.name + '.' + database.name + '.' + table.name);
             }));
     }
 
