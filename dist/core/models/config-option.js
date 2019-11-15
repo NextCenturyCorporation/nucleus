@@ -174,8 +174,7 @@ var ConfigOptionDatastore = /** @class */ (function (_super) {
     __extends(ConfigOptionDatastore, _super);
     function ConfigOptionDatastore() {
         // Value default and choices are set elsewhere.
-        // TODO THOR-1047 Show datastore in widget option menu
-        return _super.call(this, OptionType.DATASTORE, true, 'datastore', 'Datastore', undefined, undefined, true) || this;
+        return _super.call(this, OptionType.DATASTORE, true, 'datastore', 'Datastore', undefined, undefined, false) || this;
     }
     /**
      * Returns the current value to save in the bindings.

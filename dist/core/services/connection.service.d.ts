@@ -44,6 +44,17 @@ export interface Connection<T extends {
      */
     getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
+     * Returns the names of the fields in the given database/table.
+     *
+     * @arg {string} databaseName
+     * @arg {string} tableName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @abstract
+     */
+    getFieldNames(databaseName: string, tableName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    /**
      * Returns the types of the fields in the given database/table.
      *
      * @arg {string} databaseName
@@ -63,6 +74,16 @@ export interface Connection<T extends {
      * @abstract
      */
     listStates(limit: number, offset: number, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    /**
+     * Returns the table names in the given database.
+     *
+     * @arg {string} databaseName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @abstract
+     */
+    getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
      * Returns the table and field names in the given database.
      *
@@ -141,6 +162,17 @@ export declare class CoreConnection<T extends {
      */
     getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
+     * Returns the names of the fields in the given database/table.
+     *
+     * @arg {string} databaseName
+     * @arg {string} tableName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    getFieldNames(databaseName: string, tableName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    /**
      * Returns the types of the fields in the given database/table.
      *
      * @arg {string} databaseName
@@ -160,6 +192,16 @@ export declare class CoreConnection<T extends {
      * @override
      */
     listStates(limit: number, offset: number, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    /**
+     * Returns the table names in the given database.
+     *
+     * @arg {string} databaseName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
      * Returns the table and field names in the given database.
      *

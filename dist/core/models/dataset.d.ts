@@ -143,15 +143,11 @@ export declare class DatasetUtil {
     /**
      * Retrieves the tables and fields from the data server for the databases in the given datastore and updates the objects as needed.
      */
-    static updateDatastoreFromDataServer(connection: Connection, datastore: DatastoreConfig, onFinish?: (failedDatabases: DatabaseConfig[]) => void): Promise<void>;
-    /**
-     * Retrieves the field names from the data server for the tables in the given database and updates the fields in the table objects.
-     */
-    static updateFieldNamesFromDataServer(connection: Connection, database: DatabaseConfig): Promise<DatabaseConfig>;
+    static updateDatastoreFromDataServer(connection: Connection, datastore: DatastoreConfig, previouslyFinishedUpdates: Record<string, string[]>, onFinish?: (failedDatabases: string[]) => void): Promise<void>;
     /**
      * Retrieves the field types from the data server for the given table and updates the individual field objects.
      */
-    static updateFieldTypesFromDataServer(connection: Connection, database: DatabaseConfig, table: TableConfig): Promise<TableConfig>;
+    static updateFieldNamesAndTypesFromDataServer(connection: Connection, datastore: DatastoreConfig, database: DatabaseConfig, table: TableConfig): Promise<string>;
     /**
      * Ensures that the given datastore and its databases, tables, and fields have the required properties and returns it if valid.
      */

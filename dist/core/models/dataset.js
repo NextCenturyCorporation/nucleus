@@ -98,6 +98,8 @@ var Dataset = /** @class */ (function () {
         this._handleDataServer(this._dataServer);
         this._datastores = this._updateDatastores(this._datastores);
         this._relations = this._validateRelations(relations);
+        this.tableKeyCollection = this.tableKeyCollection || {};
+        this.fieldKeyCollection = this.fieldKeyCollection || {};
     }
     Object.defineProperty(Dataset.prototype, "datastores", {
         get: function () {
@@ -187,7 +189,7 @@ var Dataset = /** @class */ (function () {
             Object.keys(validated).forEach(function (datastoreId) {
                 var connection = _this._connectionService.connect(validated[datastoreId].type, validated[datastoreId].host);
                 if (connection) {
-                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId]);
+                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId], {});
                 }
             });
         }
@@ -290,68 +292,44 @@ var DatasetUtil = /** @class */ (function () {
     /**
      * Retrieves the tables and fields from the data server for the databases in the given datastore and updates the objects as needed.
      */
-    DatasetUtil.updateDatastoreFromDataServer = function (connection, datastore, onFinish) {
-        return Promise.all(Object.values(datastore.databases).map(function (database) {
-            return DatasetUtil.updateFieldNamesFromDataServer(connection, database);
-        })).then(function (databases) {
+    DatasetUtil.updateDatastoreFromDataServer = function (connection, datastore, previouslyFinishedUpdates, onFinish) {
+        return Promise.all(Object.values(datastore.databases).reduce(function (promises, database) {
+            return promises.concat(Object.values(database.tables)
+                .filter(function (table) { return (previouslyFinishedUpdates[database.name] || []).indexOf(table.name) < 0; })
+                .map(function (table) { return DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, datastore, database, table); }));
+        }, [])).then(function (tableKeys) {
             if (onFinish) {
-                onFinish(databases.filter(function (database) { return !!database; }));
+                onFinish(tableKeys.filter(function (tableKey) { return !!tableKey; }));
             }
-        });
-    };
-    /**
-     * Retrieves the field names from the data server for the tables in the given database and updates the fields in the table objects.
-     */
-    DatasetUtil.updateFieldNamesFromDataServer = function (connection, database) {
-        return new Promise(function (resolve) {
-            connection.getTableNamesAndFieldNames(database.name, function (tableNamesAndFieldNames) {
-                var promisesOnFields = [];
-                Object.keys(tableNamesAndFieldNames).forEach(function (tableName) {
-                    var table = database.tables[tableName];
-                    if (table) {
-                        var existingFields_1 = new Set(table.fields.map(function (field) { return field.columnName; }));
-                        tableNamesAndFieldNames[tableName].forEach(function (fieldName) {
-                            if (!existingFields_1.has(fieldName)) {
-                                var newField = FieldConfig.get({
-                                    columnName: fieldName,
-                                    prettyName: fieldName,
-                                    // If a lot of existing fields were defined (> 25), but this field wasn't, then hide this field.
-                                    hide: existingFields_1.size > 25,
-                                    // Set the default type to text.
-                                    type: 'text'
-                                });
-                                table.fields.push(newField);
-                            }
-                        });
-                        promisesOnFields.push(DatasetUtil.updateFieldTypesFromDataServer(connection, database, table));
-                    }
-                });
-                Promise.all(promisesOnFields).then(function (tables) {
-                    // Don't return this database if it and all its tables didn't error.
-                    resolve(tables.filter(function (table) { return !!table; }).length ? database : null);
-                });
-            }, function (__error) {
-                // Return this database if it errors.
-                resolve(database);
-            });
         });
     };
     /**
      * Retrieves the field types from the data server for the given table and updates the individual field objects.
      */
-    DatasetUtil.updateFieldTypesFromDataServer = function (connection, database, table) {
+    DatasetUtil.updateFieldNamesAndTypesFromDataServer = function (connection, datastore, database, table) {
         return new Promise(function (resolve) {
-            return connection.getFieldTypes(database.name, table.name, function (fieldTypes) {
-                if (fieldTypes) {
-                    table.fields.forEach(function (field) {
-                        field.type = fieldTypes[field.columnName] || field.type;
+            return connection.getFieldTypes(database.name, table.name, function (fieldNamesAndTypes) {
+                if (fieldNamesAndTypes) {
+                    var existingFieldNames_1 = new Set(table.fields.map(function (field) { return field.columnName; }));
+                    Object.keys(fieldNamesAndTypes).forEach(function (fieldName) {
+                        if (!existingFieldNames_1.has(fieldName)) {
+                            var newField = FieldConfig.get({
+                                columnName: fieldName,
+                                prettyName: fieldName,
+                                // If a lot of existing fields were defined (> 25), but this field wasn't, then hide this field.
+                                hide: existingFieldNames_1.size > 25,
+                                // Set the default type to text.
+                                type: fieldNamesAndTypes[fieldName] || 'text'
+                            });
+                            table.fields.push(newField);
+                        }
                     });
                 }
                 // Don't return this table if it didn't error.
                 resolve(null);
             }, function (__error) {
                 // Return this table if it errors.
-                resolve(table);
+                resolve(datastore.name + '.' + database.name + '.' + table.name);
             });
         });
     };
@@ -374,7 +352,7 @@ var DatasetUtil = /** @class */ (function () {
                     field.type = field.type || 'text';
                     return field;
                 });
-                // Always keep the table since its fields can be discovered with updateFieldNamesFromDataServer
+                // Always keep the table since its fields can be discovered with updateFieldNamesAndTypesFromDataServer
                 outputTables[tableName] = table;
                 return outputTables;
             }, {});

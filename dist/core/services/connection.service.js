@@ -44,6 +44,19 @@ var CoreConnection = /** @class */ (function () {
         return this.connection.getDatabaseNames(onSuccess, onError);
     };
     /**
+     * Returns the names of the fields in the given database/table.
+     *
+     * @arg {string} databaseName
+     * @arg {string} tableName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    CoreConnection.prototype.getFieldNames = function (databaseName, tableName, onSuccess, onError) {
+        return this.connection.getFieldNames(databaseName, tableName, onSuccess, onError);
+    };
+    /**
      * Returns the types of the fields in the given database/table.
      *
      * @arg {string} databaseName
@@ -66,6 +79,18 @@ var CoreConnection = /** @class */ (function () {
      */
     CoreConnection.prototype.listStates = function (limit, offset, onSuccess, onError) {
         return this.connection.listStates(limit, offset, onSuccess, onError);
+    };
+    /**
+     * Returns the table names in the given database.
+     *
+     * @arg {string} databaseName
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    CoreConnection.prototype.getTableNames = function (databaseName, onSuccess, onError) {
+        return this.connection.getTableNames(databaseName, onSuccess, onError);
     };
     /**
      * Returns the table and field names in the given database.

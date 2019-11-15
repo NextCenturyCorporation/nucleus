@@ -112,8 +112,8 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
     NextCenturyTextCloudVisualization.prototype.redraw = function () {
         var _this = this;
         var aggregationLabel = this.getAttribute('aggregation-label');
-        var showParagraphs = !!this.hasAttribute('enable-show-paragraphs');
-        var showValues = !!this.hasAttribute('enable-show-values');
+        var showParagraphs = this.hasAttribute('enable-show-paragraphs');
+        var showValues = this.hasAttribute('enable-show-values');
         var newElement = document.createElement('div');
         newElement.className = 'text-cloud';
         this._shadowRoot.replaceChild(newElement, this._visElement);

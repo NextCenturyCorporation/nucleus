@@ -198,11 +198,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
             this._searchService.updateFilter(queryPayload, filterClauses.length === 1 ? filterClauses[0] :
                 this._searchService.buildCompoundFilterClause(filterClauses));
         }
-        if (aggregations.length) {
-            for (var _i = 0, aggregations_1 = aggregations; _i < aggregations_1.length; _i++) {
-                var aggregation = aggregations_1[_i];
-                this._searchService.updateAggregation(queryPayload, aggregation.type, aggregation.name, (aggregation.fieldKey && aggregation.fieldKey.field) ? aggregation.fieldKey.field : aggregation.group);
-            }
+        for (var _i = 0, aggregations_1 = aggregations; _i < aggregations_1.length; _i++) {
+            var aggregation = aggregations_1[_i];
+            this._searchService.updateAggregation(queryPayload, aggregation.type, aggregation.name, (aggregation.fieldKey && aggregation.fieldKey.field) ? aggregation.fieldKey.field : aggregation.group);
         }
         if (groups.length) {
             var searchGroups = [];
@@ -565,13 +563,19 @@ var NextCenturySearch = /** @class */ (function (_super) {
         var dataHost = datasetTableKey ? datasetTableKey.datastore.host : null;
         var dataType = datasetTableKey ? datasetTableKey.datastore.type : null;
         var labels = datasetTableKey ? datasetTableKey.table.labelOptions : {};
-        var hideIfUnfiltered = !!this.hasAttribute('enable-hide-if-unfiltered');
+        var hideIfUnfiltered = this.hasAttribute('enable-hide-if-unfiltered');
         // Don't run a search query if it is not possible, or if enable-hide-if-unfiltered is true and the search query is not filtered.
         if (!this._searchService.canRunSearch(dataType, dataHost)) {
-            this._handleQuerySuccess({ data: [] }, 'Cannot Connect to Datastore');
-            return;
+            this.dispatchEvent(new CustomEvent('searchFailed', {
+                bubbles: true,
+                detail: {
+                    error: 'Cannot Connect to Datastore',
+                    message: 'FAILED ' + this.getAttribute('id')
+                }
+            }));
         }
         if (hideIfUnfiltered && !isFiltered) {
+            // Unsure if this should be success or failure.
             this._handleQuerySuccess({ data: [] }, 'Please Filter');
             return;
         }
