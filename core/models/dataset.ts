@@ -163,6 +163,8 @@ export class Dataset {
         this._handleDataServer(this._dataServer);
         this._datastores = this._updateDatastores(this._datastores);
         this._relations = this._validateRelations(relations);
+        this.tableKeyCollection = this.tableKeyCollection || {};
+        this.fieldKeyCollection = this.fieldKeyCollection || {};
     }
 
     get datastores(): Record<string, DatastoreConfig> {
@@ -367,7 +369,7 @@ export class DatasetUtil {
         onFinish?: (failedDatabases: DatabaseConfig[]) => void
     ): Promise<void> {
         return Promise.all(Object.values(datastore.databases).map((database: DatabaseConfig) =>
-            DatasetUtil.updateFieldNamesFromDataServer(connection, database))).then((databases: DatabaseConfig[]) => {
+            DatasetUtil.updateTableNamesFromDataServer(connection, database))).then((databases: DatabaseConfig[]) => {
             if (onFinish) {
                 onFinish(databases.filter((database) => !!database));
             }
@@ -377,32 +379,16 @@ export class DatasetUtil {
     /**
      * Retrieves the field names from the data server for the tables in the given database and updates the fields in the table objects.
      */
-    static updateFieldNamesFromDataServer(connection: Connection, database: DatabaseConfig): Promise<DatabaseConfig> {
+    static updateTableNamesFromDataServer(connection: Connection, database: DatabaseConfig): Promise<DatabaseConfig> {
         return new Promise<DatabaseConfig>((resolve) => {
-            connection.getTableNamesAndFieldNames(database.name, (tableNamesAndFieldNames: Record<string, string[]>) => {
+            connection.getTableNames(database.name, (tableNames: string[]) => {
                 let promisesOnFields = [];
 
-                Object.keys(tableNamesAndFieldNames).forEach((tableName: string) => {
+                tableNames.forEach((tableName: string) => {
                     let table = database.tables[tableName];
 
                     if (table) {
-                        let existingFields = new Set(table.fields.map((field) => field.columnName));
-
-                        tableNamesAndFieldNames[tableName].forEach((fieldName: string) => {
-                            if (!existingFields.has(fieldName)) {
-                                let newField: FieldConfig = FieldConfig.get({
-                                    columnName: fieldName,
-                                    prettyName: fieldName,
-                                    // If a lot of existing fields were defined (> 25), but this field wasn't, then hide this field.
-                                    hide: existingFields.size > 25,
-                                    // Set the default type to text.
-                                    type: 'text'
-                                });
-                                table.fields.push(newField);
-                            }
-                        });
-
-                        promisesOnFields.push(DatasetUtil.updateFieldTypesFromDataServer(connection, database, table));
+                        promisesOnFields.push(DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, database, table));
                     }
                 });
 
@@ -420,16 +406,28 @@ export class DatasetUtil {
     /**
      * Retrieves the field types from the data server for the given table and updates the individual field objects.
      */
-    static updateFieldTypesFromDataServer(
+    static updateFieldNamesAndTypesFromDataServer(
         connection: Connection,
         database: DatabaseConfig,
         table: TableConfig
     ): Promise<TableConfig> {
         return new Promise<TableConfig>((resolve) =>
-            connection.getFieldTypes(database.name, table.name, (fieldTypes: Record<string, string>) => {
-                if (fieldTypes) {
-                    table.fields.forEach((field: FieldConfig) => {
-                        field.type = fieldTypes[field.columnName] || field.type;
+            connection.getFieldTypes(database.name, table.name, (fieldNamesAndTypes: Record<string, string>) => {
+                if (fieldNamesAndTypes) {
+                    let existingFieldNames = new Set(table.fields.map((field) => field.columnName));
+
+                    Object.keys(fieldNamesAndTypes).forEach((fieldName: string) => {
+                        if (!existingFieldNames.has(fieldName)) {
+                            let newField: FieldConfig = FieldConfig.get({
+                                columnName: fieldName,
+                                prettyName: fieldName,
+                                // If a lot of existing fields were defined (> 25), but this field wasn't, then hide this field.
+                                hide: existingFieldNames.size > 25,
+                                // Set the default type to text.
+                                type: fieldNamesAndTypes[fieldName] || 'text'
+                            });
+                            table.fields.push(newField);
+                        }
                     });
                 }
                 // Don't return this table if it didn't error.
@@ -459,7 +457,7 @@ export class DatasetUtil {
                     field.type = field.type || 'text';
                     return field;
                 });
-                // Always keep the table since its fields can be discovered with updateFieldNamesFromDataServer
+                // Always keep the table since its fields can be discovered with updateFieldNamesAndTypesFromDataServer
                 outputTables[tableName] = table;
                 return outputTables;
             }, {});
