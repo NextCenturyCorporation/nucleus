@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { query } from 'neon-framework';
+import { query, ImportQuery } from 'neon-framework';
 export interface RequestWrapper {
     abort(): void;
     always(callback: Function): void;
@@ -235,6 +235,17 @@ export declare class CoreConnection<T extends {
     runExportQuery(exportData: {
         data: any;
     }, exportFormat: any, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    /**
+     * Runs an import query with the given data and format.
+     *
+     * @arg {any} exportData
+     * @arg {any} exportFormat
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    runImportQuery(importQuery: ImportQuery, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
      * Runs a search query with the given payload.
      *

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { query } from 'neon-framework';
+import { query, ImportQuery } from 'neon-framework';
 
 export interface RequestWrapper {
     abort(): void;
@@ -294,6 +294,24 @@ export class CoreConnection<T extends { query: any } = { query: any }> implement
         onError?: (response: any) => void
     ): RequestWrapper {
         return this.connection.executeExport(exportData, onSuccess, onError, exportFormat);
+    }
+
+    /**
+     * Runs an import query with the given data and format.
+     *
+     * @arg {any} exportData
+     * @arg {any} exportFormat
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    public runImportQuery(
+        importQuery: ImportQuery,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): RequestWrapper {
+        return this.connection.executeImport(importQuery, onSuccess, onError);
     }
 
     /**

@@ -132,6 +132,19 @@ var CoreConnection = /** @class */ (function () {
         return this.connection.executeExport(exportData, onSuccess, onError, exportFormat);
     };
     /**
+     * Runs an import query with the given data and format.
+     *
+     * @arg {any} exportData
+     * @arg {any} exportFormat
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    CoreConnection.prototype.runImportQuery = function (importQuery, onSuccess, onError) {
+        return this.connection.executeImport(importQuery, onSuccess, onError);
+    };
+    /**
      * Runs a search query with the given payload.
      *
      * @arg {T} queryPayload
