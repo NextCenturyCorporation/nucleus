@@ -323,6 +323,10 @@ var DatasetUtil = /** @class */ (function () {
                             });
                             table.fields.push(newField);
                         }
+                        else {
+                            var oldField = table.fields[_.findIndex(table.fields, function (field) { return field.columnName === fieldName; })];
+                            oldField.type = fieldNamesAndTypes[fieldName] || oldField.type;
+                        }
                     });
                 }
                 // Don't return this table if it didn't error.

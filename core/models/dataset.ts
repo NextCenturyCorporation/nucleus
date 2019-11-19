@@ -407,6 +407,9 @@ export class DatasetUtil {
                                 type: fieldNamesAndTypes[fieldName] || 'text'
                             });
                             table.fields.push(newField);
+                        } else {
+                            let oldField: FieldConfig = table.fields[_.findIndex(table.fields, (field) => field.columnName === fieldName)];
+                            oldField.type = fieldNamesAndTypes[fieldName] || oldField.type;
                         }
                     });
                 }
