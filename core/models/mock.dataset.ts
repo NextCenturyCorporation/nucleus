@@ -22,22 +22,22 @@ import {
 } from './dataset';
 
 export const FIELD_MAP = {
-    CATEGORY: FieldConfig.get({ columnName: 'testCategoryField', prettyName: 'Test Category Field', type: 'string' }),
+    CATEGORY: FieldConfig.get({ columnName: 'testCategoryField', prettyName: 'Test Category Field', type: 'keyword' }),
     DATE: FieldConfig.get({ columnName: 'testDateField', prettyName: 'Test Date Field', type: 'date' }),
-    FIELD_KEY: FieldConfig.get({ columnName: 'testFieldKeyField', prettyName: 'Test Field Key Field', type: 'string' }),
-    FILTER: FieldConfig.get({ columnName: 'testFilterField', prettyName: 'Test Filter Field', type: 'string' }),
-    ID: FieldConfig.get({ columnName: 'testIdField', prettyName: 'Test ID Field', type: 'string' }),
-    LINK: FieldConfig.get({ columnName: 'testLinkField', prettyName: 'Test Link Field', type: 'string' }),
-    NAME: FieldConfig.get({ columnName: 'testNameField', prettyName: 'Test Name Field', type: 'string' }),
-    RELATION_A: FieldConfig.get({ columnName: 'testRelationFieldA', prettyName: 'Test Relation Field A', type: 'string' }),
-    RELATION_B: FieldConfig.get({ columnName: 'testRelationFieldB', prettyName: 'Test Relation Field B', type: 'string' }),
-    SIZE: FieldConfig.get({ columnName: 'testSizeField', prettyName: 'Test Size Field', type: 'float' }),
-    SORT: FieldConfig.get({ columnName: 'testSortField', prettyName: 'Test Sort Field', type: 'string' }),
-    TEXT: FieldConfig.get({ columnName: 'testTextField', prettyName: 'Test Text Field', type: 'string' }),
-    TYPE: FieldConfig.get({ columnName: 'testTypeField', prettyName: 'Test Type Field', type: 'string' }),
-    X: FieldConfig.get({ columnName: 'testXField', prettyName: 'Test X Field', type: 'float' }),
-    Y: FieldConfig.get({ columnName: 'testYField', prettyName: 'Test Y Field', type: 'float' }),
-    ES_ID: FieldConfig.get({ columnName: '_id', prettyName: '_id', type: 'string' })
+    FIELD_KEY: FieldConfig.get({ columnName: 'testFieldKeyField', prettyName: 'Test Field Key Field', type: 'keyword' }),
+    FILTER: FieldConfig.get({ columnName: 'testFilterField', prettyName: 'Test Filter Field', type: 'keyword' }),
+    ID: FieldConfig.get({ columnName: 'testIdField', prettyName: 'Test ID Field', type: 'id' }),
+    LINK: FieldConfig.get({ columnName: 'testLinkField', prettyName: 'Test Link Field', type: 'hyperlink' }),
+    NAME: FieldConfig.get({ columnName: 'testNameField', prettyName: 'Test Name Field', type: 'keyword' }),
+    RELATION_A: FieldConfig.get({ columnName: 'testRelationFieldA', prettyName: 'Test Relation Field A', type: 'keyword' }),
+    RELATION_B: FieldConfig.get({ columnName: 'testRelationFieldB', prettyName: 'Test Relation Field B', type: 'keyword' }),
+    SIZE: FieldConfig.get({ columnName: 'testSizeField', prettyName: 'Test Size Field', type: 'decimal' }),
+    SORT: FieldConfig.get({ columnName: 'testSortField', prettyName: 'Test Sort Field', type: 'keyword' }),
+    TEXT: FieldConfig.get({ columnName: 'testTextField', prettyName: 'Test Text Field', type: 'keyword' }),
+    TYPE: FieldConfig.get({ columnName: 'testTypeField', prettyName: 'Test Type Field', type: 'text' }),
+    X: FieldConfig.get({ columnName: 'testXField', prettyName: 'Test X Field', type: 'decimal' }),
+    Y: FieldConfig.get({ columnName: 'testYField', prettyName: 'Test Y Field', type: 'decimal' }),
+    ES_ID: FieldConfig.get({ columnName: '_id', prettyName: '_id', type: 'id' })
 };
 
 // Keep in alphabetical order.
