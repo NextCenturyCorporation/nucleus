@@ -276,7 +276,7 @@ export declare class ConnectionService {
         query: any;
     } = {
         query: any;
-    }>(datastoreType: string, datastoreHost: string, ignoreUpdates?: boolean): CoreConnection<T>;
+    }>(datastoreType: string, datastoreHost: string, startListener?: boolean): CoreConnection<T>;
     /**
      * Returns the server status.
      */

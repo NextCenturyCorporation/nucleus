@@ -359,7 +359,7 @@ export class ConnectionService {
     public connect<T extends { query: any } = { query: any }>(
         datastoreType: string,
         datastoreHost: string,
-        ignoreUpdates: boolean = false
+        startListener: boolean = false
     ): CoreConnection<T> {
         if (datastoreType && datastoreHost) {
             if (!this.connections.has(datastoreType)) {
@@ -367,7 +367,7 @@ export class ConnectionService {
             }
             if (!this.connections.get(datastoreType).has(datastoreHost)) {
                 let connection = this.neonConnection();
-                connection.connect(datastoreType, datastoreHost, ignoreUpdates);
+                connection.connect(datastoreType, datastoreHost, !startListener);
                 this.connections.get(datastoreType).set(datastoreHost, new CoreConnection<T>(connection));
             }
             return this.connections.get(datastoreType).get(datastoreHost);

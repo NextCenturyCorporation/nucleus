@@ -179,15 +179,15 @@ var ConnectionService = /** @class */ (function () {
      * Returns an existing connection to the REST server using the given host and the given datastore type (like elasticsearch or sql), or
      * creates and returns a connection if none exists.
      */
-    ConnectionService.prototype.connect = function (datastoreType, datastoreHost, ignoreUpdates) {
-        if (ignoreUpdates === void 0) { ignoreUpdates = false; }
+    ConnectionService.prototype.connect = function (datastoreType, datastoreHost, startListener) {
+        if (startListener === void 0) { startListener = false; }
         if (datastoreType && datastoreHost) {
             if (!this.connections.has(datastoreType)) {
                 this.connections.set(datastoreType, new Map());
             }
             if (!this.connections.get(datastoreType).has(datastoreHost)) {
                 var connection = this.neonConnection();
-                connection.connect(datastoreType, datastoreHost, ignoreUpdates);
+                connection.connect(datastoreType, datastoreHost, !startListener);
                 this.connections.get(datastoreType).set(datastoreHost, new CoreConnection(connection));
             }
             return this.connections.get(datastoreType).get(datastoreHost);
