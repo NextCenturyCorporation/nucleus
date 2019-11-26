@@ -14,98 +14,239 @@
  */
 
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
-import { ConnectionService } from './connection.service';
-import { SearchService, CoreGroupWrapper, CoreWhereWrapper, CoreQueryWrapper } from './search.service';
-
-import { query } from 'neon-framework';
-
-// TODO How can we call query.and and query.or without using "apply" ?
-/* eslint-disable no-useless-call */
+import { ConnectionService, CoreConnection } from './connection.service';
+import { SearchService, CoreSearch } from './search.service';
+import { FieldKey } from '../models/dataset';
 
 describe('Service: Search', () => {
+    const fieldKey1 = {
+        datastore: 'testDatastore',
+        database: 'testDatabase1',
+        table: 'testTable1',
+        field: 'testField1'
+    } as FieldKey;
+
+    const fieldKey2 = {
+        datastore: 'testDatastore',
+        database: 'testDatabase1',
+        table: 'testTable1',
+        field: 'testField2'
+    } as FieldKey;
+
+    const fieldKey3 = {
+        datastore: 'testDatastore',
+        database: 'testDatabase1',
+        table: 'testTable1',
+        field: 'testField3'
+    } as FieldKey;
+
+    const fieldKey4 = {
+        datastore: 'testDatastore',
+        database: 'testDatabase1',
+        table: 'testTable1',
+        field: 'testField4'
+    } as FieldKey;
+
     let service: SearchService;
 
     beforeEach(() => {
         service = new SearchService(new ConnectionService());
     });
 
-    it('buildCompoundFilterClause does return expected filter clause', () => {
-        expect(service.buildCompoundFilterClause([
-            new CoreWhereWrapper(query.where('field1', '=', 'value1')),
-            new CoreWhereWrapper(query.where('field2', '=', 'value2'))
-        ])).toEqual(new CoreWhereWrapper(query.and.apply(query, [
-            query.where('field1', '=', 'value1'),
-            query.where('field2', '=', 'value2')
-        ])));
-
-        expect(service.buildCompoundFilterClause([
-            new CoreWhereWrapper(query.where('field1', '=', 'value1')),
-            new CoreWhereWrapper(query.where('field2', '=', 'value2'))
-        ], CompoundFilterType.OR)).toEqual(new CoreWhereWrapper(query.or.apply(query, [
-            query.where('field1', '=', 'value1'),
-            query.where('field2', '=', 'value2')
-        ])));
-
-        expect(service.buildCompoundFilterClause([
-            new CoreWhereWrapper(query.where('field1', '=', 'value1')),
-            new CoreWhereWrapper(query.or.apply(query, [
-                query.where('field2', '=', 'value2'),
-                query.where('field3', '=', 'value3')
-            ]))
-        ])).toEqual(new CoreWhereWrapper(query.and.apply(query, [
-            query.where('field1', '=', 'value1'),
-            query.or.apply(query, [
-                query.where('field2', '=', 'value2'),
-                query.where('field3', '=', 'value3')
-            ])
-        ])));
+    it('createCompoundFilterClause does return expected AND filter clause', () => {
+        let actual = service.createCompoundFilterClause([
+            service.createFilterClause(fieldKey1, '=', 'value1'),
+            service.createFilterClause(fieldKey2, '!=', 'value2')
+        ], CompoundFilterType.AND);
+        let expected = {
+            type: 'and',
+            whereClauses: [{
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                operator: '=',
+                rhs: 'value1'
+            }, {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                operator: '!=',
+                rhs: 'value2'
+            }]
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('buildCompoundFilterClause does not wrap single filter clause', () => {
-        expect(service.buildCompoundFilterClause([new CoreWhereWrapper(query.where('field', '=', 'value'))])).toEqual(
-            new CoreWhereWrapper(query.where('field', '=', 'value'))
-        );
+    it('createCompoundFilterClause does return expected OR filter clause', () => {
+        let actual = service.createCompoundFilterClause([
+            service.createFilterClause(fieldKey1, '=', 'value1'),
+            service.createFilterClause(fieldKey2, '!=', 'value2')
+        ], CompoundFilterType.OR);
+        let expected = {
+            type: 'or',
+            whereClauses: [{
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                operator: '=',
+                rhs: 'value1'
+            }, {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                operator: '!=',
+                rhs: 'value2'
+            }]
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('buildDateQueryGroup does return expected query group', () => {
-        expect(service.buildDateQueryGroup('groupField', TimeInterval.MINUTE)).toEqual(new CoreGroupWrapper(
-            new query.GroupByFunctionClause('minute', 'groupField', '_minute')
-        ));
-        expect(service.buildDateQueryGroup('groupField', TimeInterval.HOUR)).toEqual(new CoreGroupWrapper(
-            new query.GroupByFunctionClause('hour', 'groupField', '_hour')
-        ));
-        expect(service.buildDateQueryGroup('groupField', TimeInterval.DAY_OF_MONTH)).toEqual(new CoreGroupWrapper(
-            new query.GroupByFunctionClause('dayOfMonth', 'groupField', '_dayOfMonth')
-        ));
-        expect(service.buildDateQueryGroup('groupField', TimeInterval.MONTH)).toEqual(new CoreGroupWrapper(
-            new query.GroupByFunctionClause('month', 'groupField', '_month')
-        ));
-        expect(service.buildDateQueryGroup('groupField', TimeInterval.YEAR)).toEqual(new CoreGroupWrapper(
-            new query.GroupByFunctionClause('year', 'groupField', '_year')
-        ));
+    it('createCompoundFilterClause does return expected nested filter clause', () => {
+        let actual = service.createCompoundFilterClause([
+            service.createCompoundFilterClause([
+                service.createFilterClause(fieldKey1, '=', 'value1'),
+                service.createFilterClause(fieldKey2, '!=', 'value2')
+            ], CompoundFilterType.AND),
+            service.createCompoundFilterClause([
+                service.createFilterClause(fieldKey1, '=', 'value3'),
+                service.createFilterClause(fieldKey2, '!=', 'value4')
+            ], CompoundFilterType.AND)
+        ], CompoundFilterType.OR);
+        let expected = {
+            type: 'or',
+            whereClauses: [{
+                type: 'and',
+                whereClauses: [{
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: 'value1'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '!=',
+                    rhs: 'value2'
+                }]
+            }, {
+                type: 'and',
+                whereClauses: [{
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: 'value3'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '!=',
+                    rhs: 'value4'
+                }]
+            }]
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('buildFilterClause does return expected filter clause', () => {
-        expect(service.buildFilterClause('field', '=', 'value')).toEqual(new CoreWhereWrapper(query.where('field', '=', 'value')));
+    it('createCompoundFilterClause does not wrap single filter clause', () => {
+        let actual = service.createCompoundFilterClause([service.createFilterClause(fieldKey1, '=', 'value')]);
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField1'
+            },
+            operator: '=',
+            rhs: 'value'
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('buildQueryGroup does return expected query group', () => {
-        expect(service.buildQueryGroup('groupField')).toEqual(new CoreGroupWrapper('groupField'));
+    it('createFilterClause does return expected filter clause', () => {
+        let actual = service.createFilterClause(fieldKey1, '=', 'value');
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField1'
+            },
+            operator: '=',
+            rhs: 'value'
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('buildQueryPayload does return expected query payload', () => {
-        expect(service.buildQueryPayload('database', 'table')).toEqual(new CoreQueryWrapper(new query.Query().selectFrom('database',
-            'table')));
+    it('createSearch does return expected search object', () => {
+        let actual = service.createSearch('testDatabase1', 'testTable1');
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
 
-        expect(service.buildQueryPayload('database', 'table', ['field'])).toEqual(new CoreQueryWrapper(new query.Query().selectFrom(
-            'database', 'table'
-        ).withFields(['field'])));
-
-        expect(service.buildQueryPayload('database', 'table', ['field1', 'field2'])).toEqual(new CoreQueryWrapper(new query.Query()
-            .selectFrom('database', 'table').withFields(['field1', 'field2'])));
-
-        expect(service.buildQueryPayload('database', 'table', [])).toEqual(new CoreQueryWrapper(new query.Query().selectFrom('database',
-            'table')));
+    it('createSearch with fields does return expected search object', () => {
+        let actual = service.createSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: [{
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                }, {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                }]
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
     it('canRunSearch does return false with no active connection', () => {
@@ -118,7 +259,7 @@ describe('Service: Search', () => {
     });
 
     it('canRunSearch does return true with active connection', () => {
-        let spy = spyOn(service['connectionService'], 'connect').and.returnValue({});
+        let spy = spyOn(service['connectionService'], 'connect').and.returnValue(new CoreConnection(null));
 
         expect(service.canRunSearch('type', 'host')).toEqual(true);
 
@@ -127,106 +268,243 @@ describe('Service: Search', () => {
     });
 
     it('runSearch does call expected function', () => {
-        let queryPayload = new CoreQueryWrapper(new query.Query());
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+        let connection = new CoreConnection(null);
         let called = 0;
-        let spy = spyOn(service['connectionService'], 'connect').and.returnValue({
-            runSearchQuery: (queryInput, __options) => {
-                expect(queryInput).toEqual(queryPayload);
-                called++;
-            }
+        spyOn(connection, 'runSearch').and.callFake((queryInput, __options) => {
+            expect(queryInput).toEqual(searchObject);
+            called++;
+            return null;
         });
+        let spy = spyOn(service['connectionService'], 'connect').and.returnValue(connection);
 
-        service.runSearch('type', 'host', queryPayload);
+        service.runSearch('type', 'host', searchObject);
 
         expect(spy.calls.count()).toEqual(1);
         expect(spy.calls.argsFor(0)).toEqual(['type', 'host']);
         expect(called).toEqual(1);
     });
 
-    it('transformFilterClauseValues does work as expected', () => {
+    it('transformFilterClauseValues with no fields does work as expected', () => {
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+        let actual = service.createFilterClause(fieldKey1, '=', 'oldValue');
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField1'
+            },
+            operator: '=',
+            rhs: 'oldValue'
+        };
+        searchObject.whereClause = actual;
+        service.transformFilterClauseValues(searchObject, {});
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('transformFilterClauseValues with equal value does work as expected', () => {
         let map = {
-            field: {
+            testField1: {
                 newValue: 'oldValue'
             }
         };
 
-        let input1 = new query.Query().where(query.where('field', '=', 'oldValue'));
-        service.transformFilterClauseValues(new CoreQueryWrapper(input1), {});
-        expect(input1).toEqual(new query.Query().where(query.where('field', '=', 'oldValue')));
-
-        let input2 = new query.Query().where(query.where('field', '=', 'oldValue'));
-        service.transformFilterClauseValues(new CoreQueryWrapper(input2), map);
-        expect(input2).toEqual(new query.Query().where(query.where('field', '=', 'newValue')));
-
-        let input3 = new query.Query().where(query.where('field', '=', 'otherValue'));
-        service.transformFilterClauseValues(new CoreQueryWrapper(input3), map);
-        expect(input3).toEqual(new query.Query().where(query.where('field', '=', 'otherValue')));
-
-        let input4 = new query.Query().where(query.where('otherField', '=', 'oldValue'));
-        service.transformFilterClauseValues(new CoreQueryWrapper(input4), map);
-        expect(input4).toEqual(new query.Query().where(query.where('otherField', '=', 'oldValue')));
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+        let actual = service.createFilterClause(fieldKey1, '=', 'oldValue');
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField1'
+            },
+            operator: '=',
+            rhs: 'newValue'
+        };
+        searchObject.whereClause = actual;
+        service.transformFilterClauseValues(searchObject, map);
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('transformFilterClauseValues does work as expected with bool filter', () => {
+    it('transformFilterClauseValues with different value does work as expected', () => {
         let map = {
-            field1: {
+            testField1: {
+                newValue: 'oldValue'
+            }
+        };
+
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+        let actual = service.createFilterClause(fieldKey1, '=', 'otherValue');
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField1'
+            },
+            operator: '=',
+            rhs: 'otherValue'
+        };
+        searchObject.whereClause = actual;
+        service.transformFilterClauseValues(searchObject, map);
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('transformFilterClauseValues with different field does work as expected', () => {
+        let map = {
+            testField1: {
+                newValue: 'oldValue'
+            }
+        };
+
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+        let actual = service.createFilterClause(fieldKey2, '=', 'oldValue');
+        let expected = {
+            type: 'where',
+            lhs: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                field: 'testField2'
+            },
+            operator: '=',
+            rhs: 'oldValue'
+        };
+        searchObject.whereClause = actual;
+        service.transformFilterClauseValues(searchObject, map);
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('transformFilterClauseValues does work as expected with compound filter', () => {
+        let map = {
+            testField1: {
                 newValue1: 'oldValue1'
             },
-            field2: {
+            testField2: {
                 newValue2: 'oldValue2',
                 newValue3: 'oldValue3'
             }
         };
 
-        let input = new query.Query().where(query.and.apply(query, [
-            query.where('field1', '=', 'oldValue1'),
-            query.where('field1', '=', 'oldValue2'),
-            query.where('field2', '=', 'oldValue2'),
-            query.where('field2', '=', 'oldValue3'),
-            query.or.apply(query, [
-                query.where('field1', '=', 'oldValue1'),
-                query.where('field1', '=', 'oldValue2'),
-                query.where('field2', '=', 'oldValue2'),
-                query.where('field2', '=', 'oldValue3')
+        let searchObject = new CoreSearch('testDatabase1', 'testTable1');
+
+        let actual = service.createCompoundFilterClause([
+            service.createFilterClause(fieldKey1, '=', 'oldValue1'),
+            service.createFilterClause(fieldKey1, '=', 'oldValue2'),
+            service.createFilterClause(fieldKey2, '=', 'oldValue2'),
+            service.createFilterClause(fieldKey2, '=', 'oldValue3'),
+            service.createCompoundFilterClause([
+                service.createFilterClause(fieldKey1, '=', 'oldValue1'),
+                service.createFilterClause(fieldKey1, '=', 'oldValue2'),
+                service.createFilterClause(fieldKey2, '=', 'oldValue2'),
+                service.createFilterClause(fieldKey2, '=', 'oldValue3')
             ])
-        ]));
-        service.transformFilterClauseValues(new CoreQueryWrapper(input), map);
-        expect(input).toEqual(new query.Query().where(query.and.apply(query, [
-            query.where('field1', '=', 'newValue1'),
-            query.where('field1', '=', 'oldValue2'),
-            query.where('field2', '=', 'newValue2'),
-            query.where('field2', '=', 'newValue3'),
-            query.or.apply(query, [
-                query.where('field1', '=', 'newValue1'),
-                query.where('field1', '=', 'oldValue2'),
-                query.where('field2', '=', 'newValue2'),
-                query.where('field2', '=', 'newValue3')
-            ])
-        ])));
+        ]);
+        let expected = {
+            type: 'and',
+            whereClauses: [{
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                operator: '=',
+                rhs: 'newValue1'
+            }, {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                operator: '=',
+                rhs: 'oldValue2'
+            }, {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                operator: '=',
+                rhs: 'newValue2'
+            }, {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                operator: '=',
+                rhs: 'newValue3'
+            }, {
+                type: 'and',
+                whereClauses: [{
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: 'newValue1'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: 'oldValue2'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '=',
+                    rhs: 'newValue2'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '=',
+                    rhs: 'newValue3'
+                }]
+            }]
+        };
+        searchObject.whereClause = actual;
+        service.transformFilterClauseValues(searchObject, map);
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('transformQueryPayloadToExport does return expected data', () => {
+    it('transformSearchToExport does return expected data', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        let queryInput = new query.Query().withFields('field1', 'field2');
-        let queryWrapper = new CoreQueryWrapper(queryInput);
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
 
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
-                    query: 'field2',
+                    query: 'testField2',
                     pretty: 'Pretty Field 2'
                 }],
                 fileName: 'Test Name',
@@ -237,10 +515,10 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does need fields argument to work as expected', () => {
-        let queryInput = new query.Query().withFields('field1', 'field2');
+    it('transformSearchToExport does need fields argument to work as expected', () => {
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
 
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', [], new CoreQueryWrapper(queryInput), 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', [], queryInput, 'Test Name')).toEqual({
             data: {
                 fileName: 'Test Name',
                 dataStoreType: 'testStore',
@@ -251,28 +529,27 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does ignore fields duplicated in the query', () => {
+    it('transformSearchToExport does ignore fields duplicated in the query', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        let queryInput = new query.Query().withFields('field1', 'field1', 'field2');
-        let queryWrapper = new CoreQueryWrapper(queryInput);
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField1', 'testField2']);
 
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
-                    query: 'field2',
+                    query: 'testField2',
                     pretty: 'Pretty Field 2'
                 }],
                 fileName: 'Test Name',
@@ -283,31 +560,29 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does add function groups', () => {
+    it('transformSearchToExport does add date groups', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        let queryInput = new query.Query().withFields('field1', 'field2').groupBy([
-            new query.GroupByFunctionClause('minute', 'field2', '_minute'),
-            new query.GroupByFunctionClause('hour', 'field2', '_hour'),
-            new query.GroupByFunctionClause('dayOfMonth', 'field2', '_dayOfMonth'),
-            new query.GroupByFunctionClause('month', 'field2', '_month'),
-            new query.GroupByFunctionClause('year', 'field2', '_year')
-        ]);
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MINUTE);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.HOUR);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.DAY_OF_MONTH);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MONTH);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.YEAR);
 
-        let queryWrapper = new CoreQueryWrapper(queryInput);
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
                     query: '_minute',
@@ -333,28 +608,28 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does add aggregations', () => {
+    it('transformSearchToExport does add aggregations', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        /* eslint-disable-next-line dot-notation */
-        let queryInput = new query.Query().withFields('field1', 'field2').aggregate(query['COUNT'], 'field1', '_count');
-        let queryWrapper = new CoreQueryWrapper(queryInput);
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
+        service.withAggregation(queryInput, fieldKey1, '_count', AggregationType.COUNT);
+
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
-                    query: 'field2',
+                    query: 'testField2',
                     pretty: 'Pretty Field 2'
                 }, {
                     query: '_count',
@@ -368,37 +643,35 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does remove fields of non-count aggregations', () => {
+    it('transformSearchToExport does remove fields of non-count aggregations', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }, {
-            columnName: 'field4',
+            columnName: 'testField4',
             prettyName: 'Pretty Field 4'
         }, {
-            columnName: 'field5',
+            columnName: 'testField5',
             prettyName: 'Pretty Field 5'
         }];
 
-        /* eslint-disable dot-notation */
-        let queryInput = new query.Query().withFields('field1', 'field2', 'field3', 'field4', 'field5')
-            .aggregate(query['AVG'], 'field1', '_avg')
-            .aggregate(query['MAX'], 'field2', '_max')
-            .aggregate(query['MIN'], 'field3', '_min')
-            .aggregate(query['SUM'], 'field4', '_sum');
-        /* eslint-enable dot-notation */
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2', 'testField3', 'testField4',
+            'testField5']);
+        service.withAggregation(queryInput, fieldKey1, '_avg', AggregationType.AVG);
+        service.withAggregation(queryInput, fieldKey2, '_max', AggregationType.MAX);
+        service.withAggregation(queryInput, fieldKey3, '_min', AggregationType.MIN);
+        service.withAggregation(queryInput, fieldKey4, '_sum', AggregationType.SUM);
 
-        let queryWrapper = new CoreQueryWrapper(queryInput);
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field5',
+                    query: 'testField5',
                     pretty: 'Pretty Field 5'
                 }, {
                     query: '_avg',
@@ -422,30 +695,27 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does work with both groups and aggregations', () => {
+    it('transformSearchToExport does work with both groups and aggregations', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        /* eslint-disable dot-notation */
-        let queryInput = new query.Query().withFields('field1', 'field2').groupBy([
-            new query.GroupByFunctionClause('month', 'field2', '_month'),
-            new query.GroupByFunctionClause('year', 'field2', '_year')
-        ]).aggregate(query['COUNT'], 'field1', '_count');
-        /* eslint-enable dot-notation */
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MONTH);
+        service.withGroupDate(queryInput, fieldKey2, TimeInterval.YEAR);
+        service.withAggregation(queryInput, fieldKey1, '_count', AggregationType.COUNT);
 
-        let queryWrapper = new CoreQueryWrapper(queryInput);
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
                     query: '_month',
@@ -465,30 +735,30 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryPayloadToExport does work with wildcard fields', () => {
+    it('transformSearchToExport does work with all fields', () => {
         let fields = [{
-            columnName: 'field1',
+            columnName: 'testField1',
             prettyName: 'Pretty Field 1'
         }, {
-            columnName: 'field2',
+            columnName: 'testField2',
             prettyName: 'Pretty Field 2'
         }, {
-            columnName: 'field3',
+            columnName: 'testField3',
             prettyName: 'Pretty Field 3'
         }];
 
-        let queryInput = new query.Query().withFields('*');
-        let queryWrapper = new CoreQueryWrapper(queryInput);
-        expect(service.transformQueryPayloadToExport('testHost', 'testStore', fields, queryWrapper, 'Test Name')).toEqual({
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', []);
+
+        expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
                 fieldNamePrettyNamePairs: [{
-                    query: 'field1',
+                    query: 'testField1',
                     pretty: 'Pretty Field 1'
                 }, {
-                    query: 'field2',
+                    query: 'testField2',
                     pretty: 'Pretty Field 2'
                 }, {
-                    query: 'field3',
+                    query: 'testField3',
                     pretty: 'Pretty Field 3'
                 }],
                 fileName: 'Test Name',
@@ -499,16 +769,16 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryResultsValues does work as expected', () => {
+    it('transformSearchResultValues does work as expected', () => {
         let map = {
             field: {
                 oldValue: 'newValue'
             }
         };
 
-        expect(service.transformQueryResultsValues({ data: [] }, map)).toEqual({ data: [] });
+        expect(service.transformSearchResultValues({ data: [] }, map)).toEqual({ data: [] });
 
-        expect(service.transformQueryResultsValues({
+        expect(service.transformSearchResultValues({
             data: [{
                 field: 'oldValue'
             }]
@@ -518,7 +788,7 @@ describe('Service: Search', () => {
             }]
         });
 
-        expect(service.transformQueryResultsValues({
+        expect(service.transformSearchResultValues({
             data: [{
                 field: 'otherValue'
             }]
@@ -528,7 +798,7 @@ describe('Service: Search', () => {
             }]
         });
 
-        expect(service.transformQueryResultsValues({
+        expect(service.transformSearchResultValues({
             data: [{
                 field: ['oldValue', 'otherValue']
             }]
@@ -538,7 +808,7 @@ describe('Service: Search', () => {
             }]
         });
 
-        expect(service.transformQueryResultsValues({
+        expect(service.transformSearchResultValues({
             data: [{
                 otherField: 'oldValue'
             }]
@@ -548,7 +818,7 @@ describe('Service: Search', () => {
             }]
         });
 
-        expect(service.transformQueryResultsValues({
+        expect(service.transformSearchResultValues({
             data: [{
                 field: 'oldValue'
             }, {
@@ -581,7 +851,7 @@ describe('Service: Search', () => {
         });
     });
 
-    it('transformQueryResultsValues does not change the input data', () => {
+    it('transformSearchResultValues does not change the input data', () => {
         let map = {
             field: {
                 oldValue: 'newValue'
@@ -592,7 +862,7 @@ describe('Service: Search', () => {
             field: 'oldValue'
         }];
 
-        let output = service.transformQueryResultsValues({
+        let output = service.transformSearchResultValues({
             data: input
         }, map);
 
@@ -605,78 +875,847 @@ describe('Service: Search', () => {
         expect(output.data).not.toEqual(input);
     });
 
-    it('updateAggregation does update given query payload and does not remove previous aggregations', () => {
-        let input: query.Query = new query.Query();
-
-        service.updateAggregation(new CoreQueryWrapper(input), AggregationType.AVG, '_avg', 'field');
-        expect(input).toEqual(new query.Query().aggregate('avg', 'field', '_avg'));
-
-        service.updateAggregation(new CoreQueryWrapper(input), AggregationType.COUNT, '_count', '*');
-        expect(input).toEqual(new query.Query().aggregate('avg', 'field', '_avg').aggregate('count', '*', '_count'));
+    it('withAggregation does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_avg',
+                operation: 'avg'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateFieldsToMatchAll does update given query payload', () => {
-        let input: query.Query = new query.Query();
-        input.withFields(['field']);
-
-        service.updateFieldsToMatchAll(new CoreQueryWrapper(input));
-        expect(input).toEqual(new query.Query());
+    it('withAggregation does not remove previous aggregations', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
+        service.withAggregation(actual, fieldKey1, '_count', AggregationType.COUNT);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_avg',
+                operation: 'avg'
+            }, {
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_count',
+                operation: 'count'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateFilter does update given query payload', () => {
-        let input: query.Query = new query.Query();
-
-        service.updateFilter(new CoreQueryWrapper(input), null);
-        expect(input).toEqual(new query.Query());
-
-        service.updateFilter(new CoreQueryWrapper(input), new CoreWhereWrapper(query.where('field1', '=', 'value1')));
-        expect(input).toEqual(new query.Query().where(query.where('field1', '=', 'value1')));
-
-        service.updateFilter(new CoreQueryWrapper(input), new CoreWhereWrapper(query.or.apply(query, [
-            query.where('field2', '=', 'value2'), query.where('field3', '=', 'value3')
-        ])));
-        expect(input).toEqual(new query.Query().where(query.or.apply(query, [
-            query.where('field2', '=', 'value2'), query.where('field3', '=', 'value3')
-        ])));
+    it('withField does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withField(actual, fieldKey1);
+        service.withField(actual, fieldKey2);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: [{
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                }, {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                }]
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateGroups does update given query payload', () => {
-        let input: query.Query = new query.Query();
-
-        service.updateGroups(new CoreQueryWrapper(input), [new CoreGroupWrapper('group1')]);
-        expect(input).toEqual(new query.Query().groupBy(['group1']));
-
-        service.updateGroups(new CoreQueryWrapper(input), [new CoreGroupWrapper('group2'), new CoreGroupWrapper('group3')]);
-        expect(input).toEqual(new query.Query().groupBy(['group2', 'group3']));
+    it('withAllFields does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withField(actual, fieldKey1);
+        service.withAllFields(actual);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateLimit does update given query payload', () => {
-        let input: query.Query = new query.Query();
-
-        service.updateLimit(new CoreQueryWrapper(input), 0);
-        expect(input).toEqual(new query.Query().limit(0));
-
-        service.updateLimit(new CoreQueryWrapper(input), 100);
-        expect(input).toEqual(new query.Query().limit(100));
+    it('withFilter with singular filter clause does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withFilter(actual, service.createFilterClause(fieldKey1, '=', 'value1'));
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                operator: '=',
+                rhs: 'value1'
+            },
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateOffset does update given query payload', () => {
-        let input: query.Query = new query.Query();
-
-        service.updateOffset(new CoreQueryWrapper(input), 0);
-        expect(input).toEqual(new query.Query().offset(0));
-
-        service.updateOffset(new CoreQueryWrapper(input), 100);
-        expect(input).toEqual(new query.Query().offset(100));
+    it('withFilter with compound filter clause does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withFilter(actual, service.createCompoundFilterClause([
+            service.createFilterClause(fieldKey1, '=', 'value1'),
+            service.createFilterClause(fieldKey2, '!=', 'value2')
+        ]));
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: {
+                type: 'and',
+                whereClauses: [{
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: 'value1'
+                }, {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '!=',
+                    rhs: 'value2'
+                }]
+            },
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('updateSort does update given query payload', () => {
-        let input: query.Query = new query.Query();
+    it('withFilter does remove previous filter clause', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withFilter(actual, service.createFilterClause(fieldKey1, '=', 'value1'));
+        service.withFilter(actual, service.createFilterClause(fieldKey2, '!=', 'value2'));
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: {
+                type: 'where',
+                lhs: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                operator: '!=',
+                rhs: 'value2'
+            },
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
 
-        service.updateSort(new CoreQueryWrapper(input), 'sortField');
-        expect(input).toEqual(new query.Query().sortBy('sortField', 1));
+    it('withGroupAggregation does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupAggregation(actual, 'groupLabel', '_count');
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'group',
+                group: 'groupLabel',
+                label: '_count'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
 
-        service.updateSort(new CoreQueryWrapper(input), 'sortField', SortOrder.DESCENDING);
-        expect(input).toEqual(new query.Query().sortBy('sortField', -1));
+    it('withGroupAggregation does not remove previous aggregations', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
+        service.withGroupAggregation(actual, 'groupLabel', '_count');
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_avg',
+                operation: 'avg'
+            }, {
+                type: 'group',
+                group: 'groupLabel',
+                label: '_count'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on SECOND does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.SECOND);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_second',
+                operation: 'second'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on MINUTE does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.MINUTE);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_minute',
+                operation: 'minute'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on HOUR does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.HOUR);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_hour',
+                operation: 'hour'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on DAY_OF_MONTH does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.DAY_OF_MONTH);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_dayOfMonth',
+                operation: 'dayOfMonth'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on MONTH does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_month',
+                operation: 'month'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate on YEAR does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_year',
+                operation: 'year'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupDate does not remove previous groups', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupField(actual, fieldKey1);
+        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
+        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                }
+            }, {
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_month',
+                operation: 'month'
+            }, {
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_year',
+                operation: 'year'
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupField does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupField(actual, fieldKey1);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                }
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withGroupField does not remove previous groups', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
+        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
+        service.withGroupField(actual, fieldKey1);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [{
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_month',
+                operation: 'month'
+            }, {
+                type: 'operation',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_year',
+                operation: 'year'
+            }, {
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                }
+            }],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withLimit does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withLimit(actual, 100);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: { limit: 100 },
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOffset does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOffset(actual, 100);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: { offset: 100 },
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderField sort ascending does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                order: 1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderField sort descending does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderField(actual, fieldKey1, SortOrder.DESCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                order: -1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderField does not remove previous orders', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
+        service.withOrderField(actual, fieldKey2, SortOrder.DESCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                order: 1
+            }, {
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField2'
+                },
+                order: -1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderGroup sort ascending does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderGroup(actual, 'groupLabel', SortOrder.ASCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'group',
+                group: 'groupLabel',
+                order: 1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderGroup sort descending does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderGroup(actual, 'groupLabel', SortOrder.DESCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'group',
+                group: 'groupLabel',
+                order: -1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withOrderGroup does not remove previous orders', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
+        service.withOrderGroup(actual, 'groupLabel', SortOrder.DESCENDING);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                order: 1
+            }, {
+                type: 'group',
+                group: 'groupLabel',
+                order: -1
+            }],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withTotalCountAggregation does update given search object', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withTotalCountAggregation(actual, '_count');
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'total',
+                label: '_count'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withTotalCountAggregation does not remove previous aggregations', () => {
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
+        service.withTotalCountAggregation(actual, '_count');
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [{
+                type: 'field',
+                fieldClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    field: 'testField1'
+                },
+                label: '_avg',
+                operation: 'avg'
+            }, {
+                type: 'total',
+                label: '_count'
+            }],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 });

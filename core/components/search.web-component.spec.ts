@@ -30,8 +30,8 @@ import { NextCenturyAggregation } from './aggregation.web-component';
 import { NextCenturyElement } from './element.web-component';
 import { NextCenturyGroup } from './group.web-component';
 import { NextCenturySearch } from './search.web-component';
-import { QueryPayload } from '../services/abstract.search.service';
 import { RequestWrapper } from '../services/connection.service';
+import { SearchObject } from '../services/abstract.search.service';
 
 import { DATASET } from '../models/mock.dataset';
 import { SearchServiceMock } from '../services/mock.search.service';
@@ -47,17 +47,17 @@ class SearchServiceMockSuccessfulSearch extends SearchServiceMock {
     public searchArguments: {
         datastoreHost: string;
         datastoreType: string;
-        queryPayload: QueryPayload;
+        searchObject: SearchObject;
     };
 
     public searches: number = 0;
 
-    public runSearch(datastoreType: string, datastoreHost: string, queryPayload: QueryPayload): RequestWrapper {
+    public runSearch(datastoreType: string, datastoreHost: string, searchObject: SearchObject): RequestWrapper {
         this.searches++;
         this.searchArguments = {
             datastoreHost,
             datastoreType,
-            queryPayload
+            searchObject
         };
 
         return {
@@ -240,20 +240,35 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
-                    field: 'testNameField',
-                    operator: '!=',
-                    value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
                 },
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    },
+                    operator: '!=',
+                    rhs: null
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -270,50 +285,99 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testDateField', 'testNameField', 'testSizeField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testDateField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testDateField'
                     }, {
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testSizeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testSizeField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testDateField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testSizeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
 
         searchComponent.setAttribute('search-field-keys', 'datastore1.testDatabase1.testTable1.*');
 
         expect(searchService.searches).toEqual(2);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['*'],
-                limit: 10,
-                offset: 0
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: []
+                },
+                whereClause: null,
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -354,32 +418,60 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                aggregation: [{
-                    field: 'testTypeField',
-                    name: '_counts',
-                    type: 'count'
-                }],
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
+                    },
+                    label: '_counts',
+                    operation: 'count'
+                }],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -387,8 +479,8 @@ describe('Search Component init should', () => {
     it('build and run query with multiple aggregations and set expected aggregations in response data', (done) => {
         const expected = [{
             aggregations: {
-                _counts: 123,
-                _sums: 456
+                _counts: 456,
+                _sums: 123
             },
             fields: {
                 testDateField: '2019-09-01T00:00:00Z',
@@ -407,8 +499,8 @@ describe('Search Component init should', () => {
         });
 
         searchService.responseData = [{
-            _counts: 123,
-            _sums: 456,
+            _counts: 456,
+            _sums: 123,
             testDateField: '2019-09-01T00:00:00Z',
             testNameField: 'name1',
             testSizeField: 1,
@@ -417,46 +509,74 @@ describe('Search Component init should', () => {
 
         let aggregation1 = new NextCenturyAggregation();
         aggregation1.setAttribute('aggregation-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
-        aggregation1.setAttribute('aggregation-name', '_counts');
+        aggregation1.setAttribute('aggregation-name', '_sums');
+        aggregation1.setAttribute('aggregation-type', 'sum');
         searchComponent.appendChild(aggregation1);
         let aggregation2 = new NextCenturyAggregation();
-        aggregation2.setAttribute('aggregation-group', '_counts');
-        aggregation2.setAttribute('aggregation-name', '_sums');
-        aggregation2.setAttribute('aggregation-type', 'sum');
+        aggregation2.setAttribute('aggregation-group', '_sums');
+        aggregation2.setAttribute('aggregation-name', '_counts');
         searchComponent.appendChild(aggregation2);
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                aggregation: [{
-                    field: 'testTypeField',
-                    name: '_counts',
-                    type: 'count'
-                }, {
-                    field: '_counts',
-                    name: '_sums',
-                    type: 'sum'
-                }],
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
+                    },
+                    label: '_sums',
+                    operation: 'sum'
+                }, {
+                    type: 'group',
+                    group: '_sums',
+                    label: '_counts'
+                }],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -468,28 +588,58 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                groups: ['testTypeField'],
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
+                    }
+                }],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
 
@@ -500,49 +650,98 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(2);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField', 'testTypeField', 'testDateField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }, {
-                        field: 'testDateField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testDateField'
                     }]
                 },
-                groups: [
-                    'testTypeField',
-                    {
-                        field: 'testDateField',
-                        name: '_dayOfMonth',
-                        type: 'dayOfMonth'
-                    },
-                    {
-                        field: 'testDateField',
-                        name: '_month',
-                        type: 'month'
-                    },
-                    {
-                        field: 'testDateField',
-                        name: '_year',
-                        type: 'year'
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testDateField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }
-                ],
-                limit: 10,
-                offset: 0
+                }, {
+                    type: 'operation',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testDateField'
+                    },
+                    label: '_dayOfMonth',
+                    operation: 'dayOfMonth'
+                }, {
+                    type: 'operation',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testDateField'
+                    },
+                    label: '_month',
+                    operation: 'month'
+                }, {
+                    type: 'operation',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testDateField'
+                    },
+                    label: '_year',
+                    operation: 'year'
+                }],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -552,20 +751,35 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
-                    field: 'testNameField',
-                    operator: '!=',
-                    value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
                 },
-                limit: 10000,
-                offset: 0
+                whereClause: {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    },
+                    operator: '!=',
+                    rhs: null
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10000 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -575,20 +789,35 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
-                    field: 'testNameField',
-                    operator: '!=',
-                    value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
                 },
-                limit: 10,
-                offset: 10
+                whereClause: {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    },
+                    operator: '!=',
+                    rhs: null
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 10 },
+                isDistinct: false
             }
         });
     });
@@ -598,93 +827,173 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0,
-                sort: {
-                    field: 'testTypeField',
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
+                    },
                     order: -1
-                }
+                }],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
 
         searchComponent.setAttribute('sort-order', 'ascending');
 
         expect(searchService.searches).toEqual(2);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0,
-                sort: {
-                    field: 'testTypeField',
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [{
+                    type: 'field',
+                    fieldClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
+                    },
                     order: 1
-                }
+                }],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
 
         searchComponent.setAttribute('sort-aggregation', '_counts');
 
         expect(searchService.searches).toEqual(3);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField', 'testTypeField'],
-                filter: {
-                    type: 'and',
-                    filters: [{
-                        field: 'testNameField',
-                        operator: '!=',
-                        value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
                     }, {
-                        field: 'testTypeField',
-                        operator: '!=',
-                        value: null
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testTypeField'
                     }]
                 },
-                limit: 10,
-                offset: 0,
-                sort: {
-                    field: '_counts',
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [{
+                    type: 'group',
+                    group: '_counts',
                     order: 1
-                }
+                }],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -702,75 +1011,140 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 30
+                            rhs: 30
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '>=',
-                            value: 20
+                            rhs: 20
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '<=',
-                            value: 40
+                            rhs: 40
                         }]
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 20
+                            rhs: 20
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testNameField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
                             operator: '=',
-                            value: 'name1'
+                            rhs: 'name1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '!=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -788,75 +1162,140 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 30
+                            rhs: 30
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '>=',
-                            value: 20
+                            rhs: 20
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '<=',
-                            value: 40
+                            rhs: 40
                         }]
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 20
+                            rhs: 20
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testNameField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
                             operator: '=',
-                            value: 'name1'
+                            rhs: 'name1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '!=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -877,75 +1316,140 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 30
+                            rhs: 30
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '>=',
-                            value: 20
+                            rhs: 20
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '<=',
-                            value: 40
+                            rhs: 40
                         }]
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 20
+                            rhs: 20
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testNameField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
                             operator: '=',
-                            value: 'name1'
+                            rhs: 'name1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '!=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -954,10 +1458,8 @@ describe('Search Component init should', () => {
         let datasetCopy = _.cloneDeep(dataset);
         datasetCopy.datastores.datastore1.host = '';
 
-        searchComponent.addEventListener('searchFinished', (event: any) => {
-            expect(event.detail.data).toEqual([]);
-            expect(event.detail.info).toEqual('Cannot Connect to Datastore');
-            expect(event.detail.size).toEqual(0);
+        searchComponent.addEventListener('searchFailed', (event: any) => {
+            expect(event.detail.error).toEqual('Cannot Connect to Datastore');
             done();
         });
 
@@ -969,10 +1471,8 @@ describe('Search Component init should', () => {
         let datasetCopy = _.cloneDeep(dataset);
         datasetCopy.datastores.datastore1.type = '';
 
-        searchComponent.addEventListener('searchFinished', (event: any) => {
-            expect(event.detail.data).toEqual([]);
-            expect(event.detail.info).toEqual('Cannot Connect to Datastore');
-            expect(event.detail.size).toEqual(0);
+        searchComponent.addEventListener('searchFailed', (event: any) => {
+            expect(event.detail.error).toEqual('Cannot Connect to Datastore');
             done();
         });
 
@@ -1018,34 +1518,59 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -1064,20 +1589,35 @@ describe('Search Component init should', () => {
         searchComponent.init(dataset, filterService, searchService);
 
         expect(searchService.searches).toEqual(1);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
-                    field: 'testNameField',
-                    operator: '!=',
-                    value: null
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
                 },
-                limit: 10,
-                offset: 0
+                whereClause: {
+                    type: 'where',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    },
+                    operator: '!=',
+                    rhs: null
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -1158,34 +1698,59 @@ describe('Search Component', () => {
         filterService.notifyFilterChangeListeners('testFilterElementId');
 
         expect(searchService.searches).toEqual(2);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });
@@ -1267,75 +1832,140 @@ describe('Search Component', () => {
         ]);
 
         expect(searchService.searches).toEqual(2);
-        expect(searchService.searchArguments).toEqual({
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
             datastoreHost: dataset.datastores.datastore1.host,
             datastoreType: dataset.datastores.datastore1.type,
-            queryPayload: {
-                database: 'testDatabase1',
-                table: 'testTable1',
-                fields: ['testNameField'],
-                filter: {
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
                     type: 'and',
-                    filters: [{
-                        field: 'testNameField',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
                         operator: '!=',
-                        value: null
+                        rhs: null
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 30
+                            rhs: 30
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '>=',
-                            value: 20
+                            rhs: 20
                         }, {
-                            field: 'testYField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testYField'
+                            },
                             operator: '<=',
-                            value: 40
+                            rhs: 40
                         }]
                     }, {
                         type: 'and',
-                        filters: [{
-                            field: 'testXField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '>=',
-                            value: 10
+                            rhs: 10
                         }, {
-                            field: 'testXField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testXField'
+                            },
                             operator: '<=',
-                            value: 20
+                            rhs: 20
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testTypeField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '=',
-                            value: 'type2'
+                            rhs: 'type2'
                         }]
                     }, {
                         type: 'or',
-                        filters: [{
-                            field: 'testNameField',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
                             operator: '=',
-                            value: 'name1'
+                            rhs: 'name1'
                         }, {
-                            field: 'testTypeField',
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
                             operator: '!=',
-                            value: 'type1'
+                            rhs: 'type1'
                         }]
                     }]
                 },
-                limit: 10,
-                offset: 0
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                isDistinct: false
             }
         });
     });

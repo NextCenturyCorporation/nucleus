@@ -23,7 +23,7 @@ import {
     ListOfValues,
     PairOfValues
 } from '../models/filters';
-import { AbstractSearchService, FilterClause, QueryGroup, QueryPayload } from '../services/abstract.search.service';
+import { AbstractSearchService, FilterClause, SearchObject } from '../services/abstract.search.service';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
 import { CoreUtil } from '../core.util';
 import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '../models/dataset';
@@ -138,10 +138,10 @@ export class NextCenturySearch extends NextCenturyElement {
         const dataHost = datasetTableKey ? datasetTableKey.datastore.host : null;
         const dataType = datasetTableKey ? datasetTableKey.datastore.type : null;
 
-        const queryPayload: QueryPayload = this._buildQuery();
+        const searchObject: SearchObject = this._buildQuery();
 
-        return !queryPayload ? [] : [
-            this._searchService.transformQueryPayloadToExport(dataHost, dataType, exportFields, queryPayload, filename)
+        return !searchObject ? [] : [
+            this._searchService.transformSearchToExport(dataHost, dataType, exportFields, searchObject, filename)
         ];
     }
 
@@ -195,7 +195,7 @@ export class NextCenturySearch extends NextCenturyElement {
     /**
      * Returns the search query with its fields, aggregations, groups, filters, and sort.
      */
-    private _buildQuery(): QueryPayload {
+    private _buildQuery(): SearchObject {
         const searchFilters: AbstractFilter[] = this._retrieveSearchFilters();
 
         const fieldKeys: FieldKey[] = this._retrieveFieldKeys();
@@ -211,62 +211,70 @@ export class NextCenturySearch extends NextCenturyElement {
         const sortAggregation = this.getAttribute('sort-aggregation');
         const sortFieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(this.getAttribute('sort-field-key'));
 
-        const fields: string[] = allFields ? [] : (searchFieldKeys.map((fieldKey) => fieldKey.field)
-            .concat(aggregations.filter((agg) => agg.fieldKey && agg.fieldKey.field).map((agg) => agg.fieldKey.field))
-            .concat(groups.filter((group) => group.fieldKey && group.fieldKey.field).map((group) => group.fieldKey.field))
-            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey.field : []));
+        const fields: FieldKey[] = allFields ? [] : searchFieldKeys
+            .concat(aggregations.filter((agg) => agg.fieldKey && agg.fieldKey.field).map((agg) => agg.fieldKey))
+            .concat(groups.filter((group) => group.fieldKey && group.fieldKey.field).map((group) => group.fieldKey))
+            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []);
 
         const tableKey: FieldKey = this._retrieveTableKey();
-        let queryPayload: QueryPayload = this._searchService.buildQueryPayload(tableKey.database, tableKey.table,
-            fields.length ? fields : ['*']);
+        let searchObject: SearchObject = this._searchService.createSearch(tableKey.database, tableKey.table);
+        fields.forEach((field) => {
+            this._searchService.withField(searchObject, field);
+        });
 
         const filterClauses: FilterClause[] = (allFields ? [] : fields)
-            .map((fieldName) => this._searchService.buildFilterClause(fieldName, '!=', null))
+            .map((fieldName) => this._searchService.createFilterClause(fieldName, '!=', null))
             .concat(searchFilters.map((filter) => this._searchService.generateFilterClauseFromFilter(filter)))
             .concat(unsharedFilters.map((filter) => this._searchService.generateFilterClauseFromFilter(filter)));
 
         if (filterClauses.length) {
-            this._searchService.updateFilter(queryPayload, filterClauses.length === 1 ? filterClauses[0] :
-                this._searchService.buildCompoundFilterClause(filterClauses));
+            this._searchService.withFilter(searchObject, filterClauses.length === 1 ? filterClauses[0] :
+                this._searchService.createCompoundFilterClause(filterClauses));
         }
 
         for (const aggregation of aggregations) {
-            this._searchService.updateAggregation(queryPayload, aggregation.type, aggregation.name,
-                (aggregation.fieldKey && aggregation.fieldKey.field) ? aggregation.fieldKey.field : aggregation.group);
+            if (aggregation.fieldKey && aggregation.fieldKey.field) {
+                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
+            } else if (aggregation.group) {
+                this._searchService.withGroupAggregation(searchObject, aggregation.group, aggregation.name);
+            }
         }
 
         if (groups.length) {
-            let searchGroups: QueryGroup[] = [];
             for (const group of groups) {
                 switch (group.type) {
+                    case (TimeInterval.SECOND as string):
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.SECOND);
+                        // Falls through
                     case (TimeInterval.MINUTE as string):
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, TimeInterval.MINUTE));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.MINUTE);
                         // Falls through
                     case (TimeInterval.HOUR as string):
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, TimeInterval.HOUR));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.HOUR);
                         // Falls through
                     case (TimeInterval.DAY_OF_MONTH as string):
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, TimeInterval.DAY_OF_MONTH));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.DAY_OF_MONTH);
                         // Falls through
                     case (TimeInterval.MONTH as string):
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, TimeInterval.MONTH));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.MONTH);
                         // Falls through
                     case (TimeInterval.YEAR as string):
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, TimeInterval.YEAR));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.YEAR);
                         break;
                     default:
-                        searchGroups.push(this._searchService.buildQueryGroup(group.fieldKey.field));
+                        this._searchService.withGroupField(searchObject, group.fieldKey);
                 }
             }
-            this._searchService.updateGroups(queryPayload, searchGroups);
         }
 
-        if (sortAggregation || (sortFieldKey && sortFieldKey.field)) {
-            const sortOrder: SortOrder = (this.getAttribute('sort-order') || SortOrder.DESCENDING) as SortOrder;
-            this._searchService.updateSort(queryPayload, sortAggregation || sortFieldKey.field, sortOrder);
+        const sortOrder: SortOrder = (this.getAttribute('sort-order') || SortOrder.DESCENDING) as SortOrder;
+        if (sortAggregation) {
+            this._searchService.withOrderGroup(searchObject, sortAggregation, sortOrder);
+        } else if (sortFieldKey && sortFieldKey.field) {
+            this._searchService.withOrderField(searchObject, sortFieldKey, sortOrder);
         }
 
-        return queryPayload;
+        return searchObject;
     }
 
     /**
@@ -603,7 +611,7 @@ export class NextCenturySearch extends NextCenturyElement {
     /**
      * Runs the given search query using the current attributes, dataset, and services.
      */
-    private _runQuery(queryPayload: QueryPayload, isFiltered: boolean): void {
+    private _runQuery(searchObject: SearchObject, isFiltered: boolean): void {
         if (!this._isReady()) {
             return;
         }
@@ -633,6 +641,7 @@ export class NextCenturySearch extends NextCenturyElement {
                     message: 'FAILED ' + this.getAttribute('id')
                 }
             }));
+            return;
         }
         if (hideIfUnfiltered && !isFiltered) {
             // Unsure if this should be success or failure.
@@ -640,9 +649,9 @@ export class NextCenturySearch extends NextCenturyElement {
             return;
         }
 
-        this._searchService.transformFilterClauseValues(queryPayload, labels);
+        this._searchService.transformFilterClauseValues(searchObject, labels);
 
-        this._runningQuery = this._searchService.runSearch(dataType, dataHost, queryPayload);
+        this._runningQuery = this._searchService.runSearch(dataType, dataHost, searchObject);
 
         this._runningQuery.always(() => {
             this._runningQuery = undefined;
@@ -666,8 +675,7 @@ export class NextCenturySearch extends NextCenturyElement {
         });
 
         this._runningQuery.done((response) => {
-            this._handleQuerySuccess(this._searchService.transformQueryResultsValues(response, labels), null);
-            this._runningQuery = undefined;
+            this._handleQuerySuccess(this._searchService.transformSearchResultValues(response, labels), null);
         });
     }
 
@@ -679,17 +687,17 @@ export class NextCenturySearch extends NextCenturyElement {
             return;
         }
 
-        let queryPayload: QueryPayload = this._buildQuery();
+        let searchObject: SearchObject = this._buildQuery();
 
-        if (queryPayload) {
+        if (searchObject) {
             const limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
-            this._searchService.updateLimit(queryPayload, limit);
+            this._searchService.withLimit(searchObject, limit);
 
             const page = Number(this.getAttribute('search-page') || 1);
-            this._searchService.updateOffset(queryPayload, (page - 1) * limit);
+            this._searchService.withOffset(searchObject, (page - 1) * limit);
 
             const searchFilters: AbstractFilter[] = this._retrieveSearchFilters();
-            this._runQuery(queryPayload, !!searchFilters.length);
+            this._runQuery(searchObject, !!searchFilters.length);
         }
     }
 }

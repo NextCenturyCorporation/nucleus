@@ -34,6 +34,7 @@ export enum SortOrder {
 }
 
 export enum TimeInterval {
+    SECOND = 'second',
     MINUTE = 'minute',
     HOUR = 'hour',
     DAY_OF_MONTH = 'dayOfMonth',

@@ -14,34 +14,23 @@
  */
 import { AbstractFilter } from '../models/filters';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
+import { FieldKey } from '../models/dataset';
 import { RequestWrapper } from './connection.service';
 export interface FilterClause {
 }
-export interface QueryGroup {
-}
-export interface QueryPayload {
+export interface SearchObject {
 }
 export declare abstract class AbstractSearchService {
     /**
      * Returns a new compound filter clause using the given list of filter clauses.  If only one filter clause is given, just return that
      * filter clause.
      *
-     * @arg {FilterClause[]} filterClauses
+     * @arg {FilterClause[]} filterObjects
      * @arg {CompoundFilterType} [type]
      * @return {FilterClause}
      * @abstract
      */
-    abstract buildCompoundFilterClause(filterClauses: FilterClause[], type?: CompoundFilterType): FilterClause;
-    /**
-     * Returns a new query group using the given group date field and time interval.
-     *
-     * @arg {string} groupField
-     * @arg {TimeInterval} interval
-     * @arg {string} [name]
-     * @return {QueryGroup}
-     * @abstract
-     */
-    abstract buildDateQueryGroup(groupField: string, interval: TimeInterval, name?: string): QueryGroup;
+    abstract createCompoundFilterClause(filterObjects: FilterClause[], type?: CompoundFilterType): FilterClause;
     /**
      * Returns a new filter clause using the given field, operator, and value.
      *
@@ -51,25 +40,7 @@ export declare abstract class AbstractSearchService {
      * @return {FilterClause}
      * @abstract
      */
-    abstract buildFilterClause(field: string, operator: string, value: string): FilterClause;
-    /**
-     * Returns a new query group using the given group field.
-     *
-     * @arg {string} groupField
-     * @return {QueryGroup}
-     * @abstract
-     */
-    abstract buildQueryGroup(groupField: string): QueryGroup;
-    /**
-     * Returns a new search query payload using the given database, table, and field names.
-     *
-     * @arg {string} databaseName
-     * @arg {string} tableName
-     * @arg {string[]} [fieldNames]
-     * @return {QueryPayload}
-     * @abstract
-     */
-    abstract buildQueryPayload(databaseName: string, tableName: string, fieldNames?: string[]): QueryPayload;
+    abstract createFilterClause(field: FieldKey, operator: string, value: string): FilterClause;
     /**
      * Returns whether the given datastore type and host can run a search.
      *
@@ -79,6 +50,16 @@ export declare abstract class AbstractSearchService {
      * @abstract
      */
     abstract canRunSearch(datastoreType: string, datastoreHost: string): boolean;
+    /**
+     * Returns a new search object using the given database, table, and field names.
+     *
+     * @arg {string} database
+     * @arg {string} table
+     * @arg {string[]} [fields]
+     * @return {SearchObject}
+     * @abstract
+     */
+    abstract createSearch(database: string, table: string, fields?: string[]): SearchObject;
     /**
      * Returns a filter clause using the given filter.
      *
@@ -98,46 +79,46 @@ export declare abstract class AbstractSearchService {
      *
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} queryPayload
      * @return {RequestWrapper}
      * @abstract
      */
-    abstract runSearch(datastoreType: string, datastoreHost: string, queryPayload: QueryPayload): RequestWrapper;
+    abstract runSearch(datastoreType: string, datastoreHost: string, search: SearchObject): RequestWrapper;
     /**
-     * Transforms the values in the filter clauses in the given search query payload using the given map of keys-to-values-to-labels.
+     * Transforms the values in the filter clauses in the given search object using the given map of keys-to-values-to-labels.
      *
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} search
      * @arg {{ [key: string]: { [value: string]: label } }} keysToValuesToLabels
-     * @return {QueryPayload}
+     * @return {SearchObject}
      * @abstract
      */
-    abstract transformFilterClauseValues(queryPayload: QueryPayload, keysToValuesToLabels: {
+    abstract transformFilterClauseValues(search: SearchObject, keysToValuesToLabels: {
         [key: string]: {
             [value: string]: string;
         };
-    }): QueryPayload;
+    }): SearchObject;
     /**
-     * Transforms the given search query payload into an object to export.
+     * Transforms the given search object into an export object.
      *
      * @arg {{columnName:string,prettyName:string}[]} fields
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} search
      * @arg {string} uniqueName
      * @return {any}
      * @abstract
      */
-    abstract transformQueryPayloadToExport(hostName: string, dataStoreType: string, fields: {
+    abstract transformSearchToExport(hostName: string, dataStoreType: string, fields: {
         columnName: string;
         prettyName: string;
-    }[], queryPayload: QueryPayload, uniqueName: string): any;
+    }[], search: SearchObject, uniqueName: string): any;
     /**
-     * Transforms the values in the given search query results using the given map of keys-to-values-to-labels.
+     * Transforms the values in the given search results using the given map of keys-to-values-to-labels.
      *
-     * @arg {{ data: any[] }} queryResults
+     * @arg {{ data: any[] }} results
      * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
      * @return {{ data: any[] }}
      * @abstract
      */
-    abstract transformQueryResultsValues(queryResults: {
+    abstract transformSearchResultValues(results: {
         data: any[];
     }, keysToValuesToLabels: {
         [key: string]: {
@@ -147,77 +128,117 @@ export declare abstract class AbstractSearchService {
         data: any[];
     };
     /**
-     * Sets the aggregation data on the given search query payload.
+     * Adds an aggregation to the given search object.
      *
-     * @arg {QueryPayload} queryPayload
-     * @arg {AggregationType} type
-     * @arg {string} name
-     * @arg {string} field
+     * @arg {SearchObject} searchObject
+     * @arg {FieldKey} field
+     * @arg {string} label
+     * @arg {AggregationType} operation
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateAggregation(queryPayload: QueryPayload, type: AggregationType, name: string, field: string): AbstractSearchService;
+    abstract withAggregation(searchObject: SearchObject, field: FieldKey, label: string, operation: AggregationType): AbstractSearchService;
     /**
-     * Sets the fields data in the given search query payload.
+     * Adds a field to the given search object.
      *
-     * @arg {QueryPayload} queryPayload
-     * @arg {string[]} fields
+     * @arg {SearchObject} searchObject
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateFields(queryPayload: QueryPayload, fields: string[]): AbstractSearchService;
+    abstract withField(searchObject: SearchObject, field: FieldKey): AbstractSearchService;
     /**
-     * Sets the fields data in the given search query payload to match all fields.
+     * Sets the fields in the given search object to match all fields.
      *
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} searchObject
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateFieldsToMatchAll(queryPayload: QueryPayload): AbstractSearchService;
+    abstract withAllFields(searchObject: SearchObject): AbstractSearchService;
     /**
-     * Sets the filter clause data on the given search query payload.
+     * Sets the filter clause in the given search object.
      *
-     * @arg {QueryPayload} queryPayload
-     * @arg {FilterClause} filterClause
+     * @arg {SearchObject} searchObject
+     * @arg {FilterClause} filterObject
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateFilter(queryPayload: QueryPayload, filterClause: FilterClause): AbstractSearchService;
+    abstract withFilter(searchObject: SearchObject, filterObject: FilterClause): AbstractSearchService;
     /**
-     * Sets the group data on the given search query payload.
+     * Adds a group aggregation to the given search object.
      *
-     * @arg {QueryPayload} queryPayload
-     * @arg {QueryGroup[]} groups
+     * @arg {SearchObject} searchObject
+     * @arg {string} group
+     * @arg {string} label
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateGroups(queryPayload: QueryPayload, groups: QueryGroup[]): AbstractSearchService;
+    abstract withGroupAggregation(searchObject: SearchObject, group: string, label: string): AbstractSearchService;
     /**
-     * Sets the limit data on the given search query payload.
+     * Adds a date group to the given search object.
      *
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} searchObject
+     * @arg {FieldKey} field
+     * @arg {TimeInterval} interval
+     * @arg {string} [label]
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    abstract withGroupDate(searchObject: SearchObject, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService;
+    /**
+     * Adds a field group to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {FieldKey} field
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    abstract withGroupField(searchObject: SearchObject, field: FieldKey): AbstractSearchService;
+    /**
+     * Sets the limit on the given search object.
+     *
+     * @arg {SearchObject} searchObject
      * @arg {number} limit
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateLimit(queryPayload: QueryPayload, limit: number): AbstractSearchService;
+    abstract withLimit(searchObject: SearchObject, limit: number): AbstractSearchService;
     /**
-     * Sets the offset data on the given search query payload.
+     * Sets the offset on the given search object.
      *
-     * @arg {QueryPayload} queryPayload
+     * @arg {SearchObject} searchObject
      * @arg {number} offset
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateOffset(queryPayload: QueryPayload, offset: number): AbstractSearchService;
+    abstract withOffset(searchObject: SearchObject, offset: number): AbstractSearchService;
     /**
-     * Sets the sort data on the given search query payload.
+     * Adds an order field to the given search object.
      *
-     * @arg {QueryPayload} queryPayload
-     * @arg {string} field
+     * @arg {SearchObject} searchObject
+     * @arg {FieldKey} field
      * @arg {SortOrder} [order]
      * @return {AbstractSearchService}
      * @abstract
      */
-    abstract updateSort(queryPayload: QueryPayload, field: string, order?: SortOrder): AbstractSearchService;
+    abstract withOrderField(searchObject: SearchObject, field: FieldKey, order?: SortOrder): AbstractSearchService;
+    /**
+     * Adds an order group to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} group
+     * @arg {SortOrder} [order]
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    abstract withOrderGroup(searchObject: SearchObject, group: string, order?: SortOrder): AbstractSearchService;
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    abstract withTotalCountAggregation(searchObject: SearchObject, label: string): AbstractSearchService;
 }

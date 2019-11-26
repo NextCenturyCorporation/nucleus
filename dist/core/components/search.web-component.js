@@ -119,9 +119,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
         var datasetTableKey = tableKey ? this._dataset.retrieveDatasetFieldKey(tableKey) : null;
         var dataHost = datasetTableKey ? datasetTableKey.datastore.host : null;
         var dataType = datasetTableKey ? datasetTableKey.datastore.type : null;
-        var queryPayload = this._buildQuery();
-        return !queryPayload ? [] : [
-            this._searchService.transformQueryPayloadToExport(dataHost, dataType, exportFields, queryPayload, filename)
+        var searchObject = this._buildQuery();
+        return !searchObject ? [] : [
+            this._searchService.transformSearchToExport(dataHost, dataType, exportFields, searchObject, filename)
         ];
     };
     /**
@@ -184,55 +184,67 @@ var NextCenturySearch = /** @class */ (function (_super) {
         }, []);
         var sortAggregation = this.getAttribute('sort-aggregation');
         var sortFieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(this.getAttribute('sort-field-key'));
-        var fields = allFields ? [] : (searchFieldKeys.map(function (fieldKey) { return fieldKey.field; })
-            .concat(aggregations.filter(function (agg) { return agg.fieldKey && agg.fieldKey.field; }).map(function (agg) { return agg.fieldKey.field; }))
-            .concat(groups.filter(function (group) { return group.fieldKey && group.fieldKey.field; }).map(function (group) { return group.fieldKey.field; }))
-            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey.field : []));
+        var fields = allFields ? [] : searchFieldKeys
+            .concat(aggregations.filter(function (agg) { return agg.fieldKey && agg.fieldKey.field; }).map(function (agg) { return agg.fieldKey; }))
+            .concat(groups.filter(function (group) { return group.fieldKey && group.fieldKey.field; }).map(function (group) { return group.fieldKey; }))
+            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []);
         var tableKey = this._retrieveTableKey();
-        var queryPayload = this._searchService.buildQueryPayload(tableKey.database, tableKey.table, fields.length ? fields : ['*']);
+        var searchObject = this._searchService.createSearch(tableKey.database, tableKey.table);
+        fields.forEach(function (field) {
+            _this._searchService.withField(searchObject, field);
+        });
         var filterClauses = (allFields ? [] : fields)
-            .map(function (fieldName) { return _this._searchService.buildFilterClause(fieldName, '!=', null); })
+            .map(function (fieldName) { return _this._searchService.createFilterClause(fieldName, '!=', null); })
             .concat(searchFilters.map(function (filter) { return _this._searchService.generateFilterClauseFromFilter(filter); }))
             .concat(unsharedFilters.map(function (filter) { return _this._searchService.generateFilterClauseFromFilter(filter); }));
         if (filterClauses.length) {
-            this._searchService.updateFilter(queryPayload, filterClauses.length === 1 ? filterClauses[0] :
-                this._searchService.buildCompoundFilterClause(filterClauses));
+            this._searchService.withFilter(searchObject, filterClauses.length === 1 ? filterClauses[0] :
+                this._searchService.createCompoundFilterClause(filterClauses));
         }
         for (var _i = 0, aggregations_1 = aggregations; _i < aggregations_1.length; _i++) {
             var aggregation = aggregations_1[_i];
-            this._searchService.updateAggregation(queryPayload, aggregation.type, aggregation.name, (aggregation.fieldKey && aggregation.fieldKey.field) ? aggregation.fieldKey.field : aggregation.group);
+            if (aggregation.fieldKey && aggregation.fieldKey.field) {
+                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
+            }
+            else if (aggregation.group) {
+                this._searchService.withGroupAggregation(searchObject, aggregation.group, aggregation.name);
+            }
         }
         if (groups.length) {
-            var searchGroups = [];
             for (var _a = 0, groups_1 = groups; _a < groups_1.length; _a++) {
                 var group = groups_1[_a];
                 switch (group.type) {
+                    case config_option_1.TimeInterval.SECOND:
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.SECOND);
+                    // Falls through
                     case config_option_1.TimeInterval.MINUTE:
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, config_option_1.TimeInterval.MINUTE));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MINUTE);
                     // Falls through
                     case config_option_1.TimeInterval.HOUR:
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, config_option_1.TimeInterval.HOUR));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.HOUR);
                     // Falls through
                     case config_option_1.TimeInterval.DAY_OF_MONTH:
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, config_option_1.TimeInterval.DAY_OF_MONTH));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.DAY_OF_MONTH);
                     // Falls through
                     case config_option_1.TimeInterval.MONTH:
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, config_option_1.TimeInterval.MONTH));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MONTH);
                     // Falls through
                     case config_option_1.TimeInterval.YEAR:
-                        searchGroups.push(this._searchService.buildDateQueryGroup(group.fieldKey.field, config_option_1.TimeInterval.YEAR));
+                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.YEAR);
                         break;
                     default:
-                        searchGroups.push(this._searchService.buildQueryGroup(group.fieldKey.field));
+                        this._searchService.withGroupField(searchObject, group.fieldKey);
                 }
             }
-            this._searchService.updateGroups(queryPayload, searchGroups);
         }
-        if (sortAggregation || (sortFieldKey && sortFieldKey.field)) {
-            var sortOrder = (this.getAttribute('sort-order') || config_option_1.SortOrder.DESCENDING);
-            this._searchService.updateSort(queryPayload, sortAggregation || sortFieldKey.field, sortOrder);
+        var sortOrder = (this.getAttribute('sort-order') || config_option_1.SortOrder.DESCENDING);
+        if (sortAggregation) {
+            this._searchService.withOrderGroup(searchObject, sortAggregation, sortOrder);
         }
-        return queryPayload;
+        else if (sortFieldKey && sortFieldKey.field) {
+            this._searchService.withOrderField(searchObject, sortFieldKey, sortOrder);
+        }
+        return searchObject;
     };
     /**
      * Returns the aggregation data from the aggregation elements inside this search element.
@@ -546,7 +558,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Runs the given search query using the current attributes, dataset, and services.
      */
-    NextCenturySearch.prototype._runQuery = function (queryPayload, isFiltered) {
+    NextCenturySearch.prototype._runQuery = function (searchObject, isFiltered) {
         var _this = this;
         if (!this._isReady()) {
             return;
@@ -573,14 +585,15 @@ var NextCenturySearch = /** @class */ (function (_super) {
                     message: 'FAILED ' + this.getAttribute('id')
                 }
             }));
+            return;
         }
         if (hideIfUnfiltered && !isFiltered) {
             // Unsure if this should be success or failure.
             this._handleQuerySuccess({ data: [] }, 'Please Filter');
             return;
         }
-        this._searchService.transformFilterClauseValues(queryPayload, labels);
-        this._runningQuery = this._searchService.runSearch(dataType, dataHost, queryPayload);
+        this._searchService.transformFilterClauseValues(searchObject, labels);
+        this._runningQuery = this._searchService.runSearch(dataType, dataHost, searchObject);
         this._runningQuery.always(function () {
             _this._runningQuery = undefined;
         });
@@ -602,8 +615,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
             }
         });
         this._runningQuery.done(function (response) {
-            _this._handleQuerySuccess(_this._searchService.transformQueryResultsValues(response, labels), null);
-            _this._runningQuery = undefined;
+            _this._handleQuerySuccess(_this._searchService.transformSearchResultValues(response, labels), null);
         });
     };
     /**
@@ -613,14 +625,14 @@ var NextCenturySearch = /** @class */ (function (_super) {
         if (!this._isReady()) {
             return;
         }
-        var queryPayload = this._buildQuery();
-        if (queryPayload) {
+        var searchObject = this._buildQuery();
+        if (searchObject) {
             var limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
-            this._searchService.updateLimit(queryPayload, limit);
+            this._searchService.withLimit(searchObject, limit);
             var page = Number(this.getAttribute('search-page') || 1);
-            this._searchService.updateOffset(queryPayload, (page - 1) * limit);
+            this._searchService.withOffset(searchObject, (page - 1) * limit);
             var searchFilters = this._retrieveSearchFilters();
-            this._runQuery(queryPayload, !!searchFilters.length);
+            this._runQuery(searchObject, !!searchFilters.length);
         }
     };
     NextCenturySearch.DEFAULT_LIMIT = 10;

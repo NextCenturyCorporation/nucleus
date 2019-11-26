@@ -147,14 +147,14 @@ var CoreConnection = /** @class */ (function () {
     /**
      * Runs a search query with the given payload.
      *
-     * @arg {T} queryPayload
+     * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
      * @override
      */
-    CoreConnection.prototype.runSearchQuery = function (queryPayload, __onSuccess, __onError) {
-        return this.connection.executeQuery(queryPayload.query, null);
+    CoreConnection.prototype.runSearch = function (searchObject, __onSuccess, __onError) {
+        return this.connection.executeQuery(searchObject, null);
     };
     /**
      * Saves (or overwrites) a state with the given data.

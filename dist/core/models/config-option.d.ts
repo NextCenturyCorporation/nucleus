@@ -14,6 +14,7 @@ export declare enum SortOrder {
     DESCENDING = "descending"
 }
 export declare enum TimeInterval {
+    SECOND = "second",
     MINUTE = "minute",
     HOUR = "hour",
     DAY_OF_MONTH = "dayOfMonth",

@@ -49,6 +49,7 @@ var SortOrder;
 })(SortOrder = exports.SortOrder || (exports.SortOrder = {}));
 var TimeInterval;
 (function (TimeInterval) {
+    TimeInterval["SECOND"] = "second";
     TimeInterval["MINUTE"] = "minute";
     TimeInterval["HOUR"] = "hour";
     TimeInterval["DAY_OF_MONTH"] = "dayOfMonth";

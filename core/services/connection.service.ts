@@ -21,7 +21,7 @@ export interface RequestWrapper {
     fail(callback: Function): void;
 }
 
-export interface Connection<T extends { query: any } = { query: any }> {
+export interface Connection<T extends {} = {}> {
 
     /**
      * Deletes the saved dashboard state with the given name.
@@ -133,13 +133,13 @@ export interface Connection<T extends { query: any } = { query: any }> {
     /**
      * Runs a search query with the given payload.
      *
-     * @arg {T} queryPayload
+     * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
      * @abstract
      */
-    runSearchQuery(queryPayload: T, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    runSearch(searchObject: T, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
 
     /**
      * Saves (or overwrites) a state with the given data.
@@ -153,7 +153,7 @@ export interface Connection<T extends { query: any } = { query: any }> {
 }
 
 // Internal class that wraps AbstractSearchService.Connection.  Exported to use in the unit tests.
-export class CoreConnection<T extends { query: any } = { query: any }> implements Connection<T> {
+export class CoreConnection<T extends {} = {}> implements Connection<T> {
     constructor(public connection: query.Connection) { }
 
     /**
@@ -317,18 +317,18 @@ export class CoreConnection<T extends { query: any } = { query: any }> implement
     /**
      * Runs a search query with the given payload.
      *
-     * @arg {T} queryPayload
+     * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
      * @override
      */
-    public runSearchQuery(
-        queryPayload: T,
+    public runSearch(
+        searchObject: T,
         __onSuccess: (response: any) => void,
         __onError?: (response: any) => void
     ): RequestWrapper {
-        return this.connection.executeQuery(queryPayload.query, null);
+        return this.connection.executeQuery(searchObject, null);
     }
 
     /**
@@ -356,7 +356,7 @@ export class ConnectionService {
      * Returns an existing connection to the REST server using the given host and the given datastore type (like elasticsearch or sql), or
      * creates and returns a connection if none exists.
      */
-    public connect<T extends { query: any } = { query: any }>(
+    public connect<T extends {} = {}>(
         datastoreType: string,
         datastoreHost: string,
         startListener: boolean = false

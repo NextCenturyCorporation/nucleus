@@ -19,11 +19,7 @@ export interface RequestWrapper {
     done(callback: Function): void;
     fail(callback: Function): void;
 }
-export interface Connection<T extends {
-    query: any;
-} = {
-    query: any;
-}> {
+export interface Connection<T extends {} = {}> {
     /**
      * Deletes the saved dashboard state with the given name.
      *
@@ -118,13 +114,13 @@ export interface Connection<T extends {
     /**
      * Runs a search query with the given payload.
      *
-     * @arg {T} queryPayload
+     * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
      * @abstract
      */
-    runSearchQuery(queryPayload: T, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    runSearch(searchObject: T, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
     /**
      * Saves (or overwrites) a state with the given data.
      *
@@ -135,11 +131,7 @@ export interface Connection<T extends {
      */
     saveState(stateData: any, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
 }
-export declare class CoreConnection<T extends {
-    query: any;
-} = {
-    query: any;
-}> implements Connection<T> {
+export declare class CoreConnection<T extends {} = {}> implements Connection<T> {
     connection: query.Connection;
     constructor(connection: query.Connection);
     /**
@@ -249,13 +241,13 @@ export declare class CoreConnection<T extends {
     /**
      * Runs a search query with the given payload.
      *
-     * @arg {T} queryPayload
+     * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
      * @override
      */
-    runSearchQuery(queryPayload: T, __onSuccess: (response: any) => void, __onError?: (response: any) => void): RequestWrapper;
+    runSearch(searchObject: T, __onSuccess: (response: any) => void, __onError?: (response: any) => void): RequestWrapper;
     /**
      * Saves (or overwrites) a state with the given data.
      *
@@ -272,11 +264,7 @@ export declare class ConnectionService {
      * Returns an existing connection to the REST server using the given host and the given datastore type (like elasticsearch or sql), or
      * creates and returns a connection if none exists.
      */
-    connect<T extends {
-        query: any;
-    } = {
-        query: any;
-    }>(datastoreType: string, datastoreHost: string, startListener?: boolean): CoreConnection<T>;
+    connect<T extends {} = {}>(datastoreType: string, datastoreHost: string, startListener?: boolean): CoreConnection<T>;
     /**
      * Returns the server status.
      */

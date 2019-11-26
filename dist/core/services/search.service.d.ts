@@ -12,21 +12,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AbstractSearchService, FilterClause, QueryGroup, QueryPayload } from './abstract.search.service';
+import { AbstractSearchService, FilterClause, SearchObject } from './abstract.search.service';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
 import { ConnectionService, RequestWrapper } from './connection.service';
-import { query } from 'neon-framework';
-export declare class CoreQueryWrapper implements QueryPayload {
-    query: query.Query;
-    constructor(query: query.Query);
+import { FieldKey } from '../models/dataset';
+declare class CoreFieldClause {
+    database: string;
+    table: string;
+    field: string;
+    constructor(database: string, table: string, field: string);
 }
-export declare class CoreGroupWrapper implements QueryGroup {
-    group: string | query.GroupByFunctionClause;
-    constructor(group: string | query.GroupByFunctionClause);
+export declare abstract class CoreFilterClause implements FilterClause {
+    type: string;
+    constructor(type: string);
 }
-export declare class CoreWhereWrapper implements FilterClause {
-    where: query.WherePredicate;
-    constructor(where: query.WherePredicate);
+declare abstract class CoreAggregateClause {
+    type: string;
+    constructor(type: string);
+}
+declare abstract class CoreGroupByClause {
+    type: string;
+    constructor(type: string);
+}
+declare abstract class CoreOrderByClause {
+    type: string;
+    constructor(type: string);
+}
+export declare class CoreSearch implements SearchObject {
+    selectClause: {
+        database: string;
+        table: string;
+        fieldClauses: CoreFieldClause[];
+    };
+    whereClause: CoreFilterClause;
+    aggregateClauses: CoreAggregateClause[];
+    groupByClauses: CoreGroupByClause[];
+    orderByClauses: CoreOrderByClause[];
+    limitClause: {
+        limit: number;
+    };
+    offsetClause: {
+        offset: number;
+    };
+    isDistinct: boolean;
+    constructor(database: string, table: string, fields?: string[]);
 }
 export declare class SearchService extends AbstractSearchService {
     private connectionService;
@@ -35,50 +64,22 @@ export declare class SearchService extends AbstractSearchService {
      * Returns a new compound filter clause using the given list of filter clauses.  If only one filter clause is given, just return that
      * filter clause.
      *
-     * @arg {CoreWhereWrapper[]} filterClauses
+     * @arg {CoreFilterClause[]} filterObjects
      * @arg {CompoundFilterType} [type=CompoundFilterType.AND]
-     * @return {CoreWhereWrapper}
+     * @return {CoreFilterClause}
      * @abstract
      */
-    buildCompoundFilterClause(filterClauses: CoreWhereWrapper[], type?: CompoundFilterType): CoreWhereWrapper;
-    /**
-     * Returns a new query group using the given group date field and time interval.
-     *
-     * @arg {string} groupField
-     * @arg {TimeInterval} interval
-     * @arg {string} [name]
-     * @return {CoreGroupWrapper}
-     * @override
-     */
-    buildDateQueryGroup(groupField: string, interval: TimeInterval, name?: string): CoreGroupWrapper;
+    createCompoundFilterClause(filterObjects: CoreFilterClause[], type?: CompoundFilterType): CoreFilterClause;
     /**
      * Returns a new filter clause using the given field, operator, and value.
      *
      * @arg {string} field
      * @arg {string} operator
      * @arg {string} value
-     * @return {CoreWhereWrapper}
+     * @return {CoreFilterClause}
      * @override
      */
-    buildFilterClause(field: string, operator: string, value: string): CoreWhereWrapper;
-    /**
-     * Returns a new query group using the given group field.
-     *
-     * @arg {string} groupField
-     * @return {CoreGroupWrapper}
-     * @override
-     */
-    buildQueryGroup(groupField: string): CoreGroupWrapper;
-    /**
-     * Returns a new search query payload using the given database, table, and field names.
-     *
-     * @arg {string} databaseName
-     * @arg {string} tableName
-     * @arg {string[]} [fieldNames=[]]
-     * @return {CoreQueryWrapper}
-     * @override
-     */
-    buildQueryPayload(databaseName: string, tableName: string, fieldNames?: string[]): CoreQueryWrapper;
+    createFilterClause(field: FieldKey, operator: string, value: string): CoreFilterClause;
     /**
      * Returns whether the given datastore type and host can run a search.
      *
@@ -89,63 +90,60 @@ export declare class SearchService extends AbstractSearchService {
      */
     canRunSearch(datastoreType: string, datastoreHost: string): boolean;
     /**
-     * Finds and returns the export fields from the fields, groupByClauses, and aggregates in the given export query object.
-     * Assumes activeFields does not have duplicates.
+     * Returns a new search object using the given database, table, and field names.
      *
-     * @arg {query.Query} exportQuery
-     * @arg {{columnName:string,prettyName:string}[]} activeFields
-     * @return {ExportField[]}
-     * @private
+     * @arg {string} databaseName
+     * @arg {string} tableName
+     * @arg {string[]} [fieldNames=[]]
+     * @return {CoreSearch}
+     * @override
      */
-    private findExportFields;
+    createSearch(database: string, table: string, fields?: string[]): CoreSearch;
     /**
      * Runs the given search using the given datastore type and host.
      *
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @return {RequestWrapper}
      * @override
      */
-    runSearch(datastoreType: string, datastoreHost: string, queryPayload: CoreQueryWrapper): RequestWrapper;
-    private transformAggregationOperatorToPrettyName;
-    private transformAggregationType;
-    private transformDateGroupOperatorToPrettyName;
+    runSearch(datastoreType: string, datastoreHost: string, searchObject: CoreSearch): RequestWrapper;
     /**
-     * Transforms the values in the filter clauses in the given search query payload using the given map of keys-to-values-to-labels.
+     * Transforms the values in the filter clauses in the given search object using the given map of keys-to-values-to-labels.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
-     * @return {CoreQueryWrapper}
+     * @return {CoreSearch}
      * @override
      */
-    transformFilterClauseValues(queryPayload: CoreQueryWrapper, keysToValuesToLabels: {
+    transformFilterClauseValues(searchObject: CoreSearch, keysToValuesToLabels: {
         [key: string]: {
             [value: string]: string;
         };
-    }): CoreQueryWrapper;
+    }): CoreSearch;
     /**
-     * Transforms the given search query payload into an object to export.
+     * Transforms the given search object into an export object.
      *
      * @arg {{columnName:string,prettyName:string}[]} fields
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {string} uniqueName
      * @return {any}
      * @override
      */
-    transformQueryPayloadToExport(hostName: string, dataStoreType: string, fields: {
+    transformSearchToExport(hostName: string, dataStoreType: string, fields: {
         columnName: string;
         prettyName: string;
-    }[], queryPayload: CoreQueryWrapper, uniqueName: string): any;
+    }[], searchObject: CoreSearch, uniqueName: string): any;
     /**
-     * Transforms the values in the given search query results using the given map of keys-to-values-to-labels.
+     * Transforms the values in the given search results using the given map of keys-to-values-to-labels.
      *
      * @arg {{ data: any[] }} queryResults
      * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
      * @return {{ data: any[] }}
      * @override
      */
-    transformQueryResultsValues(queryResults: {
+    transformSearchResultValues(results: {
         data: any[];
     }, keysToValuesToLabels: {
         [key: string]: {
@@ -155,85 +153,142 @@ export declare class SearchService extends AbstractSearchService {
         data: any[];
     };
     /**
-     * Transforms the values in the given WherePredicate using the given map of keys-to-values-to-labels.
+     * Adds an aggregation to the given search object.
      *
-     * @arg {query.WherePredicate} wherePredicate
-     * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
-     */
-    private transformWherePredicateNestedValues;
-    private transformWherePredicateValues;
-    /**
-     * Sets the aggregation data on the given search query payload.
-     *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {AggregationType} type
-     * @arg {string} name
-     * @arg {string} field
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @arg {string} label
+     * @arg {AggregationType} operation
      * @return {AbstractSearchService}
      * @override
      */
-    updateAggregation(queryPayload: CoreQueryWrapper, type: AggregationType, name: string, field: string): AbstractSearchService;
+    withAggregation(searchObject: CoreSearch, field: FieldKey, label: string, operation: AggregationType): AbstractSearchService;
     /**
-     * Sets the fields data in the given search query payload.
+     * Adds a field to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {string[]} fields
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @override
      */
-    updateFields(queryPayload: CoreQueryWrapper, fields: string[]): AbstractSearchService;
+    withField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService;
     /**
-     * Sets the fields data in the given search query payload to match all fields.
+     * Sets the fields in the given search object to match all fields.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @return {AbstractSearchService}
      * @override
      */
-    updateFieldsToMatchAll(queryPayload: CoreQueryWrapper): AbstractSearchService;
+    withAllFields(searchObject: CoreSearch): AbstractSearchService;
     /**
-     * Sets the filter clause data on the given search query payload.
+     * Sets the filter clause in the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {CoreWhereWrapper} filterClause
+     * @arg {CoreSearch} searchObject
+     * @arg {CoreFilterClause} filterObject
      * @return {AbstractSearchService}
      * @override
      */
-    updateFilter(queryPayload: CoreQueryWrapper, filterClause: CoreWhereWrapper): AbstractSearchService;
+    withFilter(searchObject: CoreSearch, filterObject: CoreFilterClause): AbstractSearchService;
     /**
-     * Sets the group data on the given search query payload.
+     * Adds a group aggregation to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {CoreGroupWrapper[]} groupClauses
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {string} label
      * @return {AbstractSearchService}
      * @override
      */
-    updateGroups(queryPayload: CoreQueryWrapper, groupClauses: CoreGroupWrapper[]): AbstractSearchService;
+    withGroupAggregation(searchObject: CoreSearch, group: string, label: string): AbstractSearchService;
     /**
-     * Sets the limit data on the given search query payload.
+     * Adds a date group to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @arg {TimeInterval} interval
+     * @arg {string} [label]
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withGroupDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService;
+    /**
+     * Adds a field group to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withGroupField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService;
+    /**
+     * Sets the limit on the given search object.
+     *
+     * @arg {CoreSearch} searchObject
      * @arg {number} limit
      * @return {AbstractSearchService}
      * @override
      */
-    updateLimit(queryPayload: CoreQueryWrapper, limit: number): AbstractSearchService;
+    withLimit(searchObject: CoreSearch, limit: number): AbstractSearchService;
     /**
-     * Sets the offset data on the given search query payload.
+     * Sets the offset on the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {number} offset
      * @return {AbstractSearchService}
      * @override
      */
-    updateOffset(queryPayload: CoreQueryWrapper, offset: number): AbstractSearchService;
+    withOffset(searchObject: CoreSearch, offset: number): AbstractSearchService;
     /**
-     * Sets the sort data on the given search query payload.
+     * Adds an order field to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {string} field
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
      * @arg {SortOrder} [order=SortOrder.ASCENDING]
      * @return {AbstractSearchService}
      * @override
      */
-    updateSort(queryPayload: CoreQueryWrapper, field: string, order?: SortOrder): AbstractSearchService;
+    withOrderField(searchObject: CoreSearch, field: FieldKey, order?: SortOrder): AbstractSearchService;
+    /**
+     * Adds an order group to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {SortOrder} [order=SortOrder.ASCENDING]
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withOrderGroup(searchObject: CoreSearch, group: string, order?: SortOrder): AbstractSearchService;
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withTotalCountAggregation(searchObject: CoreSearch, label: string): AbstractSearchService;
+    /**
+     * Finds and returns the export fields from the fields, groups, and aggregates in the given export query object.
+     * Assumes activeFields does not have duplicates.
+     *
+     * @arg {CoreSearch} exportQuery
+     * @arg {{columnName:string,prettyName:string}[]} activeFields
+     * @return {ExportField[]}
+     * @private
+     */
+    private _findExportFields;
+    private _transformAggregationOperationToPrettyName;
+    private _transformAggregationOperation;
+    private _transformDateGroupOperationToPrettyName;
+    private _transformFieldKeyToFieldClause;
+    private _transformFieldToPrettyName;
+    private _transformSortOrder;
+    /**
+     * Transforms the values in the given FilterClause using the given map of keys-to-values-to-labels.
+     *
+     * @arg {CoreFilterClause} whereClause
+     * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
+     */
+    private _transformFilterClauseNestedValues;
+    private _transformFilterClauseValues;
 }
+export {};

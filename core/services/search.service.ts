@@ -13,23 +13,114 @@
  * limitations under the License.
  */
 
-import { AbstractSearchService, FilterClause, QueryGroup, QueryPayload } from './abstract.search.service';
+import { AbstractSearchService, FilterClause, SearchObject } from './abstract.search.service';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
 import { ConnectionService, CoreConnection, RequestWrapper } from './connection.service';
+import { FieldKey } from '../models/dataset';
 
-import { query } from 'neon-framework';
-
-export class CoreQueryWrapper implements QueryPayload {
-    /* eslint-disable-next-line no-shadow */
-    constructor(public query: query.Query) { }
+class CoreFieldClause {
+    constructor(public database: string, public table: string, public field: string) {}
 }
 
-export class CoreGroupWrapper implements QueryGroup {
-    constructor(public group: string | query.GroupByFunctionClause) { }
+export abstract class CoreFilterClause implements FilterClause {
+    constructor(public type: string) {}
 }
 
-export class CoreWhereWrapper implements FilterClause {
-    constructor(public where: query.WherePredicate) { }
+class CoreSingularFilterClause extends CoreFilterClause {
+    constructor(public lhs: CoreFieldClause, public operator: string, public rhs: any) {
+        super('where');
+    }
+}
+
+abstract class CoreCompoundFilterClause extends CoreFilterClause {
+    constructor(type: string, public whereClauses: CoreFilterClause[]) {
+        super(type);
+    }
+}
+
+class CoreAndFilterClause extends CoreCompoundFilterClause {
+    constructor(whereClauses: CoreFilterClause[]) {
+        super('and', whereClauses);
+    }
+}
+
+class CoreOrFilterClause extends CoreCompoundFilterClause {
+    constructor(whereClauses: CoreFilterClause[]) {
+        super('or', whereClauses);
+    }
+}
+
+abstract class CoreAggregateClause {
+    constructor(public type: string) {}
+}
+
+class CoreAggregateByFieldClause extends CoreAggregateClause {
+    constructor(public fieldClause: CoreFieldClause, public label: string, public operation: string) {
+        super('field');
+    }
+}
+
+class CoreAggregateByGroupCountClause extends CoreAggregateClause {
+    constructor(public group: string, public label: string) {
+        super('group');
+    }
+}
+
+class CoreAggregateByTotalCountClause extends CoreAggregateClause {
+    constructor(public label: string) {
+        super('total');
+    }
+}
+
+abstract class CoreGroupByClause {
+    constructor(public type: string) {}
+}
+
+class CoreGroupByFieldClause extends CoreGroupByClause {
+    constructor(public fieldClause: CoreFieldClause) {
+        super('field');
+    }
+}
+
+class CoreGroupByOperationClause extends CoreGroupByClause {
+    constructor(public fieldClause: CoreFieldClause, public label: string, public operation: string) {
+        super('operation');
+    }
+}
+
+abstract class CoreOrderByClause {
+    constructor(public type: string) {}
+}
+
+class CoreOrderByFieldClause extends CoreOrderByClause {
+    constructor(public fieldClause: CoreFieldClause, public order: number) {
+        super('field');
+    }
+}
+
+class CoreOrderByGroupClause extends CoreOrderByClause {
+    constructor(public group: string, public order: number) {
+        super('group');
+    }
+}
+
+export class CoreSearch implements SearchObject {
+    public selectClause: { database: string, table: string, fieldClauses: CoreFieldClause[] };
+    public whereClause: CoreFilterClause = null;
+    public aggregateClauses: CoreAggregateClause[] = [];
+    public groupByClauses: CoreGroupByClause[] = [];
+    public orderByClauses: CoreOrderByClause[] = [];
+    public limitClause: { limit: number } = null;
+    public offsetClause: { offset: number } = null;
+    public isDistinct: boolean = false;
+
+    constructor(database: string, table: string, fields: string[] = []) {
+        this.selectClause = {
+            database,
+            table,
+            fieldClauses: fields.map((field) => new CoreFieldClause(database, table, field))
+        };
+    }
 }
 
 interface ExportField {
@@ -46,37 +137,27 @@ export class SearchService extends AbstractSearchService {
      * Returns a new compound filter clause using the given list of filter clauses.  If only one filter clause is given, just return that
      * filter clause.
      *
-     * @arg {CoreWhereWrapper[]} filterClauses
+     * @arg {CoreFilterClause[]} filterObjects
      * @arg {CompoundFilterType} [type=CompoundFilterType.AND]
-     * @return {CoreWhereWrapper}
+     * @return {CoreFilterClause}
      * @abstract
      */
-    public buildCompoundFilterClause(
-        filterClauses: CoreWhereWrapper[],
+    public createCompoundFilterClause(
+        filterObjects: CoreFilterClause[],
         type: CompoundFilterType = CompoundFilterType.AND
-    ): CoreWhereWrapper {
-        if (!filterClauses.length) {
-            return null;
+    ): CoreFilterClause {
+        if (filterObjects.length === 1) {
+            return filterObjects[0];
         }
-        if (filterClauses.length === 1) {
-            return filterClauses[0];
+        if (filterObjects.length) {
+            if (type === CompoundFilterType.AND) {
+                return new CoreAndFilterClause(filterObjects);
+            }
+            if (type === CompoundFilterType.OR) {
+                return new CoreOrFilterClause(filterObjects);
+            }
         }
-        let wheres = filterClauses.map((filterClause) => (filterClause).where);
-        return new CoreWhereWrapper(type === CompoundFilterType.AND ? query.and.apply(query, wheres) :
-            query.or.apply(query, wheres));
-    }
-
-    /**
-     * Returns a new query group using the given group date field and time interval.
-     *
-     * @arg {string} groupField
-     * @arg {TimeInterval} interval
-     * @arg {string} [name]
-     * @return {CoreGroupWrapper}
-     * @override
-     */
-    public buildDateQueryGroup(groupField: string, interval: TimeInterval, name?: string): CoreGroupWrapper {
-        return new CoreGroupWrapper(new query.GroupByFunctionClause('' + interval, groupField, name || ('_' + interval)));
+        return null;
     }
 
     /**
@@ -85,39 +166,11 @@ export class SearchService extends AbstractSearchService {
      * @arg {string} field
      * @arg {string} operator
      * @arg {string} value
-     * @return {CoreWhereWrapper}
+     * @return {CoreFilterClause}
      * @override
      */
-    public buildFilterClause(field: string, operator: string, value: string): CoreWhereWrapper {
-        return new CoreWhereWrapper(query.where(field, operator, value));
-    }
-
-    /**
-     * Returns a new query group using the given group field.
-     *
-     * @arg {string} groupField
-     * @return {CoreGroupWrapper}
-     * @override
-     */
-    public buildQueryGroup(groupField: string): CoreGroupWrapper {
-        return new CoreGroupWrapper(groupField);
-    }
-
-    /**
-     * Returns a new search query payload using the given database, table, and field names.
-     *
-     * @arg {string} databaseName
-     * @arg {string} tableName
-     * @arg {string[]} [fieldNames=[]]
-     * @return {CoreQueryWrapper}
-     * @override
-     */
-    public buildQueryPayload(databaseName: string, tableName: string, fieldNames: string[] = []): CoreQueryWrapper {
-        let queryObject: query.Query = new query.Query().selectFrom(databaseName, tableName);
-        if (fieldNames.length) {
-            queryObject.withFields(fieldNames);
-        }
-        return new CoreQueryWrapper(queryObject);
+    public createFilterClause(field: FieldKey, operator: string, value: string): CoreFilterClause {
+        return new CoreSingularFilterClause(this._transformFieldKeyToFieldClause(field), operator, value);
     }
 
     /**
@@ -133,57 +186,16 @@ export class SearchService extends AbstractSearchService {
     }
 
     /**
-     * Finds and returns the export fields from the fields, groupByClauses, and aggregates in the given export query object.
-     * Assumes activeFields does not have duplicates.
+     * Returns a new search object using the given database, table, and field names.
      *
-     * @arg {query.Query} exportQuery
-     * @arg {{columnName:string,prettyName:string}[]} activeFields
-     * @return {ExportField[]}
-     * @private
+     * @arg {string} databaseName
+     * @arg {string} tableName
+     * @arg {string[]} [fieldNames=[]]
+     * @return {CoreSearch}
+     * @override
      */
-    private findExportFields(exportQuery: any, activeFields: { columnName: string, prettyName: string }[]): ExportField[] {
-        // Use all activeFields if the exportQuery fields are a wildcard.
-        let isWildcard: boolean = (exportQuery.fields.length === 1 && exportQuery.fields[0] === '*');
-
-        // Save each activeField that is a field from the exportQuery in the export fields.
-        let queryFields: ExportField[] =
-            (
-                isWildcard ?
-                    activeFields :
-                    activeFields.filter((activeField) =>
-                        exportQuery.fields.some((exportFieldName) =>
-                            exportFieldName === activeField.columnName))
-            )
-                .map((activeField) => ({
-                    query: activeField.columnName,
-                    pretty: activeField.prettyName
-                } as ExportField));
-
-        // Save each group function from the exportQuery in the export fields.
-        let groupFields: ExportField[] = exportQuery.groupByClauses.filter((group) => group.type === 'function').map((group) => {
-            // Remove the field of each group function from the queryFields.
-            queryFields = queryFields.filter((field) => field.query !== group.field);
-            return {
-                query: group.name,
-                pretty: this.transformDateGroupOperatorToPrettyName(group.operation, group.field, activeFields)
-            } as ExportField;
-        });
-
-        // Save each aggregation field from the exportQuery in the export fields.
-        let aggregationFields: ExportField[] = exportQuery.aggregates.map((aggregate) => {
-            // Remove the field of each non-COUNT aggregation from the queryFields.
-            /* eslint-disable-next-line dot-notation */
-            if (aggregate.operation !== query['COUNT']) {
-                queryFields = queryFields.filter((field) => field.query !== aggregate.field);
-            }
-
-            return {
-                query: aggregate.name,
-                pretty: this.transformAggregationOperatorToPrettyName(aggregate.operation, aggregate.field, activeFields)
-            } as ExportField;
-        });
-
-        return queryFields.concat(groupFields).concat(aggregationFields);
+    public createSearch(database: string, table: string, fields: string[] = []): CoreSearch {
+        return new CoreSearch(database, table, fields);
     }
 
     /**
@@ -191,141 +203,75 @@ export class SearchService extends AbstractSearchService {
      *
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @return {RequestWrapper}
      * @override
      */
-    public runSearch(datastoreType: string, datastoreHost: string, queryPayload: CoreQueryWrapper): RequestWrapper {
-        let connection: CoreConnection<CoreQueryWrapper> = this.connectionService.connect(datastoreType, datastoreHost);
-        return connection ? connection.runSearchQuery(queryPayload, null) : null;
-    }
-
-    private transformAggregationOperatorToPrettyName(
-        aggregationOperator: string,
-        aggregationField: string,
-        fields: { columnName: string, prettyName: string }[]
-    ): string {
-        let prettyName = (fields.filter((field) => field.columnName === aggregationField)[0] || {} as any).prettyName;
-
-        /* eslint-disable dot-notation */
-        switch (aggregationOperator) {
-            case query['AVG']:
-                return 'Average' + (prettyName ? (' ' + prettyName) : '');
-            case query['COUNT']:
-                return 'Count' + (prettyName ? (' ' + prettyName) : '');
-            case query['MAX']:
-                return 'Maximum' + (prettyName ? (' ' + prettyName) : '');
-            case query['MIN']:
-                return 'Minimum' + (prettyName ? (' ' + prettyName) : '');
-            case query['SUM']:
-                return 'Sum' + (prettyName ? (' ' + prettyName) : '');
-        }
-        /* eslint-enable dot-notation */
-        return '';
-    }
-
-    private transformAggregationType(type: AggregationType): string {
-        /* eslint-disable dot-notation */
-        switch (type) {
-            case AggregationType.AVG:
-                return query['AVG'];
-            case AggregationType.COUNT:
-                return query['COUNT'];
-            case AggregationType.MAX:
-                return query['MAX'];
-            case AggregationType.MIN:
-                return query['MIN'];
-            case AggregationType.SUM:
-                return query['SUM'];
-        }
-        /* eslint-enable dot-notation */
-        return '';
-    }
-
-    private transformDateGroupOperatorToPrettyName(
-        groupOperator: string,
-        groupField: string,
-        fields: { columnName: string, prettyName: string }[]
-    ): string {
-        let prettyName = (fields.filter((field) => field.columnName === groupField)[0] || {} as any).prettyName;
-        switch (groupOperator) {
-            case 'minute':
-                return 'Minute' + (prettyName ? (' ' + prettyName) : '');
-            case 'hour':
-                return 'Hour' + (prettyName ? (' ' + prettyName) : '');
-            case 'dayOfMonth':
-                return 'Day' + (prettyName ? (' ' + prettyName) : '');
-            case 'month':
-                return 'Month' + (prettyName ? (' ' + prettyName) : '');
-            case 'year':
-                return 'Year' + (prettyName ? (' ' + prettyName) : '');
-        }
-        return '';
+    public runSearch(datastoreType: string, datastoreHost: string, searchObject: CoreSearch): RequestWrapper {
+        let connection: CoreConnection<CoreSearch> = this.connectionService.connect(datastoreType, datastoreHost);
+        return connection ? connection.runSearch(searchObject, null) : null;
     }
 
     /**
-     * Transforms the values in the filter clauses in the given search query payload using the given map of keys-to-values-to-labels.
+     * Transforms the values in the filter clauses in the given search object using the given map of keys-to-values-to-labels.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
-     * @return {CoreQueryWrapper}
+     * @return {CoreSearch}
      * @override
      */
-    public transformFilterClauseValues(queryPayload: CoreQueryWrapper,
-        keysToValuesToLabels: { [key: string]: { [value: string]: string } }): CoreQueryWrapper {
-        /* eslint-disable-next-line dot-notation */
-        let wherePredicate: query.WherePredicate = queryPayload.query['filter'].whereClause;
-
-        if (wherePredicate) {
-            this.transformWherePredicateNestedValues(wherePredicate, keysToValuesToLabels);
+    public transformFilterClauseValues(
+        searchObject: CoreSearch,
+        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
+    ): CoreSearch {
+        if (searchObject.whereClause) {
+            this._transformFilterClauseNestedValues(searchObject.whereClause, keysToValuesToLabels);
         }
 
-        return queryPayload;
+        return searchObject;
     }
 
     /**
-     * Transforms the given search query payload into an object to export.
+     * Transforms the given search object into an export object.
      *
      * @arg {{columnName:string,prettyName:string}[]} fields
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {string} uniqueName
      * @return {any}
      * @override
      */
-    public transformQueryPayloadToExport(
+    public transformSearchToExport(
         hostName: string,
         dataStoreType: string,
         fields: { columnName: string, prettyName: string }[],
-        queryPayload: CoreQueryWrapper,
+        searchObject: CoreSearch,
         uniqueName: string
     ): any {
         return {
             data: {
-                // IgnoreFilters: undefined,
-                // ignoredFilterIds: [],
                 fileName: uniqueName,
                 dataStoreType: dataStoreType,
                 hostName: hostName,
-                query: queryPayload.query,
-                fieldNamePrettyNamePairs: this.findExportFields(queryPayload.query, fields)
-                // SelectionOnly: undefined,
-                // type: 'query'
+                query: searchObject,
+                fieldNamePrettyNamePairs: this._findExportFields(searchObject, fields)
             }
         };
     }
 
     /**
-     * Transforms the values in the given search query results using the given map of keys-to-values-to-labels.
+     * Transforms the values in the given search results using the given map of keys-to-values-to-labels.
      *
      * @arg {{ data: any[] }} queryResults
      * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
      * @return {{ data: any[] }}
      * @override
      */
-    public transformQueryResultsValues(queryResults: { data: any[] },
-        keysToValuesToLabels: { [key: string]: { [value: string]: string } }): { data: any[] } {
+    public transformSearchResultValues(
+        results: { data: any[] },
+        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
+    ): { data: any[] } {
         let transformedResults = [];
-        for (let result of queryResults.data) {
+        for (let result of results.data) {
             let transformedResult = {};
             for (let key of Object.keys(result)) {
                 transformedResult[key] = result[key];
@@ -346,153 +292,347 @@ export class SearchService extends AbstractSearchService {
     }
 
     /**
-     * Transforms the values in the given WherePredicate using the given map of keys-to-values-to-labels.
+     * Adds an aggregation to the given search object.
      *
-     * @arg {query.WherePredicate} wherePredicate
-     * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
-     */
-    private transformWherePredicateNestedValues(
-        wherePredicate: query.WherePredicate,
-        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
-    ): void {
-        switch (wherePredicate.type) {
-            case 'and':
-            case 'or':
-                for (let nestedWherePredicate of wherePredicate.whereClauses) {
-                    this.transformWherePredicateNestedValues(nestedWherePredicate, keysToValuesToLabels);
-                }
-                break;
-            case 'where':
-                this.transformWherePredicateValues(wherePredicate, keysToValuesToLabels);
-                break;
-        }
-    }
-
-    private transformWherePredicateValues(
-        wherePredicate: query.WherePredicate,
-        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
-    ): void {
-        let keys = Object.keys(keysToValuesToLabels);
-        let key = wherePredicate.lhs;
-        if (keys.includes(key)) {
-            let valuesToLabels = keysToValuesToLabels[key];
-            let values = Object.keys(valuesToLabels);
-            for (let value of values) {
-                if (valuesToLabels[value] === wherePredicate.rhs) {
-                    wherePredicate.rhs = value;
-                }
-            }
-        }
-    }
-
-    /**
-     * Sets the aggregation data on the given search query payload.
-     *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {AggregationType} type
-     * @arg {string} name
-     * @arg {string} field
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @arg {string} label
+     * @arg {AggregationType} operation
      * @return {AbstractSearchService}
      * @override
      */
-    public updateAggregation(queryPayload: CoreQueryWrapper, type: AggregationType, name: string, field: string): AbstractSearchService {
-        queryPayload.query.aggregate(this.transformAggregationType(type), field, name);
-        return this;
-    }
-
-    // TODO THOR-950 Temp function
-    /**
-     * Sets the fields data in the given search query payload.
-     *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {string[]} fields
-     * @return {AbstractSearchService}
-     * @override
-     */
-    public updateFields(queryPayload: CoreQueryWrapper, fields: string[]): AbstractSearchService {
-        let existingFields: string[] = (queryPayload.query as any).fields;
-        queryPayload.query.withFields((existingFields.length === 1 && existingFields[0] === '*') ? fields : existingFields.concat(fields));
+    public withAggregation(searchObject: CoreSearch, field: FieldKey, label: string, operation: AggregationType): AbstractSearchService {
+        searchObject.aggregateClauses.push(new CoreAggregateByFieldClause(this._transformFieldKeyToFieldClause(field), label,
+            this._transformAggregationOperation(operation)));
         return this;
     }
 
     /**
-     * Sets the fields data in the given search query payload to match all fields.
+     * Adds a field to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @override
      */
-    public updateFieldsToMatchAll(queryPayload: CoreQueryWrapper): AbstractSearchService {
-        queryPayload.query.withFields('*');
+    public withField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService {
+        searchObject.selectClause.fieldClauses.push(this._transformFieldKeyToFieldClause(field));
         return this;
     }
 
     /**
-     * Sets the filter clause data on the given search query payload.
+     * Sets the fields in the given search object to match all fields.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {CoreWhereWrapper} filterClause
+     * @arg {CoreSearch} searchObject
      * @return {AbstractSearchService}
      * @override
      */
-    public updateFilter(queryPayload: CoreQueryWrapper, filterClause: CoreWhereWrapper): AbstractSearchService {
-        if (filterClause) {
-            queryPayload.query.where(filterClause.where);
-        }
+    public withAllFields(searchObject: CoreSearch): AbstractSearchService {
+        searchObject.selectClause.fieldClauses = [];
         return this;
     }
 
     /**
-     * Sets the group data on the given search query payload.
+     * Sets the filter clause in the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {CoreGroupWrapper[]} groupClauses
+     * @arg {CoreSearch} searchObject
+     * @arg {CoreFilterClause} filterObject
      * @return {AbstractSearchService}
      * @override
      */
-    public updateGroups(queryPayload: CoreQueryWrapper, groupClauses: CoreGroupWrapper[]): AbstractSearchService {
-        queryPayload.query.groupBy(groupClauses.map((groupClause) => groupClause.group));
+    public withFilter(searchObject: CoreSearch, filterObject: CoreFilterClause): AbstractSearchService {
+        searchObject.whereClause = filterObject;
         return this;
     }
 
     /**
-     * Sets the limit data on the given search query payload.
+     * Adds a group aggregation to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withGroupAggregation(searchObject: CoreSearch, group: string, label: string): AbstractSearchService {
+        searchObject.aggregateClauses.push(new CoreAggregateByGroupCountClause(group, label));
+        return this;
+    }
+
+    /**
+     * Adds a date group to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @arg {TimeInterval} interval
+     * @arg {string} [label]
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withGroupDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService {
+        searchObject.groupByClauses.push(new CoreGroupByOperationClause(this._transformFieldKeyToFieldClause(field),
+            label || ('_' + interval), '' + interval));
+        return this;
+    }
+
+    /**
+     * Adds a field group to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withGroupField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService {
+        searchObject.groupByClauses.push(new CoreGroupByFieldClause(this._transformFieldKeyToFieldClause(field)));
+        return this;
+    }
+
+    /**
+     * Sets the limit on the given search object.
+     *
+     * @arg {CoreSearch} searchObject
      * @arg {number} limit
      * @return {AbstractSearchService}
      * @override
      */
-    public updateLimit(queryPayload: CoreQueryWrapper, limit: number): AbstractSearchService {
-        queryPayload.query.limit(limit);
+    public withLimit(searchObject: CoreSearch, limit: number): AbstractSearchService {
+        searchObject.limitClause = {
+            limit
+        };
         return this;
     }
 
     /**
-     * Sets the offset data on the given search query payload.
+     * Sets the offset on the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
+     * @arg {CoreSearch} searchObject
      * @arg {number} offset
      * @return {AbstractSearchService}
      * @override
      */
-    public updateOffset(queryPayload: CoreQueryWrapper, offset: number): AbstractSearchService {
-        queryPayload.query.offset(offset);
+    public withOffset(searchObject: CoreSearch, offset: number): AbstractSearchService {
+        searchObject.offsetClause = {
+            offset
+        };
         return this;
     }
 
     /**
-     * Sets the sort data on the given search query payload.
+     * Adds an order field to the given search object.
      *
-     * @arg {CoreQueryWrapper} queryPayload
-     * @arg {string} field
+     * @arg {CoreSearch} searchObject
+     * @arg {FieldKey} field
      * @arg {SortOrder} [order=SortOrder.ASCENDING]
      * @return {AbstractSearchService}
      * @override
      */
-    public updateSort(queryPayload: CoreQueryWrapper, field: string, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
-        /* eslint-disable-next-line dot-notation */
-        queryPayload.query.sortBy(field, order === SortOrder.ASCENDING ? query['ASCENDING'] : query['DESCENDING']);
+    public withOrderField(searchObject: CoreSearch, field: FieldKey, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
+        searchObject.orderByClauses.push(new CoreOrderByFieldClause(this._transformFieldKeyToFieldClause(field),
+            this._transformSortOrder(order)));
         return this;
+    }
+
+    /**
+     * Adds an order group to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {SortOrder} [order=SortOrder.ASCENDING]
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withOrderGroup(searchObject: CoreSearch, group: string, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
+        searchObject.orderByClauses.push(new CoreOrderByGroupClause(group, this._transformSortOrder(order)));
+        return this;
+    }
+
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withTotalCountAggregation(searchObject: CoreSearch, label: string): AbstractSearchService {
+        searchObject.aggregateClauses.push(new CoreAggregateByTotalCountClause(label));
+        return this;
+    }
+
+    /**
+     * Finds and returns the export fields from the fields, groups, and aggregates in the given export query object.
+     * Assumes activeFields does not have duplicates.
+     *
+     * @arg {CoreSearch} exportQuery
+     * @arg {{columnName:string,prettyName:string}[]} activeFields
+     * @return {ExportField[]}
+     * @private
+     */
+    private _findExportFields(exportQuery: CoreSearch, activeFields: { columnName: string, prettyName: string }[]): ExportField[] {
+        // Use all activeFields if the exportQuery fields are a wildcard.
+        let isWildcard = (!exportQuery.selectClause.fieldClauses.length);
+
+        // Save each activeField that is a field from the exportQuery in the export fields.
+        let queryFields: ExportField[] =
+            (
+                isWildcard ?
+                    activeFields :
+                    activeFields.filter((activeField) =>
+                        exportQuery.selectClause.fieldClauses.some((exportFieldClause) =>
+                            exportFieldClause.field === activeField.columnName))
+            )
+                .map((activeField) => ({
+                    query: activeField.columnName,
+                    pretty: activeField.prettyName
+                } as ExportField));
+
+        // Save each group function from the exportQuery in the export fields.
+        let groupFields: ExportField[] = exportQuery.groupByClauses.filter((group) => group.type === 'operation').map((input) => {
+            const group = input as CoreGroupByOperationClause;
+            // Remove the field of each group operation from the queryFields.
+            queryFields = queryFields.filter((field) => field.query !== group.fieldClause.field);
+            return {
+                query: group.label,
+                pretty: this._transformDateGroupOperationToPrettyName(group.operation, this._transformFieldToPrettyName(
+                    group.fieldClause.field, activeFields
+                ))
+            } as ExportField;
+        });
+
+        // Save each aggregation field from the exportQuery in the export fields.
+        let aggregationFields: ExportField[] = exportQuery.aggregateClauses.map((input) => {
+            let queryLabel = '';
+            let operation = '';
+            let fieldOrGroup = '';
+            // Remove the field of each non-COUNT aggregation from the queryFields.
+            if (input.type === 'field') {
+                const aggregate = input as CoreAggregateByFieldClause;
+                if (aggregate.operation !== 'count') {
+                    queryFields = queryFields.filter((field) => field.query !== aggregate.fieldClause.field);
+                }
+                queryLabel = aggregate.label;
+                operation = aggregate.operation;
+                fieldOrGroup = this._transformFieldToPrettyName(aggregate.fieldClause.field, activeFields);
+            }
+            if (input.type === 'group') {
+                const aggregate = input as CoreAggregateByGroupCountClause;
+                queryLabel = aggregate.label;
+                operation = 'count';
+                fieldOrGroup = aggregate.group;
+            }
+            if (input.type === 'total') {
+                const aggregate = input as CoreAggregateByTotalCountClause;
+                queryLabel = aggregate.label;
+                operation = 'count';
+                fieldOrGroup = '*';
+            }
+            return {
+                query: queryLabel,
+                pretty: this._transformAggregationOperationToPrettyName(operation, fieldOrGroup)
+            } as ExportField;
+        });
+
+        return queryFields.concat(groupFields).concat(aggregationFields);
+    }
+
+    private _transformAggregationOperationToPrettyName(aggregationOperation: string, fieldOrGroup: string) {
+        switch (aggregationOperation) {
+            case 'avg':
+                return 'Average' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'count':
+                return 'Count' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'max':
+                return 'Maximum' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'min':
+                return 'Minimum' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'sum':
+                return 'Sum' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+        }
+        return '';
+    }
+
+    private _transformAggregationOperation(type: AggregationType): string {
+        switch (type) {
+            case AggregationType.AVG:
+                return 'avg';
+            case AggregationType.COUNT:
+                return 'count';
+            case AggregationType.MAX:
+                return 'max';
+            case AggregationType.MIN:
+                return 'min';
+            case AggregationType.SUM:
+                return 'sum';
+        }
+        return '';
+    }
+
+    private _transformDateGroupOperationToPrettyName(groupOperation: string, fieldOrGroup: string): string {
+        switch (groupOperation) {
+            case 'minute':
+                return 'Minute' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'hour':
+                return 'Hour' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'dayOfMonth':
+                return 'Day' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'month':
+                return 'Month' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+            case 'year':
+                return 'Year' + (fieldOrGroup ? (' ' + fieldOrGroup) : '');
+        }
+        return '';
+    }
+
+    private _transformFieldKeyToFieldClause(field: FieldKey): CoreFieldClause {
+        return new CoreFieldClause(field.database, field.table, field.field);
+    }
+
+    private _transformFieldToPrettyName(inputField: string, fields: { columnName: string, prettyName: string }[]): string {
+        return (fields.filter((field) => field.columnName === inputField)[0] || {} as any).prettyName;
+    }
+
+    private _transformSortOrder(order: SortOrder): number {
+        return (order === SortOrder.ASCENDING ? 1 : -1);
+    }
+
+    /**
+     * Transforms the values in the given FilterClause using the given map of keys-to-values-to-labels.
+     *
+     * @arg {CoreFilterClause} whereClause
+     * @arg {{ [key: string]: { [value: string]: string } }} keysToValuesToLabels
+     */
+    private _transformFilterClauseNestedValues(
+        whereClause: CoreFilterClause,
+        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
+    ): void {
+        switch (whereClause.type) {
+            case 'and':
+            case 'or':
+                for (let nestedFilterClause of (whereClause as CoreCompoundFilterClause).whereClauses) {
+                    this._transformFilterClauseNestedValues(nestedFilterClause, keysToValuesToLabels);
+                }
+                break;
+            case 'where':
+                this._transformFilterClauseValues((whereClause as CoreSingularFilterClause), keysToValuesToLabels);
+                break;
+        }
+    }
+
+    private _transformFilterClauseValues(
+        whereClause: CoreSingularFilterClause,
+        keysToValuesToLabels: { [key: string]: { [value: string]: string } }
+    ): void {
+        let keys = Object.keys(keysToValuesToLabels);
+        let key = whereClause.lhs.field;
+        if (keys.includes(key)) {
+            let valuesToLabels = keysToValuesToLabels[key];
+            let values = Object.keys(valuesToLabels);
+            for (let value of values) {
+                if (valuesToLabels[value] === whereClause.rhs) {
+                    whereClause.rhs = value;
+                }
+            }
+        }
     }
 }

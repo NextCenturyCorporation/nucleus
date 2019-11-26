@@ -372,10 +372,8 @@ export class DatasetUtil {
         return Promise.all(Object.values(datastore.databases).reduce((promises: Promise<string>[], database: DatabaseConfig) =>
             promises.concat(Object.values(database.tables)
                 .filter((table: TableConfig) => (previouslyFinishedUpdates[database.name] || []).indexOf(table.name) < 0)
-                .map((table: TableConfig) => DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, datastore, database, table))
-            ),
-            [] as Promise<string>[]
-        )).then((tableKeys: string[]) => {
+                .map((table: TableConfig) => DatasetUtil.updateFieldNamesAndTypesFromDataServer(connection, datastore, database, table))),
+        [] as Promise<string>[])).then((tableKeys: string[]) => {
             if (onFinish) {
                 onFinish(tableKeys.filter((tableKey) => !!tableKey));
             }
