@@ -66,12 +66,12 @@ var AbstractSearchService = /** @class */ (function () {
         return null;
     };
     /**
-     * Returns an aggregation name from the given descriptor.
+     * Returns an aggregation label from the given descriptor.
      *
      * @arg {string} [descriptor]
      * @return {string}
      */
-    AbstractSearchService.prototype.getAggregationName = function (descriptor) {
+    AbstractSearchService.prototype.getAggregationLabel = function (descriptor) {
         return descriptor ? ('_' + descriptor) : '_aggregation';
     };
     return AbstractSearchService;

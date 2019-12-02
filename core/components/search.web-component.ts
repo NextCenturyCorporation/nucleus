@@ -236,7 +236,7 @@ export class NextCenturySearch extends NextCenturyElement {
             if (aggregation.fieldKey && aggregation.fieldKey.field) {
                 this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
             } else if (aggregation.group) {
-                this._searchService.withGroupAggregation(searchObject, aggregation.group, aggregation.name);
+                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.name);
             }
         }
 
@@ -244,34 +244,34 @@ export class NextCenturySearch extends NextCenturyElement {
             for (const group of groups) {
                 switch (group.type) {
                     case (TimeInterval.SECOND as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.SECOND);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.SECOND);
                         // Falls through
                     case (TimeInterval.MINUTE as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.MINUTE);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.MINUTE);
                         // Falls through
                     case (TimeInterval.HOUR as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.HOUR);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.HOUR);
                         // Falls through
                     case (TimeInterval.DAY_OF_MONTH as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.DAY_OF_MONTH);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.DAY_OF_MONTH);
                         // Falls through
                     case (TimeInterval.MONTH as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.MONTH);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.MONTH);
                         // Falls through
                     case (TimeInterval.YEAR as string):
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, TimeInterval.YEAR);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.YEAR);
                         break;
                     default:
-                        this._searchService.withGroupField(searchObject, group.fieldKey);
+                        this._searchService.withGroup(searchObject, group.fieldKey);
                 }
             }
         }
 
         const sortOrder: SortOrder = (this.getAttribute('sort-order') || SortOrder.DESCENDING) as SortOrder;
         if (sortAggregation) {
-            this._searchService.withOrderGroup(searchObject, sortAggregation, sortOrder);
+            this._searchService.withOrderByOperation(searchObject, sortAggregation, sortOrder);
         } else if (sortFieldKey && sortFieldKey.field) {
-            this._searchService.withOrderField(searchObject, sortFieldKey, sortOrder);
+            this._searchService.withOrder(searchObject, sortFieldKey, sortOrder);
         }
 
         return searchObject;

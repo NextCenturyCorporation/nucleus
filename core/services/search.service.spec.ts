@@ -573,11 +573,11 @@ describe('Service: Search', () => {
         }];
 
         let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MINUTE);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.HOUR);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.DAY_OF_MONTH);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MONTH);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.YEAR);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.MINUTE);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.HOUR);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.DAY_OF_MONTH);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.MONTH);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.YEAR);
 
         expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
             data: {
@@ -661,7 +661,10 @@ describe('Service: Search', () => {
             prettyName: 'Pretty Field 5'
         }];
 
-        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2', 'testField3', 'testField4',
+        let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1',
+            'testField2',
+            'testField3',
+            'testField4',
             'testField5']);
         service.withAggregation(queryInput, fieldKey1, '_avg', AggregationType.AVG);
         service.withAggregation(queryInput, fieldKey2, '_max', AggregationType.MAX);
@@ -708,8 +711,8 @@ describe('Service: Search', () => {
         }];
 
         let queryInput = new CoreSearch('testDatabase1', 'testTable1', ['testField1', 'testField2']);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.MONTH);
-        service.withGroupDate(queryInput, fieldKey2, TimeInterval.YEAR);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.MONTH);
+        service.withGroupByDate(queryInput, fieldKey2, TimeInterval.YEAR);
         service.withAggregation(queryInput, fieldKey1, '_count', AggregationType.COUNT);
 
         expect(service.transformSearchToExport('testHost', 'testStore', fields, queryInput, 'Test Name')).toEqual({
@@ -1096,9 +1099,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupAggregation does update given search object', () => {
+    it('withAggregationByGroupCount does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupAggregation(actual, 'groupLabel', '_count');
+        service.withAggregationByGroupCount(actual, 'groupLabel', '_count');
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1120,10 +1123,10 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupAggregation does not remove previous aggregations', () => {
+    it('withAggregationByGroupCount does not remove previous aggregations', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
         service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
-        service.withGroupAggregation(actual, 'groupLabel', '_count');
+        service.withAggregationByGroupCount(actual, 'groupLabel', '_count');
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1154,9 +1157,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on SECOND does update given search object', () => {
+    it('withGroupByDate on SECOND does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.SECOND);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.SECOND);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1183,9 +1186,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on MINUTE does update given search object', () => {
+    it('withGroupByDate on MINUTE does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.MINUTE);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.MINUTE);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1212,9 +1215,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on HOUR does update given search object', () => {
+    it('withGroupByDate on HOUR does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.HOUR);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.HOUR);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1241,9 +1244,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on DAY_OF_MONTH does update given search object', () => {
+    it('withGroupByDate on DAY_OF_MONTH does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.DAY_OF_MONTH);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.DAY_OF_MONTH);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1270,9 +1273,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on MONTH does update given search object', () => {
+    it('withGroupByDate on MONTH does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.MONTH);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1299,9 +1302,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate on YEAR does update given search object', () => {
+    it('withGroupByDate on YEAR does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.YEAR);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1328,11 +1331,11 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupDate does not remove previous groups', () => {
+    it('withGroupByDate does not remove previous groups', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupField(actual, fieldKey1);
-        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
-        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
+        service.withGroup(actual, fieldKey1);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.MONTH);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.YEAR);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1375,9 +1378,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupField does update given search object', () => {
+    it('withGroup does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupField(actual, fieldKey1);
+        service.withGroup(actual, fieldKey1);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1402,11 +1405,11 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withGroupField does not remove previous groups', () => {
+    it('withGroup does not remove previous groups', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withGroupDate(actual, fieldKey1, TimeInterval.MONTH);
-        service.withGroupDate(actual, fieldKey1, TimeInterval.YEAR);
-        service.withGroupField(actual, fieldKey1);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.MONTH);
+        service.withGroupByDate(actual, fieldKey1, TimeInterval.YEAR);
+        service.withGroup(actual, fieldKey1);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1489,9 +1492,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderField sort ascending does update given search object', () => {
+    it('withOrder sort ascending does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
+        service.withOrder(actual, fieldKey1, SortOrder.ASCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1517,9 +1520,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderField sort descending does update given search object', () => {
+    it('withOrder sort descending does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderField(actual, fieldKey1, SortOrder.DESCENDING);
+        service.withOrder(actual, fieldKey1, SortOrder.DESCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1545,10 +1548,10 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderField does not remove previous orders', () => {
+    it('withOrder does not remove previous orders', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
-        service.withOrderField(actual, fieldKey2, SortOrder.DESCENDING);
+        service.withOrder(actual, fieldKey1, SortOrder.ASCENDING);
+        service.withOrder(actual, fieldKey2, SortOrder.DESCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1582,9 +1585,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderGroup sort ascending does update given search object', () => {
+    it('withOrderByOperation sort ascending does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderGroup(actual, 'groupLabel', SortOrder.ASCENDING);
+        service.withOrderByOperation(actual, 'operationLabel', SortOrder.ASCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1595,8 +1598,8 @@ describe('Service: Search', () => {
             aggregateClauses: [],
             groupByClauses: [],
             orderByClauses: [{
-                type: 'group',
-                group: 'groupLabel',
+                type: 'operation',
+                operation: 'operationLabel',
                 order: 1
             }],
             limitClause: null,
@@ -1606,9 +1609,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderGroup sort descending does update given search object', () => {
+    it('withOrderByOperation sort descending does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderGroup(actual, 'groupLabel', SortOrder.DESCENDING);
+        service.withOrderByOperation(actual, 'operationLabel', SortOrder.DESCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1619,8 +1622,8 @@ describe('Service: Search', () => {
             aggregateClauses: [],
             groupByClauses: [],
             orderByClauses: [{
-                type: 'group',
-                group: 'groupLabel',
+                type: 'operation',
+                operation: 'operationLabel',
                 order: -1
             }],
             limitClause: null,
@@ -1630,10 +1633,10 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withOrderGroup does not remove previous orders', () => {
+    it('withOrderByOperation does not remove previous orders', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withOrderField(actual, fieldKey1, SortOrder.ASCENDING);
-        service.withOrderGroup(actual, 'groupLabel', SortOrder.DESCENDING);
+        service.withOrder(actual, fieldKey1, SortOrder.ASCENDING);
+        service.withOrderByOperation(actual, 'operationLabel', SortOrder.DESCENDING);
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1652,8 +1655,8 @@ describe('Service: Search', () => {
                 },
                 order: 1
             }, {
-                type: 'group',
-                group: 'groupLabel',
+                type: 'operation',
+                operation: 'operationLabel',
                 order: -1
             }],
             limitClause: null,
@@ -1663,9 +1666,9 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withTotalCountAggregation does update given search object', () => {
+    it('withAggregationByTotalCount does update given search object', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
-        service.withTotalCountAggregation(actual, '_count');
+        service.withAggregationByTotalCount(actual, '_count');
         let expected = {
             selectClause: {
                 database: 'testDatabase1',
@@ -1686,10 +1689,10 @@ describe('Service: Search', () => {
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
     });
 
-    it('withTotalCountAggregation does not remove previous aggregations', () => {
+    it('withAggregationByTotalCount does not remove previous aggregations', () => {
         let actual = new CoreSearch('testDatabase1', 'testTable1');
         service.withAggregation(actual, fieldKey1, '_avg', AggregationType.AVG);
-        service.withTotalCountAggregation(actual, '_count');
+        service.withAggregationByTotalCount(actual, '_count');
         let expected = {
             selectClause: {
                 database: 'testDatabase1',

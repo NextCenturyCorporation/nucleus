@@ -164,6 +164,25 @@ export declare class SearchService extends AbstractSearchService {
      */
     withAggregation(searchObject: CoreSearch, field: FieldKey, label: string, operation: AggregationType): AbstractSearchService;
     /**
+     * Adds a group aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withAggregationByGroupCount(searchObject: CoreSearch, group: string, label: string): AbstractSearchService;
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withAggregationByTotalCount(searchObject: CoreSearch, label: string): AbstractSearchService;
+    /**
      * Adds a field to the given search object.
      *
      * @arg {CoreSearch} searchObject
@@ -190,15 +209,14 @@ export declare class SearchService extends AbstractSearchService {
      */
     withFilter(searchObject: CoreSearch, filterObject: CoreFilterClause): AbstractSearchService;
     /**
-     * Adds a group aggregation to the given search object.
+     * Adds a field group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
-     * @arg {string} label
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @override
      */
-    withGroupAggregation(searchObject: CoreSearch, group: string, label: string): AbstractSearchService;
+    withGroup(searchObject: CoreSearch, field: FieldKey): AbstractSearchService;
     /**
      * Adds a date group to the given search object.
      *
@@ -209,16 +227,7 @@ export declare class SearchService extends AbstractSearchService {
      * @return {AbstractSearchService}
      * @override
      */
-    withGroupDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService;
-    /**
-     * Adds a field group to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {FieldKey} field
-     * @return {AbstractSearchService}
-     * @override
-     */
-    withGroupField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService;
+    withGroupByDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService;
     /**
      * Sets the limit on the given search object.
      *
@@ -246,26 +255,17 @@ export declare class SearchService extends AbstractSearchService {
      * @return {AbstractSearchService}
      * @override
      */
-    withOrderField(searchObject: CoreSearch, field: FieldKey, order?: SortOrder): AbstractSearchService;
+    withOrder(searchObject: CoreSearch, field: FieldKey, order?: SortOrder): AbstractSearchService;
     /**
      * Adds an order group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
+     * @arg {string} operation
      * @arg {SortOrder} [order=SortOrder.ASCENDING]
      * @return {AbstractSearchService}
      * @override
      */
-    withOrderGroup(searchObject: CoreSearch, group: string, order?: SortOrder): AbstractSearchService;
-    /**
-     * Adds a total count aggregation to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {string} label
-     * @return {AbstractSearchService}
-     * @override
-     */
-    withTotalCountAggregation(searchObject: CoreSearch, label: string): AbstractSearchService;
+    withOrderByOperation(searchObject: CoreSearch, operation: string, order?: SortOrder): AbstractSearchService;
     /**
      * Finds and returns the export fields from the fields, groups, and aggregates in the given export query object.
      * Assumes activeFields does not have duplicates.

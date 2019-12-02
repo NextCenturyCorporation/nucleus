@@ -987,8 +987,8 @@ describe('Search Component init should', () => {
                 aggregateClauses: [],
                 groupByClauses: [],
                 orderByClauses: [{
-                    type: 'group',
-                    group: '_counts',
+                    type: 'operation',
+                    operation: '_counts',
                     order: 1
                 }],
                 limitClause: { limit: 10 },

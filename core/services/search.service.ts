@@ -98,9 +98,9 @@ class CoreOrderByFieldClause extends CoreOrderByClause {
     }
 }
 
-class CoreOrderByGroupClause extends CoreOrderByClause {
-    constructor(public group: string, public order: number) {
-        super('group');
+class CoreOrderByOperationClause extends CoreOrderByClause {
+    constructor(public operation: string, public order: number) {
+        super('operation');
     }
 }
 
@@ -308,6 +308,33 @@ export class SearchService extends AbstractSearchService {
     }
 
     /**
+     * Adds a group aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withAggregationByGroupCount(searchObject: CoreSearch, group: string, label: string): AbstractSearchService {
+        searchObject.aggregateClauses.push(new CoreAggregateByGroupCountClause(group, label));
+        return this;
+    }
+
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    public withAggregationByTotalCount(searchObject: CoreSearch, label: string): AbstractSearchService {
+        searchObject.aggregateClauses.push(new CoreAggregateByTotalCountClause(label));
+        return this;
+    }
+
+    /**
      * Adds a field to the given search object.
      *
      * @arg {CoreSearch} searchObject
@@ -346,16 +373,15 @@ export class SearchService extends AbstractSearchService {
     }
 
     /**
-     * Adds a group aggregation to the given search object.
+     * Adds a field group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
-     * @arg {string} label
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @override
      */
-    public withGroupAggregation(searchObject: CoreSearch, group: string, label: string): AbstractSearchService {
-        searchObject.aggregateClauses.push(new CoreAggregateByGroupCountClause(group, label));
+    public withGroup(searchObject: CoreSearch, field: FieldKey): AbstractSearchService {
+        searchObject.groupByClauses.push(new CoreGroupByFieldClause(this._transformFieldKeyToFieldClause(field)));
         return this;
     }
 
@@ -369,22 +395,9 @@ export class SearchService extends AbstractSearchService {
      * @return {AbstractSearchService}
      * @override
      */
-    public withGroupDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService {
+    public withGroupByDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService {
         searchObject.groupByClauses.push(new CoreGroupByOperationClause(this._transformFieldKeyToFieldClause(field),
             label || ('_' + interval), '' + interval));
-        return this;
-    }
-
-    /**
-     * Adds a field group to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {FieldKey} field
-     * @return {AbstractSearchService}
-     * @override
-     */
-    public withGroupField(searchObject: CoreSearch, field: FieldKey): AbstractSearchService {
-        searchObject.groupByClauses.push(new CoreGroupByFieldClause(this._transformFieldKeyToFieldClause(field)));
         return this;
     }
 
@@ -427,7 +440,7 @@ export class SearchService extends AbstractSearchService {
      * @return {AbstractSearchService}
      * @override
      */
-    public withOrderField(searchObject: CoreSearch, field: FieldKey, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
+    public withOrder(searchObject: CoreSearch, field: FieldKey, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
         searchObject.orderByClauses.push(new CoreOrderByFieldClause(this._transformFieldKeyToFieldClause(field),
             this._transformSortOrder(order)));
         return this;
@@ -437,26 +450,17 @@ export class SearchService extends AbstractSearchService {
      * Adds an order group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
+     * @arg {string} operation
      * @arg {SortOrder} [order=SortOrder.ASCENDING]
      * @return {AbstractSearchService}
      * @override
      */
-    public withOrderGroup(searchObject: CoreSearch, group: string, order: SortOrder = SortOrder.ASCENDING): AbstractSearchService {
-        searchObject.orderByClauses.push(new CoreOrderByGroupClause(group, this._transformSortOrder(order)));
-        return this;
-    }
-
-    /**
-     * Adds a total count aggregation to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {string} label
-     * @return {AbstractSearchService}
-     * @override
-     */
-    public withTotalCountAggregation(searchObject: CoreSearch, label: string): AbstractSearchService {
-        searchObject.aggregateClauses.push(new CoreAggregateByTotalCountClause(label));
+    public withOrderByOperation(
+        searchObject: CoreSearch,
+        operation: string,
+        order: SortOrder = SortOrder.ASCENDING
+    ): AbstractSearchService {
+        searchObject.orderByClauses.push(new CoreOrderByOperationClause(operation, this._transformSortOrder(order)));
         return this;
     }
 

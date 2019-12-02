@@ -118,12 +118,12 @@ export abstract class AbstractSearchService {
     }
 
     /**
-     * Returns an aggregation name from the given descriptor.
+     * Returns an aggregation label from the given descriptor.
      *
      * @arg {string} [descriptor]
      * @return {string}
      */
-    public getAggregationName(descriptor?: string): string {
+    public getAggregationLabel(descriptor?: string): string {
         return descriptor ? ('_' + descriptor) : '_aggregation';
     }
 
@@ -199,6 +199,27 @@ export abstract class AbstractSearchService {
     ): AbstractSearchService;
 
     /**
+     * Adds a group aggregation to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} group
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    public abstract withAggregationByGroupCount(searchObject: SearchObject, group: string, label: string): AbstractSearchService;
+
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    public abstract withAggregationByTotalCount(searchObject: SearchObject, label: string): AbstractSearchService;
+
+    /**
      * Adds a field to the given search object.
      *
      * @arg {SearchObject} searchObject
@@ -228,15 +249,14 @@ export abstract class AbstractSearchService {
     public abstract withFilter(searchObject: SearchObject, filterObject: FilterClause): AbstractSearchService;
 
     /**
-     * Adds a group aggregation to the given search object.
+     * Adds a field group to the given search object.
      *
      * @arg {SearchObject} searchObject
-     * @arg {string} group
-     * @arg {string} label
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @abstract
      */
-    public abstract withGroupAggregation(searchObject: SearchObject, group: string, label: string): AbstractSearchService;
+    public abstract withGroup(searchObject: SearchObject, field: FieldKey): AbstractSearchService;
 
     /**
      * Adds a date group to the given search object.
@@ -248,22 +268,12 @@ export abstract class AbstractSearchService {
      * @return {AbstractSearchService}
      * @abstract
      */
-    public abstract withGroupDate(
+    public abstract withGroupByDate(
         searchObject: SearchObject,
         field: FieldKey,
         interval: TimeInterval,
         label?: string
     ): AbstractSearchService;
-
-    /**
-     * Adds a field group to the given search object.
-     *
-     * @arg {SearchObject} searchObject
-     * @arg {FieldKey} field
-     * @return {AbstractSearchService}
-     * @abstract
-     */
-    public abstract withGroupField(searchObject: SearchObject, field: FieldKey): AbstractSearchService;
 
     /**
      * Sets the limit on the given search object.
@@ -294,7 +304,7 @@ export abstract class AbstractSearchService {
      * @return {AbstractSearchService}
      * @abstract
      */
-    public abstract withOrderField(searchObject: SearchObject, field: FieldKey, order?: SortOrder): AbstractSearchService;
+    public abstract withOrder(searchObject: SearchObject, field: FieldKey, order?: SortOrder): AbstractSearchService;
 
     /**
      * Adds an order group to the given search object.
@@ -305,15 +315,5 @@ export abstract class AbstractSearchService {
      * @return {AbstractSearchService}
      * @abstract
      */
-    public abstract withOrderGroup(searchObject: SearchObject, group: string, order?: SortOrder): AbstractSearchService;
-
-    /**
-     * Adds a total count aggregation to the given search object.
-     *
-     * @arg {SearchObject} searchObject
-     * @arg {string} label
-     * @return {AbstractSearchService}
-     * @abstract
-     */
-    public abstract withTotalCountAggregation(searchObject: SearchObject, label: string): AbstractSearchService;
+    public abstract withOrderByOperation(searchObject: SearchObject, group: string, order?: SortOrder): AbstractSearchService;
 }

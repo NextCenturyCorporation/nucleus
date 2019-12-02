@@ -207,7 +207,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
                 this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
             }
             else if (aggregation.group) {
-                this._searchService.withGroupAggregation(searchObject, aggregation.group, aggregation.name);
+                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.name);
             }
         }
         if (groups.length) {
@@ -215,34 +215,34 @@ var NextCenturySearch = /** @class */ (function (_super) {
                 var group = groups_1[_a];
                 switch (group.type) {
                     case config_option_1.TimeInterval.SECOND:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.SECOND);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.SECOND);
                     // Falls through
                     case config_option_1.TimeInterval.MINUTE:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MINUTE);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MINUTE);
                     // Falls through
                     case config_option_1.TimeInterval.HOUR:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.HOUR);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.HOUR);
                     // Falls through
                     case config_option_1.TimeInterval.DAY_OF_MONTH:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.DAY_OF_MONTH);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.DAY_OF_MONTH);
                     // Falls through
                     case config_option_1.TimeInterval.MONTH:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MONTH);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.MONTH);
                     // Falls through
                     case config_option_1.TimeInterval.YEAR:
-                        this._searchService.withGroupDate(searchObject, group.fieldKey, config_option_1.TimeInterval.YEAR);
+                        this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.YEAR);
                         break;
                     default:
-                        this._searchService.withGroupField(searchObject, group.fieldKey);
+                        this._searchService.withGroup(searchObject, group.fieldKey);
                 }
             }
         }
         var sortOrder = (this.getAttribute('sort-order') || config_option_1.SortOrder.DESCENDING);
         if (sortAggregation) {
-            this._searchService.withOrderGroup(searchObject, sortAggregation, sortOrder);
+            this._searchService.withOrderByOperation(searchObject, sortAggregation, sortOrder);
         }
         else if (sortFieldKey && sortFieldKey.field) {
-            this._searchService.withOrderField(searchObject, sortFieldKey, sortOrder);
+            this._searchService.withOrder(searchObject, sortFieldKey, sortOrder);
         }
         return searchObject;
     };

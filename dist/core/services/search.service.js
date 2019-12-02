@@ -156,15 +156,15 @@ var CoreOrderByFieldClause = /** @class */ (function (_super) {
     }
     return CoreOrderByFieldClause;
 }(CoreOrderByClause));
-var CoreOrderByGroupClause = /** @class */ (function (_super) {
-    __extends(CoreOrderByGroupClause, _super);
-    function CoreOrderByGroupClause(group, order) {
-        var _this = _super.call(this, 'group') || this;
-        _this.group = group;
+var CoreOrderByOperationClause = /** @class */ (function (_super) {
+    __extends(CoreOrderByOperationClause, _super);
+    function CoreOrderByOperationClause(operation, order) {
+        var _this = _super.call(this, 'operation') || this;
+        _this.operation = operation;
         _this.order = order;
         return _this;
     }
-    return CoreOrderByGroupClause;
+    return CoreOrderByOperationClause;
 }(CoreOrderByClause));
 var CoreSearch = /** @class */ (function () {
     function CoreSearch(database, table, fields) {
@@ -349,6 +349,31 @@ var SearchService = /** @class */ (function (_super) {
         return this;
     };
     /**
+     * Adds a group aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} group
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    SearchService.prototype.withAggregationByGroupCount = function (searchObject, group, label) {
+        searchObject.aggregateClauses.push(new CoreAggregateByGroupCountClause(group, label));
+        return this;
+    };
+    /**
+     * Adds a total count aggregation to the given search object.
+     *
+     * @arg {CoreSearch} searchObject
+     * @arg {string} label
+     * @return {AbstractSearchService}
+     * @override
+     */
+    SearchService.prototype.withAggregationByTotalCount = function (searchObject, label) {
+        searchObject.aggregateClauses.push(new CoreAggregateByTotalCountClause(label));
+        return this;
+    };
+    /**
      * Adds a field to the given search object.
      *
      * @arg {CoreSearch} searchObject
@@ -384,16 +409,15 @@ var SearchService = /** @class */ (function (_super) {
         return this;
     };
     /**
-     * Adds a group aggregation to the given search object.
+     * Adds a field group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
-     * @arg {string} label
+     * @arg {FieldKey} field
      * @return {AbstractSearchService}
      * @override
      */
-    SearchService.prototype.withGroupAggregation = function (searchObject, group, label) {
-        searchObject.aggregateClauses.push(new CoreAggregateByGroupCountClause(group, label));
+    SearchService.prototype.withGroup = function (searchObject, field) {
+        searchObject.groupByClauses.push(new CoreGroupByFieldClause(this._transformFieldKeyToFieldClause(field)));
         return this;
     };
     /**
@@ -406,20 +430,8 @@ var SearchService = /** @class */ (function (_super) {
      * @return {AbstractSearchService}
      * @override
      */
-    SearchService.prototype.withGroupDate = function (searchObject, field, interval, label) {
+    SearchService.prototype.withGroupByDate = function (searchObject, field, interval, label) {
         searchObject.groupByClauses.push(new CoreGroupByOperationClause(this._transformFieldKeyToFieldClause(field), label || ('_' + interval), '' + interval));
-        return this;
-    };
-    /**
-     * Adds a field group to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {FieldKey} field
-     * @return {AbstractSearchService}
-     * @override
-     */
-    SearchService.prototype.withGroupField = function (searchObject, field) {
-        searchObject.groupByClauses.push(new CoreGroupByFieldClause(this._transformFieldKeyToFieldClause(field)));
         return this;
     };
     /**
@@ -459,7 +471,7 @@ var SearchService = /** @class */ (function (_super) {
      * @return {AbstractSearchService}
      * @override
      */
-    SearchService.prototype.withOrderField = function (searchObject, field, order) {
+    SearchService.prototype.withOrder = function (searchObject, field, order) {
         if (order === void 0) { order = config_option_1.SortOrder.ASCENDING; }
         searchObject.orderByClauses.push(new CoreOrderByFieldClause(this._transformFieldKeyToFieldClause(field), this._transformSortOrder(order)));
         return this;
@@ -468,26 +480,14 @@ var SearchService = /** @class */ (function (_super) {
      * Adds an order group to the given search object.
      *
      * @arg {CoreSearch} searchObject
-     * @arg {string} group
+     * @arg {string} operation
      * @arg {SortOrder} [order=SortOrder.ASCENDING]
      * @return {AbstractSearchService}
      * @override
      */
-    SearchService.prototype.withOrderGroup = function (searchObject, group, order) {
+    SearchService.prototype.withOrderByOperation = function (searchObject, operation, order) {
         if (order === void 0) { order = config_option_1.SortOrder.ASCENDING; }
-        searchObject.orderByClauses.push(new CoreOrderByGroupClause(group, this._transformSortOrder(order)));
-        return this;
-    };
-    /**
-     * Adds a total count aggregation to the given search object.
-     *
-     * @arg {CoreSearch} searchObject
-     * @arg {string} label
-     * @return {AbstractSearchService}
-     * @override
-     */
-    SearchService.prototype.withTotalCountAggregation = function (searchObject, label) {
-        searchObject.aggregateClauses.push(new CoreAggregateByTotalCountClause(label));
+        searchObject.orderByClauses.push(new CoreOrderByOperationClause(operation, this._transformSortOrder(order)));
         return this;
     };
     /**
