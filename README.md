@@ -37,6 +37,7 @@
   * [Filter Type](#filter-type)
   * [Filtered Values](#filtered-values)
   * [Group Operation](#group-operation)
+  * [Join Type](#join-type)
   * [Relation](#relation)
   * [Search Data Object](#search-data-object)
 * [The Neon Dashboard](#the-neon-dashboard)
@@ -201,7 +202,6 @@ const relations = [ // relations array
 // fieldX and fieldY.  Do not create a relation filter on a filter containing just fieldA,
 // or just fieldB, or just fieldX, or just fieldY, or more than fieldA and fieldB, or more
 // than fieldX and fieldY.
-```          
 
 ### The Data Server
 
@@ -309,7 +309,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
@@ -328,17 +328,17 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.username_field"
+    search-field-keys="es.index_name.index_type.username_field"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
     <next-century-group
-        group-field-key="es1.index_name.index_type.username_field"
+        group-field-key="es.index_name.index_type.username_field"
     >
     </next-century-group>
-    
+
     <next-century-aggregation
-        aggregation-field-key="es1.index_name.index_type.username_field"
+        aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
@@ -360,7 +360,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
@@ -369,7 +369,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 <next-century-filter
     id="filter1"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.id_field"
+    list-field-key="es.index_name.index_type.id_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -386,19 +386,19 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.username_field"
+    search-field-keys="es.index_name.index_type.username_field"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
     <next-century-aggregation
-        aggregation-field-key="es1.index_name.index_type.username_field"
+        aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
     </next-century-aggregation>
 
     <next-century-group
-        group-field-key="es1.index_name.index_type.username_field"
+        group-field-key="es.index_name.index_type.username_field"
     >
     </next-century-group>
 </next-century-search>
@@ -406,7 +406,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 <next-century-filter
     id="filter1"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.username_field"
+    list-field-key="es.index_name.index_type.username_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -423,24 +423,24 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
     <next-century-aggregation
-        aggregation-field-key="es1.index_name.index_type.username_field"
+        aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
     </next-century-aggregation>
 
     <next-century-group
-        group-field-key="es1.index_name.index_type.username_field"
+        group-field-key="es.index_name.index_type.username_field"
     >
     </next-century-group>
 
     <next-century-group
-        group-field-key="es1.index_name.index_type.text_field"
+        group-field-key="es.index_name.index_type.text_field"
     >
     </next-century-group>
 </next-century-search>
@@ -448,7 +448,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 <next-century-filter
     id="filter1"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.username_field"
+    list-field-key="es.index_name.index_type.username_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -460,7 +460,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 <next-century-filter
     id="filter2"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.text_field"
+    list-field-key="es.index_name.index_type.text_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -468,6 +468,28 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     vis-filter-output-event="textSelected"
 >
 </next-century-filter>
+```
+
+#### Search with Joins
+
+```html
+<visualization-element id="vis1"></visualization-element>
+
+<next-century-search
+    id="search1"
+    search-field-keys="es.index_name_1.index_type_1.username_field"
+    vis-draw-function="drawData"
+    vis-element-id="vis1"
+>
+    <next-century-join
+        join-field-key-1="es.index_name_1.index_type_1.username_field"
+        join-field-key-2="es.index_name_2.index_type_2.username_field"
+        join-operator="="
+        join-table-key="es.index_name_2.index_type_2"
+        join-type="full"
+    >
+    </next-century-join>
+</next-century-search>
 ```
 
 ### Using NCCL Visualization Components
@@ -478,7 +500,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 <!-- Simple Examples -->
 <next-century-text-cloud
     id="textCloud1"
-    text-field-key="es1.index_name.index_type.text_field"
+    text-field-key="es.index_name.index_type.text_field"
 >
 </next-century-text-cloud>
 
@@ -490,8 +512,8 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     enable-intersection-filter
     enable-show-counts
     strength-aggregation="avg"
-    strength-field-key="es1.index_name.index_type.size_field"
-    text-field-key="es1.index_name.index_type.text_field"
+    strength-field-key="es.index_name.index_type.size_field"
+    text-field-key="es.index_name.index_type.text_field"
 >
 </next-century-text-cloud>
 ```
@@ -516,7 +538,7 @@ textCloud2.init(dataset, filterService, searchService);
 
 <next-century-search
     id="textCloud1Search"
-    search-field-keys="es1.index_name.index_type.text_field"
+    search-field-keys="es.index_name.index_type.text_field"
     search-limit=10000
     sort-aggregation="_count"
     sort-order="descending"
@@ -524,12 +546,12 @@ textCloud2.init(dataset, filterService, searchService);
     vis-element-id="textCloud1Vis"
 >
     <next-century-aggregation
-        aggregation-field-key="es1.index_name.index_type.text_field"
+        aggregation-field-key="es.index_name.index_type.text_field"
         aggregation-label="_count"
     >
     </next-century-aggregation>
     <next-century-group
-        group-field-key="es1.index_name.index_type.text_field"
+        group-field-key="es.index_name.index_type.text_field"
     >
     </next-century-group>
 </next-century-search>
@@ -537,7 +559,7 @@ textCloud2.init(dataset, filterService, searchService);
 <next-century-filter
     id="textCloud1Filter"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.text_field"
+    list-field-key="es.index_name.index_type.text_field"
     list-operator="="
     search-element-id="textCloud1Search"
     vis-element-id="textCloud1Vis"
@@ -589,7 +611,7 @@ const transformSearchDataArray = function(event) {
 
     // Transform the searchDataArray into your visualization-element's expected data format.
     const yourData = searchDataArray.reduce((searchDataObject) => { ... }, []);
-    
+
     // Send the transformed visualization data to your visualization-element by whatever method you desire.
     const vis1 = document.querySelector('vis1');
     vis1.drawData(yourData);
@@ -604,7 +626,7 @@ search1.addEventListener('searchFinished', transformSearchDataArray);
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
 >
 </next-century-search>
 ```
@@ -620,7 +642,7 @@ search1.addEventListener('searchFinished', transformSearchDataArray);
 const transformFilterEventData = function(event) {
     // Transform the filter event data from your visualization-element's output data format.
     const filterDataArray = [event.detail.your_property];
-    
+
     // Send the filter data array to the Filter Component by calling updateFilters.
     const filter1 = document.querySelector('filter1');
     filter1.updateFilters(filterDataArray);
@@ -635,7 +657,7 @@ vis1.addEventListener('yourFilterEvent', transformFilterEventData);
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
@@ -644,7 +666,7 @@ vis1.addEventListener('yourFilterEvent', transformFilterEventData);
 <next-century-filter
     id="filter1"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.id_field"
+    list-field-key="es.index_name.index_type.id_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -666,7 +688,7 @@ const transformFilterDataArray = function(event) {
 
     // Transform the filterDataArray into your visualization-element's expected data format.
     const yourData = filterDataArray.reduce((filterData) => { ... }, []);
-    
+
     // Send the transformed filter data to your visualization-element by whatever method you desire.
     const vis1 = document.querySelector('vis1');
     vis1.changeFilters(yourData);
@@ -681,7 +703,7 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 
 <next-century-search
     id="search1"
-    search-field-keys="es1.index_name.index_type.*"
+    search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
@@ -690,7 +712,7 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 <next-century-filter
     id="filter1"
     filter-type="list"
-    list-field-key="es1.index_name.index_type.id_field"
+    list-field-key="es.index_name.index_type.id_field"
     list-operator="="
     search-element-id="search1"
     vis-element-id="vis1"
@@ -769,7 +791,7 @@ An **externally set filter** is a filter that is applicable to the visualization
 
 ### Field Key
 
-A **field key** is a string containing a **unique datastore identifier**, **database name**, **table name**, and **field name**, separated by dots (i.e. `datastore_id.database_name.table_name.field_name`).  Remember that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.
+A **field key** is a string containing a **unique datastore identifier**, **database name**, **table name**, and **field name**, separated by dots (i.e. `datastore_id.database_name.table_name.field_name`).  Remember that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  Field keys are similar to [table keys](#table-key).
 
 ### Filter Data Array
 
@@ -831,7 +853,7 @@ Example:
 
 ```js
 {
-    fieldKey: 'es1.index_name.index_type.field_name',
+    fieldKey: 'es.index_name.index_type.field_name',
     operator: '=',
     values: ['a', 'b', 'c']
 }
@@ -852,10 +874,10 @@ Example:
 
 ```js
 {
-    fieldKey1: 'es1.index_name.index_type.x_field',
+    fieldKey1: 'es.index_name.index_type.x_field',
     begin1: 1,
     end1: 2,
-    fieldKey2: 'es1.index_name.index_type.y_field',
+    fieldKey2: 'es.index_name.index_type.y_field',
     begin2: 3,
     end2: 4
 }
@@ -875,7 +897,7 @@ Example:
 
 ```js
 {
-    fieldKey: 'es1.index_name.index_type.date_field',
+    fieldKey: 'es.index_name.index_type.date_field',
     begin: 1,
     end: 2
 }
@@ -893,10 +915,10 @@ Filter Component Attributes:
 Example:
 
 ```js
-    fieldKey1: 'es1.index_name.index_type.field_1',
+    fieldKey1: 'es.index_name.index_type.field_1',
     operator1: '=',
     value1: 'a',
-    fieldKey2: 'es1.index_name.index_type.field_2',
+    fieldKey2: 'es.index_name.index_type.field_2',
     operator2: '!=',
     value2: 'b'
 ```
@@ -920,11 +942,11 @@ Example:
 {
     intersection: true,
     filters: [{
-      fieldKey: 'es1.index_name.index_type.field_name',
+      fieldKey: 'es.index_name.index_type.field_name',
       operator: '=',
       values: ['a', 'b', 'c']
     }, {
-      fieldKey: 'es1.index_name.index_type.date_field',
+      fieldKey: 'es.index_name.index_type.date_field',
       begin: 1,
       end: 2
     }]
@@ -948,6 +970,14 @@ By default, the Group Component creates a grouping on a specific field.  Instead
 * Date Grouping on Day of the Month (`'dayOfMonth'`), creates a grouping named `_dayOfMonth`
 * Date Grouping on Hour (`'hour'`), creates a grouping named `_hour`
 * Date Grouping on Minute (`'minute'`), creates a grouping named `_minute`
+
+### Join Type
+
+* JOIN (`''`), the default
+* FULL JOIN (`'full'`)
+* INNER JOIN (`'inner'`)
+* LEFT JOIN (`'left'`)
+* RIGHT JOIN (`'right'`)
 
 ### Relation
 
@@ -985,6 +1015,10 @@ Examples:
   filtered: false
 }
 ```
+
+### Table Key
+
+A **table key** is a string containing a **unique datastore identifier**, **database name**, and **table name**, separated by dots (i.e. `datastore_id.database_name.table_name`).  Remember that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  Table keys are similar to [field keys](#field-key).
 
 ## The Neon Dashboard
 
