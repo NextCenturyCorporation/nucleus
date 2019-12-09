@@ -26,7 +26,7 @@
   * [Developing in React](#developing-in-react)
   * [Developing in Vue](#developing-in-vue)
 * [Definitions](#definitions)
-  * [Aggregation Type](#aggregation-type)
+  * [Aggregation Operation](#aggregation-operation)
   * [Datastore Type](#datastore-type)
   * [Dotted Path](#dotted-path)
   * [Externally Filtered Data](#externally-filtered-data)
@@ -36,7 +36,7 @@
   * [Filter Operator](#filter-operator)
   * [Filter Type](#filter-type)
   * [Filtered Values](#filtered-values)
-  * [Group Type](#group-type)
+  * [Group Operation](#group-operation)
   * [Relation](#relation)
   * [Search Data Object](#search-data-object)
 * [The Neon Dashboard](#the-neon-dashboard)
@@ -321,7 +321,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 1. Define your **Visualization element** and a **[Search Component](#search-component)** as normal ([see above](#search)).
 2. Inside the Search Component, define a **[Group Component](#group-component)** and an **[Aggregation Component](#aggregation-component)**.
 3. Give the Group Component a `field-key` attribute containing the [field-key](#field-key) of the specific group field.
-4. Give the Aggregation Component a `field-key` attribute containing the [field-key](#field-key) of the specific aggregation field (probably the same as a corresponding group field), a `name` attribute for the unique aggregation name, and a `type` attribute for the [type of aggregation function](#aggregation-type).  Instead of a `field-key`, you may use the `group` attribute for the name of an [advanced grouping](#group-type) defined in a Group Component.
+4. Give the Aggregation Component a `field-key` attribute containing the [field-key](#field-key) of the specific aggregation field (probably the same as a corresponding group field), a `name` attribute for the unique aggregation name, and a `type` attribute for the [type of aggregation function](#aggregation-operation).  Instead of a `field-key`, you may use the `group` attribute for the name of an [advanced grouping](#group-operation) defined in a Group Component.
 
 ```html
 <visualization-element id="vis1"></visualization-element>
@@ -339,8 +339,8 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     
     <next-century-aggregation
         aggregation-field-key="es1.index_name.index_type.username_field"
-        aggregation-name="_records"
-        aggregation-type="count"
+        aggregation-label="_records"
+        aggregation-operation="count"
     >
     </next-century-aggregation>
 </next-century-search>
@@ -392,8 +392,8 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 >
     <next-century-aggregation
         aggregation-field-key="es1.index_name.index_type.username_field"
-        aggregation-name="_records"
-        aggregation-type="count"
+        aggregation-label="_records"
+        aggregation-operation="count"
     >
     </next-century-aggregation>
 
@@ -429,8 +429,8 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 >
     <next-century-aggregation
         aggregation-field-key="es1.index_name.index_type.username_field"
-        aggregation-name="_records"
-        aggregation-type="count"
+        aggregation-label="_records"
+        aggregation-operation="count"
     >
     </next-century-aggregation>
 
@@ -525,7 +525,7 @@ textCloud2.init(dataset, filterService, searchService);
 >
     <next-century-aggregation
         aggregation-field-key="es1.index_name.index_type.text_field"
-        aggregation-name="_count"
+        aggregation-label="_count"
     >
     </next-century-aggregation>
     <next-century-group
@@ -713,7 +713,7 @@ TODO
 
 ## Definitions
 
-### Aggregation Type
+### Aggregation Operation
 
 * Count (`'count'`), the default
 * Average (`'avg'`)
@@ -939,7 +939,7 @@ TODO
 
 **Filtered values** are the primitives (string, number, or boolean) or Date objects that are filtered by your visualization.  Examples:  parts of a document's text; groups in a bar chart; coordinates on a map; IDs of nodes in a graph.
 
-### Group Type
+### Group Operation
 
 By default, the Group Component creates a grouping on a specific field.  Instead, you may create one of the following advanced groupings:
 

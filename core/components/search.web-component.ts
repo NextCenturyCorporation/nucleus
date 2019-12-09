@@ -34,14 +34,14 @@ import { RequestWrapper } from '../services/connection.service';
 interface AggregationData {
     fieldKey: FieldKey;
     group: string;
-    name: string;
-    type: AggregationType;
+    label: string;
+    operation: AggregationType;
 }
 
 interface GroupData {
     fieldKey: FieldKey;
-    name: string;
-    type: AggregationType;
+    label: string;
+    operation: string;
 }
 
 export class NextCenturySearch extends NextCenturyElement {
@@ -234,15 +234,15 @@ export class NextCenturySearch extends NextCenturyElement {
 
         for (const aggregation of aggregations) {
             if (aggregation.fieldKey && aggregation.fieldKey.field) {
-                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
+                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.label, aggregation.operation);
             } else if (aggregation.group) {
-                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.name);
+                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.label);
             }
         }
 
         if (groups.length) {
             for (const group of groups) {
-                switch (group.type) {
+                switch (group.operation) {
                     case (TimeInterval.SECOND as string):
                         this._searchService.withGroupByDate(searchObject, group.fieldKey, TimeInterval.SECOND);
                         // Falls through
@@ -285,14 +285,14 @@ export class NextCenturySearch extends NextCenturyElement {
         for (const aggregationElement of this.getElementsByTagName('next-century-aggregation') as any) {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(aggregationElement.getAttribute('aggregation-field-key'));
             const group = aggregationElement.getAttribute('aggregation-group');
-            const name = aggregationElement.getAttribute('aggregation-name');
-            const type = (aggregationElement.getAttribute('aggregation-type') || AggregationType.COUNT) as AggregationType;
-            if ((fieldKey || group) && name) {
+            const label = aggregationElement.getAttribute('aggregation-label');
+            const operation = (aggregationElement.getAttribute('aggregation-operation') || AggregationType.COUNT) as AggregationType;
+            if ((fieldKey || group) && label) {
                 aggregations.push({
                     fieldKey,
                     group,
-                    name,
-                    type
+                    label,
+                    operation
                 });
             }
         }
@@ -306,13 +306,13 @@ export class NextCenturySearch extends NextCenturyElement {
         let groups: GroupData[] = [];
         for (const groupElement of this.getElementsByTagName('next-century-group') as any) {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(groupElement.getAttribute('group-field-key'));
-            const name = groupElement.getAttribute('group-name');
-            const type = groupElement.getAttribute('group-type');
+            const label = groupElement.getAttribute('group-label');
+            const operation = groupElement.getAttribute('group-operation');
             if (fieldKey) {
                 groups.push({
                     fieldKey,
-                    name,
-                    type
+                    label,
+                    operation
                 });
             }
         }
@@ -346,11 +346,11 @@ export class NextCenturySearch extends NextCenturyElement {
         const data = queryResults.data.map((result) => {
             let item = {
                 aggregations: aggregations.reduce((collection, aggregation) => {
-                    collection[aggregation.name] = result[aggregation.name];
+                    collection[aggregation.label] = result[aggregation.label];
                     return collection;
                 }, {}),
                 fields: Object.keys(result).reduce((collection, key) => {
-                    if (aggregations.every((aggregation) => aggregation.name !== key)) {
+                    if (aggregations.every((aggregation) => aggregation.label !== key)) {
                         collection[key] = result[key];
                     }
                     return collection;

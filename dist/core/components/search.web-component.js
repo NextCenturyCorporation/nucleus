@@ -204,16 +204,16 @@ var NextCenturySearch = /** @class */ (function (_super) {
         for (var _i = 0, aggregations_1 = aggregations; _i < aggregations_1.length; _i++) {
             var aggregation = aggregations_1[_i];
             if (aggregation.fieldKey && aggregation.fieldKey.field) {
-                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.name, aggregation.type);
+                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.label, aggregation.operation);
             }
             else if (aggregation.group) {
-                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.name);
+                this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.label);
             }
         }
         if (groups.length) {
             for (var _a = 0, groups_1 = groups; _a < groups_1.length; _a++) {
                 var group = groups_1[_a];
-                switch (group.type) {
+                switch (group.operation) {
                     case config_option_1.TimeInterval.SECOND:
                         this._searchService.withGroupByDate(searchObject, group.fieldKey, config_option_1.TimeInterval.SECOND);
                     // Falls through
@@ -255,14 +255,14 @@ var NextCenturySearch = /** @class */ (function (_super) {
             var aggregationElement = _a[_i];
             var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(aggregationElement.getAttribute('aggregation-field-key'));
             var group = aggregationElement.getAttribute('aggregation-group');
-            var name_1 = aggregationElement.getAttribute('aggregation-name');
-            var type = (aggregationElement.getAttribute('aggregation-type') || config_option_1.AggregationType.COUNT);
-            if ((fieldKey || group) && name_1) {
+            var label = aggregationElement.getAttribute('aggregation-label');
+            var operation = (aggregationElement.getAttribute('aggregation-operation') || config_option_1.AggregationType.COUNT);
+            if ((fieldKey || group) && label) {
                 aggregations.push({
                     fieldKey: fieldKey,
                     group: group,
-                    name: name_1,
-                    type: type
+                    label: label,
+                    operation: operation
                 });
             }
         }
@@ -276,13 +276,13 @@ var NextCenturySearch = /** @class */ (function (_super) {
         for (var _i = 0, _a = this.getElementsByTagName('next-century-group'); _i < _a.length; _i++) {
             var groupElement = _a[_i];
             var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(groupElement.getAttribute('group-field-key'));
-            var name_2 = groupElement.getAttribute('group-name');
-            var type = groupElement.getAttribute('group-type');
+            var label = groupElement.getAttribute('group-label');
+            var operation = groupElement.getAttribute('group-operation');
             if (fieldKey) {
                 groups.push({
                     fieldKey: fieldKey,
-                    name: name_2,
-                    type: type
+                    label: label,
+                    operation: operation
                 });
             }
         }
@@ -313,11 +313,11 @@ var NextCenturySearch = /** @class */ (function (_super) {
         var data = queryResults.data.map(function (result) {
             var item = {
                 aggregations: aggregations.reduce(function (collection, aggregation) {
-                    collection[aggregation.name] = result[aggregation.name];
+                    collection[aggregation.label] = result[aggregation.label];
                     return collection;
                 }, {}),
                 fields: Object.keys(result).reduce(function (collection, key) {
-                    if (aggregations.every(function (aggregation) { return aggregation.name !== key; })) {
+                    if (aggregations.every(function (aggregation) { return aggregation.label !== key; })) {
                         collection[key] = result[key];
                     }
                     return collection;

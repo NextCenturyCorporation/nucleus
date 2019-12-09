@@ -94,11 +94,11 @@ export class NextCenturyTextCloud extends NextCenturyElement {
         visElement.redraw();
     }
 
-    private _createAggregationLabel(attributes: Record<string, any>): string {
-        if (attributes['aggregation-label']) {
-            return attributes['aggregation-label'];
+    private _createAggregationTitle(attributes: Record<string, any>): string {
+        if (attributes['aggregation-title']) {
+            return attributes['aggregation-title'];
         }
-        const aggregationType = attributes['aggregation-type'];
+        const aggregationType = attributes['aggregation-operation'];
         if (aggregationType && aggregationType !== 'count') {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(attributes['aggregation-field-key']);
             if (fieldKey && fieldKey.field) {
@@ -129,12 +129,12 @@ export class NextCenturyTextCloud extends NextCenturyElement {
         attributes['aggregation-field'] = 'aggregations._aggregation';
         attributes['aggregation-field-key'] = attributes['aggregation-field-key'] || attributes['text-field-key'];
         attributes['aggregation-group'] = undefined;
-        attributes['aggregation-label'] = this._createAggregationLabel(attributes);
-        attributes['aggregation-name'] = '_aggregation';
+        attributes['aggregation-label'] = '_aggregation';
+        attributes['aggregation-title'] = this._createAggregationTitle(attributes);
         attributes['filter-type'] = 'list';
         attributes['group-field-key'] = attributes['text-field-key'];
-        attributes['group-name'] = undefined;
-        attributes['group-type'] = undefined;
+        attributes['group-label'] = undefined;
+        attributes['group-operation'] = undefined;
         attributes['list-field-key'] = attributes['text-field-key'];
         attributes['list-operator'] = attributes['list-operator'] || '=';
         attributes['search-element-id'] = searchElementId;

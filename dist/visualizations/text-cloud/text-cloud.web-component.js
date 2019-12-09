@@ -86,11 +86,11 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         var visElement = this._containerElement.querySelector('next-century-visualization-text-cloud');
         visElement.redraw();
     };
-    NextCenturyTextCloud.prototype._createAggregationLabel = function (attributes) {
-        if (attributes['aggregation-label']) {
-            return attributes['aggregation-label'];
+    NextCenturyTextCloud.prototype._createAggregationTitle = function (attributes) {
+        if (attributes['aggregation-title']) {
+            return attributes['aggregation-title'];
         }
-        var aggregationType = attributes['aggregation-type'];
+        var aggregationType = attributes['aggregation-operation'];
         if (aggregationType && aggregationType !== 'count') {
             var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(attributes['aggregation-field-key']);
             if (fieldKey && fieldKey.field) {
@@ -117,12 +117,12 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         attributes['aggregation-field'] = 'aggregations._aggregation';
         attributes['aggregation-field-key'] = attributes['aggregation-field-key'] || attributes['text-field-key'];
         attributes['aggregation-group'] = undefined;
-        attributes['aggregation-label'] = this._createAggregationLabel(attributes);
-        attributes['aggregation-name'] = '_aggregation';
+        attributes['aggregation-label'] = '_aggregation';
+        attributes['aggregation-title'] = this._createAggregationTitle(attributes);
         attributes['filter-type'] = 'list';
         attributes['group-field-key'] = attributes['text-field-key'];
-        attributes['group-name'] = undefined;
-        attributes['group-type'] = undefined;
+        attributes['group-label'] = undefined;
+        attributes['group-operation'] = undefined;
         attributes['list-field-key'] = attributes['text-field-key'];
         attributes['list-operator'] = attributes['list-operator'] || '=';
         attributes['search-element-id'] = searchElementId;

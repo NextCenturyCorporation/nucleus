@@ -27,7 +27,7 @@ Example:
 <next-century-text-cloud
     id="textCloud"
     aggregation-field-key="datastore.database.table.number_field"
-    aggregation-type="max"
+    aggregation-operation="max"
     enable-ignore-self-filter
     text-field-key="datastore.database.table.text_field"
 >
@@ -52,9 +52,9 @@ The string [field key](../../README.md#field-key) containing the text in the dat
 
 A string [field key](../../README.md#field-key) on which to aggregate.  Required only if **aggregation-group** is not set.
 
-**aggregation-type**
+**aggregation-operation**
 
-A string [aggregation type](../../README.md#aggregation-type).  Default `"count"`
+A string [aggregation operation](../../README.md#aggregation-operation).  Default `"count"`
 
 **enable-hide-if-unfiltered**
 
@@ -152,7 +152,7 @@ Example:
 >
     <next-century-aggregation
         aggregation-field-key="datastore.database.table.text_field"
-        aggregation-name="_records"
+        aggregation-label="_records"
     ></next-century-aggregation>
     <next-century-group
         group-field-key="datastore.database.table.text_field"
@@ -188,7 +188,7 @@ The [dotted path](../../README.md#dotted-path) to the property within the [searc
 
 ### Text Cloud Visualization Optional Properties
 
-**aggregation-label**
+**aggregation-title**
 
 The string label to show next to the aggregation values in the tooltips of the text.  Default none
 

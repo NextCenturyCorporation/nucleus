@@ -413,7 +413,7 @@ describe('Search Component init should', () => {
 
         let aggregation1 = new NextCenturyAggregation();
         aggregation1.setAttribute('aggregation-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
-        aggregation1.setAttribute('aggregation-name', '_counts');
+        aggregation1.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation1);
         searchComponent.init(dataset, filterService, searchService);
 
@@ -509,12 +509,12 @@ describe('Search Component init should', () => {
 
         let aggregation1 = new NextCenturyAggregation();
         aggregation1.setAttribute('aggregation-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
-        aggregation1.setAttribute('aggregation-name', '_sums');
-        aggregation1.setAttribute('aggregation-type', 'sum');
+        aggregation1.setAttribute('aggregation-label', '_sums');
+        aggregation1.setAttribute('aggregation-operation', 'sum');
         searchComponent.appendChild(aggregation1);
         let aggregation2 = new NextCenturyAggregation();
         aggregation2.setAttribute('aggregation-group', '_sums');
-        aggregation2.setAttribute('aggregation-name', '_counts');
+        aggregation2.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation2);
         searchComponent.init(dataset, filterService, searchService);
 
@@ -645,7 +645,7 @@ describe('Search Component init should', () => {
 
         let group2 = new NextCenturyGroup();
         group2.setAttribute('group-field-key', 'datastore1.testDatabase1.testTable1.testDateField');
-        group2.setAttribute('group-type', 'dayOfMonth');
+        group2.setAttribute('group-operation', 'dayOfMonth');
         searchComponent.appendChild(group2);
         searchComponent.init(dataset, filterService, searchService);
 

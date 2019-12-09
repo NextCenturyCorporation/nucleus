@@ -51,7 +51,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
         get: function () {
             return [
                 'aggregation-field',
-                'aggregation-label',
+                'aggregation-title',
                 'color-accent',
                 'color-text',
                 'enable-show-paragraphs',
@@ -111,7 +111,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
      */
     NextCenturyTextCloudVisualization.prototype.redraw = function () {
         var _this = this;
-        var aggregationLabel = this.getAttribute('aggregation-label');
+        var aggregationTitle = this.getAttribute('aggregation-title');
         var showParagraphs = this.hasAttribute('enable-show-paragraphs');
         var showValues = this.hasAttribute('enable-show-values');
         var newElement = document.createElement('div');
@@ -128,7 +128,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
             };
             itemElement.style.color = item.color;
             itemElement.style['font-size'] = item.fontSize;
-            itemElement.title = (aggregationLabel ? (aggregationLabel + ': ') : '') + item.value;
+            itemElement.title = (aggregationTitle ? (aggregationTitle + ': ') : '') + item.value;
             var keyElement = document.createElement('span');
             keyElement.className = 'key';
             keyElement.innerHTML = item.key;

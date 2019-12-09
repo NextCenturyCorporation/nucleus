@@ -21,8 +21,8 @@ export class NextCenturyGroup extends NextCenturyElement {
     static get observedAttributes(): string[] {
         return [
             'group-field-key',
-            'group-name',
-            'group-type'
+            'group-label',
+            'group-operation'
         ];
     }
 

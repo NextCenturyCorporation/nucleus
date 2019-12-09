@@ -102,7 +102,7 @@ export class AppComponent implements AfterViewInit {
 
     public searchAggregations3 = [{
         'aggregation-field-key': 'es1.earthquakes.quakedata.net',
-        'aggregation-name': '_count'
+        'aggregation-label': '_count'
     }];
 
     public searchGroups3 = [{
@@ -127,16 +127,16 @@ export class AppComponent implements AfterViewInit {
 
     public searchAggregations4 = [{
         'aggregation-field-key': 'es1.earthquakes.quakedata.time',
-        'aggregation-name': '_timestamp',
-        'aggregation-type': 'min'
+        'aggregation-label': '_timestamp',
+        'aggregation-operation': 'min'
     }, {
         'aggregation-group': '_dayOfMonth',
-        'aggregation-name': '_count'
+        'aggregation-label': '_count'
     }];
 
     public searchGroups4 = [{
         'group-field-key': 'es1.earthquakes.quakedata.time',
-        'group-type': 'dayOfMonth'
+        'group-operation': 'dayOfMonth'
     }];
 
     public filterOptions4 = {
@@ -159,7 +159,7 @@ export class AppComponent implements AfterViewInit {
 
     public searchAggregations5 = [{
         'aggregation-field-key': 'es1.earthquakes.quakedata.net',
-        'aggregation-name': '_count'
+        'aggregation-label': '_count'
     }];
 
     public searchGroups5 = [{

@@ -37,8 +37,8 @@ var NextCenturyGroup = /** @class */ (function (_super) {
         get: function () {
             return [
                 'group-field-key',
-                'group-name',
-                'group-type'
+                'group-label',
+                'group-operation'
             ];
         },
         enumerable: true,

@@ -43,6 +43,6 @@ export declare class NextCenturyTextCloud extends NextCenturyElement {
      * Redraws the text cloud.
      */
     redraw(): void;
-    private _createAggregationLabel;
+    private _createAggregationTitle;
     private _createVisualization;
 }

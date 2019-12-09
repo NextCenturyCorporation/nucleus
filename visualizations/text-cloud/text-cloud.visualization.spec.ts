@@ -193,8 +193,8 @@ describe('Text Cloud Visualization', () => {
         expect(elementC.querySelector('.key').innerHTML).toEqual('c');
     });
 
-    it('drawData does work with aggregation-label attribute', () => {
-        textCloudVis.setAttribute('aggregation-label', 'Label');
+    it('drawData does work with aggregation-title attribute', () => {
+        textCloudVis.setAttribute('aggregation-title', 'Title');
         textCloudVis.drawData([{
             testCounts: 4,
             testText: 'a'
@@ -212,19 +212,19 @@ describe('Text Cloud Visualization', () => {
         expect(elementA.className).toEqual('text');
         expect(elementA.style.color).toEqual(color1);
         expect(elementA.style['font-size']).toEqual('140%');
-        expect(elementA.title).toEqual('Label: 4');
+        expect(elementA.title).toEqual('Title: 4');
         expect(elementA.querySelector('.key').innerHTML).toEqual('a');
         let elementB = textElements.item(1) as HTMLElement;
         expect(elementB.className).toEqual('text');
         expect(elementB.style.color).toEqual(color2);
         expect(elementB.style['font-size']).toEqual('100%');
-        expect(elementB.title).toEqual('Label: 2');
+        expect(elementB.title).toEqual('Title: 2');
         expect(elementB.querySelector('.key').innerHTML).toEqual('b');
         let elementC = textElements.item(2) as HTMLElement;
         expect(elementC.className).toEqual('text');
         expect(elementC.style.color).toEqual(color3);
         expect(elementC.style['font-size']).toEqual('80%');
-        expect(elementC.title).toEqual('Label: 1');
+        expect(elementC.title).toEqual('Title: 1');
         expect(elementC.querySelector('.key').innerHTML).toEqual('c');
     });
 
@@ -374,7 +374,7 @@ describe('Text Cloud Visualization', () => {
         expect(elementC.title).toEqual('1');
         expect(elementC.querySelector('.key').innerHTML).toEqual('c');
 
-        textCloudVis.setAttribute('aggregation-label', 'Label');
+        textCloudVis.setAttribute('aggregation-title', 'Title');
 
         textElements = textCloudVis.shadowRoot.querySelectorAll('.text');
         expect(textElements.length).toEqual(3);
@@ -382,19 +382,19 @@ describe('Text Cloud Visualization', () => {
         expect(elementA.className).toEqual('text');
         expect(elementA.style.color).toEqual(color1);
         expect(elementA.style['font-size']).toEqual('140%');
-        expect(elementA.title).toEqual('Label: 4');
+        expect(elementA.title).toEqual('Title: 4');
         expect(elementA.querySelector('.key').innerHTML).toEqual('a');
         elementB = textElements.item(1) as HTMLElement;
         expect(elementB.className).toEqual('text');
         expect(elementB.style.color).toEqual(color2);
         expect(elementB.style['font-size']).toEqual('100%');
-        expect(elementB.title).toEqual('Label: 2');
+        expect(elementB.title).toEqual('Title: 2');
         expect(elementB.querySelector('.key').innerHTML).toEqual('b');
         elementC = textElements.item(2) as HTMLElement;
         expect(elementC.className).toEqual('text');
         expect(elementC.style.color).toEqual(color3);
         expect(elementC.style['font-size']).toEqual('80%');
-        expect(elementC.title).toEqual('Label: 1');
+        expect(elementC.title).toEqual('Title: 1');
         expect(elementC.querySelector('.key').innerHTML).toEqual('c');
     });
 

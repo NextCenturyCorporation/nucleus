@@ -22,8 +22,8 @@ export class NextCenturyAggregation extends NextCenturyElement {
         return [
             'aggregation-field-key',
             'aggregation-group',
-            'aggregation-name',
-            'aggregation-type'
+            'aggregation-label',
+            'aggregation-operation'
         ];
     }
 

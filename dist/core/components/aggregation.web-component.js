@@ -38,8 +38,8 @@ var NextCenturyAggregation = /** @class */ (function (_super) {
             return [
                 'aggregation-field-key',
                 'aggregation-group',
-                'aggregation-name',
-                'aggregation-type'
+                'aggregation-label',
+                'aggregation-operation'
             ];
         },
         enumerable: true,

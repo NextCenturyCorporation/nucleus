@@ -27,7 +27,7 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
     static get observedAttributes(): string[] {
         return [
             'aggregation-field',
-            'aggregation-label',
+            'aggregation-title',
             'color-accent',
             'color-text',
             'enable-show-paragraphs',
@@ -146,7 +146,7 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
      * Redraws the text cloud.
      */
     public redraw(): void {
-        const aggregationLabel = this.getAttribute('aggregation-label');
+        const aggregationTitle = this.getAttribute('aggregation-title');
         const showParagraphs = this.hasAttribute('enable-show-paragraphs');
         const showValues = this.hasAttribute('enable-show-values');
 
@@ -166,7 +166,7 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
             };
             itemElement.style.color = item.color;
             itemElement.style['font-size'] = item.fontSize;
-            itemElement.title = (aggregationLabel ? (aggregationLabel + ': ') : '') + item.value;
+            itemElement.title = (aggregationTitle ? (aggregationTitle + ': ') : '') + item.value;
 
             let keyElement = document.createElement('span');
             keyElement.className = 'key';
