@@ -54,6 +54,12 @@ export declare class CoreSearch implements SearchObject {
     offsetClause: {
         offset: number;
     };
+    joinClauses: {
+        database: string;
+        table: string;
+        type: string;
+        onClause: CoreFilterClause;
+    }[];
     isDistinct: boolean;
     constructor(database: string, table: string, fields?: string[]);
 }
@@ -67,7 +73,7 @@ export declare class SearchService extends AbstractSearchService {
      * @arg {CoreFilterClause[]} filterObjects
      * @arg {CompoundFilterType} [type=CompoundFilterType.AND]
      * @return {CoreFilterClause}
-     * @abstract
+     * @override
      */
     createCompoundFilterClause(filterObjects: CoreFilterClause[], type?: CompoundFilterType): CoreFilterClause;
     /**
@@ -228,6 +234,20 @@ export declare class SearchService extends AbstractSearchService {
      * @override
      */
     withGroupByDate(searchObject: CoreSearch, field: FieldKey, interval: TimeInterval, label?: string): AbstractSearchService;
+    /**
+     * Adds a join clause to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} type
+     * @arg {string} database
+     * @arg {string} table
+     * @arg {FieldKey} field1
+     * @arg {string} operator
+     * @arg {FieldKey} field2
+     * @return {AbstractSearchService}
+     * @override
+     */
+    withJoin(searchObject: CoreSearch, type: string, database: string, table: string, field1: FieldKey, operator: string, field2: FieldKey): AbstractSearchService;
     /**
      * Sets the limit on the given search object.
      *

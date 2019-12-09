@@ -217,6 +217,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -244,6 +245,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -902,6 +904,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -941,6 +944,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -970,6 +974,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -991,6 +996,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1020,6 +1026,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1064,6 +1071,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1094,6 +1102,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1118,6 +1127,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1152,6 +1162,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1181,6 +1192,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1210,6 +1222,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1239,6 +1252,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1268,6 +1282,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1297,6 +1312,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1326,6 +1342,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1373,6 +1390,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1400,6 +1418,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1447,6 +1466,125 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withJoin does update given search object', () => {
+        const joinFieldKey = {
+            datastore: 'testDatastore',
+            database: 'testDatabase2',
+            table: 'testTable2',
+            field: 'testJoinField1'
+        } as FieldKey;
+
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withJoin(actual, 'inner', 'testDatabase2', 'testTable2', fieldKey1, '=', joinFieldKey);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            joinClauses: [{
+                type: 'inner',
+                database: 'testDatabase2',
+                table: 'testTable2',
+                onClause: {
+                    type: 'fields',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: {
+                        database: 'testDatabase2',
+                        table: 'testTable2',
+                        field: 'testJoinField1'
+                    }
+                }
+            }],
+            isDistinct: false
+        };
+        expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
+    });
+
+    it('withJoin does not remove previous joins', () => {
+        const joinFieldKey1 = {
+            datastore: 'testDatastore',
+            database: 'testDatabase2',
+            table: 'testTable2',
+            field: 'testJoinField1'
+        } as FieldKey;
+
+        const joinFieldKey2 = {
+            datastore: 'testDatastore',
+            database: 'testDatabase3',
+            table: 'testTable3',
+            field: 'testJoinField2'
+        } as FieldKey;
+
+        let actual = new CoreSearch('testDatabase1', 'testTable1');
+        service.withJoin(actual, 'inner', 'testDatabase2', 'testTable2', fieldKey1, '=', joinFieldKey1);
+        service.withJoin(actual, '', 'testDatabase3', 'testTable3', fieldKey2, '=', joinFieldKey2);
+        let expected = {
+            selectClause: {
+                database: 'testDatabase1',
+                table: 'testTable1',
+                fieldClauses: []
+            },
+            whereClause: null,
+            aggregateClauses: [],
+            groupByClauses: [],
+            orderByClauses: [],
+            limitClause: null,
+            offsetClause: null,
+            joinClauses: [{
+                type: 'inner',
+                database: 'testDatabase2',
+                table: 'testTable2',
+                onClause: {
+                    type: 'fields',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField1'
+                    },
+                    operator: '=',
+                    rhs: {
+                        database: 'testDatabase2',
+                        table: 'testTable2',
+                        field: 'testJoinField1'
+                    }
+                }
+            }, {
+                type: '',
+                database: 'testDatabase3',
+                table: 'testTable3',
+                onClause: {
+                    type: 'fields',
+                    lhs: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testField2'
+                    },
+                    operator: '=',
+                    rhs: {
+                        database: 'testDatabase3',
+                        table: 'testTable3',
+                        field: 'testJoinField2'
+                    }
+                }
+            }],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1467,6 +1605,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: { limit: 100 },
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1487,6 +1626,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: { offset: 100 },
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1515,6 +1655,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1543,6 +1684,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1580,6 +1722,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1604,6 +1747,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1628,6 +1772,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1661,6 +1806,7 @@ describe('Service: Search', () => {
             }],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1684,6 +1830,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);
@@ -1717,6 +1864,7 @@ describe('Service: Search', () => {
             orderByClauses: [],
             limitClause: null,
             offsetClause: null,
+            joinClauses: [],
             isDistinct: false
         };
         expect(JSON.parse(JSON.stringify(actual))).toEqual(expected);

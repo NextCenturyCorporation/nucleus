@@ -32,6 +32,7 @@ var config_option_1 = require("../models/config-option");
 var core_util_1 = require("../core.util");
 var dataset_1 = require("../models/dataset");
 var element_web_component_1 = require("./element.web-component");
+var _ = require("lodash");
 var NextCenturySearch = /** @class */ (function (_super) {
     __extends(NextCenturySearch, _super);
     function NextCenturySearch() {
@@ -179,15 +180,17 @@ var NextCenturySearch = /** @class */ (function (_super) {
         var searchFieldKeys = fieldKeys.filter(function (fieldKey) { return !!fieldKey && !!fieldKey.field && fieldKey.field !== '*'; });
         var aggregations = this._findSearchAggregations();
         var groups = this._findSearchGroups();
+        var joins = this._findSearchJoins();
         var unsharedFilters = Array.from(this._idsToFilters.values()).reduce(function (completeFilterList, filterList) {
             return completeFilterList.concat(filterList);
         }, []);
         var sortAggregation = this.getAttribute('sort-aggregation');
         var sortFieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(this.getAttribute('sort-field-key'));
-        var fields = allFields ? [] : searchFieldKeys
+        var fields = _.uniqWith(allFields ? [] : searchFieldKeys
             .concat(aggregations.filter(function (agg) { return agg.fieldKey && agg.fieldKey.field; }).map(function (agg) { return agg.fieldKey; }))
             .concat(groups.filter(function (group) { return group.fieldKey && group.fieldKey.field; }).map(function (group) { return group.fieldKey; }))
-            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []);
+            .concat(joins.map(function (join) { return join.fieldKey1; })).concat(joins.map(function (join) { return join.fieldKey2; }))
+            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []), _.isEqual.bind(this));
         var tableKey = this._retrieveTableKey();
         var searchObject = this._searchService.createSearch(tableKey.database, tableKey.table);
         fields.forEach(function (field) {
@@ -236,6 +239,10 @@ var NextCenturySearch = /** @class */ (function (_super) {
                         this._searchService.withGroup(searchObject, group.fieldKey);
                 }
             }
+        }
+        for (var _b = 0, joins_1 = joins; _b < joins_1.length; _b++) {
+            var join = joins_1[_b];
+            this._searchService.withJoin(searchObject, join.type, join.tableKey.database, join.tableKey.table, join.fieldKey1, join.operator, join.fieldKey2);
         }
         var sortOrder = (this.getAttribute('sort-order') || config_option_1.SortOrder.DESCENDING);
         if (sortAggregation) {
@@ -287,6 +294,30 @@ var NextCenturySearch = /** @class */ (function (_super) {
             }
         }
         return groups;
+    };
+    /**
+     * Returns the join data from the join elements inside this search element.
+     */
+    NextCenturySearch.prototype._findSearchJoins = function () {
+        var joins = [];
+        for (var _i = 0, _a = this.getElementsByTagName('next-century-join'); _i < _a.length; _i++) {
+            var joinElement = _a[_i];
+            var fieldKey1 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-1'));
+            var fieldKey2 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-2'));
+            var operator = joinElement.getAttribute('join-operator') || '=';
+            var tableKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-table-key'));
+            var type = joinElement.getAttribute('join-type') || '';
+            if (fieldKey1 && fieldKey1.field && fieldKey2 && fieldKey2.field && tableKey) {
+                joins.push({
+                    fieldKey1: fieldKey1,
+                    fieldKey2: fieldKey2,
+                    operator: operator,
+                    tableKey: tableKey,
+                    type: type
+                });
+            }
+        }
+        return joins;
     };
     /**
      * Handles the behavior whenever any filters in the whole application are changed by starting a new search query if needed.

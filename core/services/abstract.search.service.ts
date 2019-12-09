@@ -276,6 +276,29 @@ export abstract class AbstractSearchService {
     ): AbstractSearchService;
 
     /**
+     * Adds a join clause to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} type
+     * @arg {string} database
+     * @arg {string} table
+     * @arg {FieldKey} field1
+     * @arg {string} operator
+     * @arg {FieldKey} field2
+     * @return {AbstractSearchService}
+     * @abstract
+     */
+    public abstract withJoin(
+        searchObject: SearchObject,
+        type: string,
+        database: string,
+        table: string,
+        field1: FieldKey,
+        operator: string,
+        field2: FieldKey
+    ): AbstractSearchService;
+
+    /**
      * Sets the limit on the given search object.
      *
      * @arg {SearchObject} searchObject

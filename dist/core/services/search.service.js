@@ -55,6 +55,17 @@ var CoreSingularFilterClause = /** @class */ (function (_super) {
     }
     return CoreSingularFilterClause;
 }(CoreFilterClause));
+var CoreFieldsFilterClause = /** @class */ (function (_super) {
+    __extends(CoreFieldsFilterClause, _super);
+    function CoreFieldsFilterClause(lhs, operator, rhs) {
+        var _this = _super.call(this, 'fields') || this;
+        _this.lhs = lhs;
+        _this.operator = operator;
+        _this.rhs = rhs;
+        return _this;
+    }
+    return CoreFieldsFilterClause;
+}(CoreFilterClause));
 var CoreCompoundFilterClause = /** @class */ (function (_super) {
     __extends(CoreCompoundFilterClause, _super);
     function CoreCompoundFilterClause(type, whereClauses) {
@@ -175,6 +186,7 @@ var CoreSearch = /** @class */ (function () {
         this.orderByClauses = [];
         this.limitClause = null;
         this.offsetClause = null;
+        this.joinClauses = [];
         this.isDistinct = false;
         this.selectClause = {
             database: database,
@@ -199,7 +211,7 @@ var SearchService = /** @class */ (function (_super) {
      * @arg {CoreFilterClause[]} filterObjects
      * @arg {CompoundFilterType} [type=CompoundFilterType.AND]
      * @return {CoreFilterClause}
-     * @abstract
+     * @override
      */
     SearchService.prototype.createCompoundFilterClause = function (filterObjects, type) {
         if (type === void 0) { type = config_option_1.CompoundFilterType.AND; }
@@ -432,6 +444,28 @@ var SearchService = /** @class */ (function (_super) {
      */
     SearchService.prototype.withGroupByDate = function (searchObject, field, interval, label) {
         searchObject.groupByClauses.push(new CoreGroupByOperationClause(this._transformFieldKeyToFieldClause(field), label || ('_' + interval), '' + interval));
+        return this;
+    };
+    /**
+     * Adds a join clause to the given search object.
+     *
+     * @arg {SearchObject} searchObject
+     * @arg {string} type
+     * @arg {string} database
+     * @arg {string} table
+     * @arg {FieldKey} field1
+     * @arg {string} operator
+     * @arg {FieldKey} field2
+     * @return {AbstractSearchService}
+     * @override
+     */
+    SearchService.prototype.withJoin = function (searchObject, type, database, table, field1, operator, field2) {
+        searchObject.joinClauses.push({
+            database: database,
+            table: table,
+            type: type,
+            onClause: new CoreFieldsFilterClause(new CoreFieldClause(field1.database, field1.table, field1.field), operator, new CoreFieldClause(field2.database, field2.table, field2.field))
+        });
         return this;
     };
     /**

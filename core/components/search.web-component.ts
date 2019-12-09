@@ -31,6 +31,8 @@ import { FilterService } from '../services/filter.service';
 import { NextCenturyElement } from './element.web-component';
 import { RequestWrapper } from '../services/connection.service';
 
+import * as _ from 'lodash';
+
 interface AggregationData {
     fieldKey: FieldKey;
     group: string;
@@ -42,6 +44,14 @@ interface GroupData {
     fieldKey: FieldKey;
     label: string;
     operation: string;
+}
+
+interface JoinData {
+    fieldKey1: FieldKey;
+    fieldKey2: FieldKey;
+    operator: string;
+    tableKey: FieldKey;
+    type: string;
 }
 
 export class NextCenturySearch extends NextCenturyElement {
@@ -204,6 +214,7 @@ export class NextCenturySearch extends NextCenturyElement {
 
         const aggregations: AggregationData[] = this._findSearchAggregations();
         const groups: GroupData[] = this._findSearchGroups();
+        const joins: JoinData[] = this._findSearchJoins();
 
         const unsharedFilters: AbstractFilter[] = Array.from(this._idsToFilters.values()).reduce((completeFilterList, filterList) =>
             completeFilterList.concat(filterList), []);
@@ -211,10 +222,11 @@ export class NextCenturySearch extends NextCenturyElement {
         const sortAggregation = this.getAttribute('sort-aggregation');
         const sortFieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(this.getAttribute('sort-field-key'));
 
-        const fields: FieldKey[] = allFields ? [] : searchFieldKeys
+        const fields: FieldKey[] = _.uniqWith(allFields ? [] : searchFieldKeys
             .concat(aggregations.filter((agg) => agg.fieldKey && agg.fieldKey.field).map((agg) => agg.fieldKey))
             .concat(groups.filter((group) => group.fieldKey && group.fieldKey.field).map((group) => group.fieldKey))
-            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []);
+            .concat(joins.map((join) => join.fieldKey1)).concat(joins.map((join) => join.fieldKey2))
+            .concat((sortFieldKey && sortFieldKey.field) ? sortFieldKey : []), _.isEqual.bind(this));
 
         const tableKey: FieldKey = this._retrieveTableKey();
         let searchObject: SearchObject = this._searchService.createSearch(tableKey.database, tableKey.table);
@@ -267,6 +279,11 @@ export class NextCenturySearch extends NextCenturyElement {
             }
         }
 
+        for (const join of joins) {
+            this._searchService.withJoin(searchObject, join.type, join.tableKey.database, join.tableKey.table, join.fieldKey1,
+                join.operator, join.fieldKey2);
+        }
+
         const sortOrder: SortOrder = (this.getAttribute('sort-order') || SortOrder.DESCENDING) as SortOrder;
         if (sortAggregation) {
             this._searchService.withOrderByOperation(searchObject, sortAggregation, sortOrder);
@@ -317,6 +334,30 @@ export class NextCenturySearch extends NextCenturyElement {
             }
         }
         return groups;
+    }
+
+    /**
+     * Returns the join data from the join elements inside this search element.
+     */
+    private _findSearchJoins(): JoinData[] {
+        let joins: JoinData[] = [];
+        for (const joinElement of this.getElementsByTagName('next-century-join') as any) {
+            const fieldKey1: FieldKey = DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-1'));
+            const fieldKey2: FieldKey = DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-2'));
+            const operator = joinElement.getAttribute('join-operator') || '=';
+            const tableKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-table-key'));
+            const type = joinElement.getAttribute('join-type') || '';
+            if (fieldKey1 && fieldKey1.field && fieldKey2 && fieldKey2.field && tableKey) {
+                joins.push({
+                    fieldKey1,
+                    fieldKey2,
+                    operator,
+                    tableKey,
+                    type
+                });
+            }
+        }
+        return joins;
     }
 
     /**

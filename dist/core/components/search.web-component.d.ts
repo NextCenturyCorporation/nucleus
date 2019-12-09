@@ -70,6 +70,10 @@ export declare class NextCenturySearch extends NextCenturyElement {
      */
     private _findSearchGroups;
     /**
+     * Returns the join data from the join elements inside this search element.
+     */
+    private _findSearchJoins;
+    /**
      * Handles the behavior whenever any filters in the whole application are changed by starting a new search query if needed.
      */
     private _handleFilterChange;

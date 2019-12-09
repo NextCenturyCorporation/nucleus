@@ -29,6 +29,7 @@ import {
 import { NextCenturyAggregation } from './aggregation.web-component';
 import { NextCenturyElement } from './element.web-component';
 import { NextCenturyGroup } from './group.web-component';
+import { NextCenturyJoin } from './join.web-component';
 import { NextCenturySearch } from './search.web-component';
 import { RequestWrapper } from '../services/connection.service';
 import { SearchObject } from '../services/abstract.search.service';
@@ -268,6 +269,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -355,6 +357,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -377,6 +380,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -471,6 +475,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -576,6 +581,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -639,6 +645,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -741,9 +748,225 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
+    });
+
+    it('build and run query with joins', () => {
+        let join1 = new NextCenturyJoin();
+        join1.setAttribute('join-field-key-1', 'datastore1.testDatabase1.testTable1.testIdField');
+        join1.setAttribute('join-field-key-2', 'datastore1.testDatabase2.testTable2.testIdField');
+        join1.setAttribute('join-table-key', 'datastore1.testDatabase2.testTable2');
+        searchComponent.appendChild(join1);
+        searchComponent.init(dataset, filterService, searchService);
+
+        expect(searchService.searches).toEqual(1);
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
+            datastoreHost: dataset.datastores.datastore1.host,
+            datastoreType: dataset.datastores.datastore1.type,
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }, {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testIdField'
+                    }, {
+                        database: 'testDatabase2',
+                        table: 'testTable2',
+                        field: 'testIdField'
+                    }]
+                },
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testIdField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testIdField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                joinClauses: [{
+                    type: '',
+                    database: 'testDatabase2',
+                    table: 'testTable2',
+                    onClause: {
+                        type: 'fields',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testIdField'
+                        },
+                        operator: '=',
+                        rhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testIdField'
+                        }
+                    }
+                }],
+                isDistinct: false
+            }
+        });
+
+        let join2 = new NextCenturyJoin();
+        join2.setAttribute('join-field-key-1', 'datastore1.testDatabase1.testTable1.testNameField');
+        join2.setAttribute('join-field-key-2', 'datastore1.testDatabase2.testTable2.testTypeField');
+        join2.setAttribute('join-operator', '!=');
+        join2.setAttribute('join-table-key', 'datastore1.testDatabase2.testTable2');
+        join2.setAttribute('join-type', 'inner');
+        searchComponent.appendChild(join2);
+        searchComponent.init(dataset, filterService, searchService);
+
+        expect(searchService.searches).toEqual(2);
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
+            datastoreHost: dataset.datastores.datastore1.host,
+            datastoreType: dataset.datastores.datastore1.type,
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }, {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testIdField'
+                    }, {
+                        database: 'testDatabase2',
+                        table: 'testTable2',
+                        field: 'testIdField'
+                    }, {
+                        database: 'testDatabase2',
+                        table: 'testTable2',
+                        field: 'testTypeField'
+                    }]
+                },
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testIdField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testIdField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testTypeField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                joinClauses: [{
+                    type: '',
+                    database: 'testDatabase2',
+                    table: 'testTable2',
+                    onClause: {
+                        type: 'fields',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testIdField'
+                        },
+                        operator: '=',
+                        rhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testIdField'
+                        }
+                    }
+                }, {
+                    type: 'inner',
+                    database: 'testDatabase2',
+                    table: 'testTable2',
+                    onClause: {
+                        type: 'fields',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: {
+                            database: 'testDatabase2',
+                            table: 'testTable2',
+                            field: 'testTypeField'
+                        }
+                    }
+                }],
+                isDistinct: false
+            }
+        });
+    });
+
+    it('build and run query with joins and additional join filters', () => {
+        // TODO
     });
 
     it('build and run query with limit', () => {
@@ -779,6 +1002,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10000 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -817,6 +1041,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 10 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -879,6 +1104,7 @@ describe('Search Component init should', () => {
                 }],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -938,6 +1164,7 @@ describe('Search Component init should', () => {
                 }],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -993,6 +1220,7 @@ describe('Search Component init should', () => {
                 }],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1144,6 +1372,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1295,6 +1524,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1449,6 +1679,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1570,6 +1801,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1617,6 +1849,7 @@ describe('Search Component init should', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1750,6 +1983,7 @@ describe('Search Component', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
@@ -1965,6 +2199,7 @@ describe('Search Component', () => {
                 orderByClauses: [],
                 limitClause: { limit: 10 },
                 offsetClause: { offset: 0 },
+                joinClauses: [],
                 isDistinct: false
             }
         });
