@@ -117,6 +117,14 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
     }
 
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    public runQuery(id: string, filters: AbstractFilter[]): void {
+        const searchElement: NextCenturySearch = this.findWrappedElement();
+        searchElement.runQuery();
+    }
+
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     public updateFilters(id: string, filters: AbstractFilter[]): void {

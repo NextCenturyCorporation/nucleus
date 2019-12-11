@@ -50,6 +50,10 @@ export declare class NextCenturySearch extends NextCenturyElement {
      */
     init(dataset: Dataset, filterService: FilterService, searchService: AbstractSearchService, options?: any): void;
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    runQuery(): void;
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     updateFilters(id: string, filters: AbstractFilter[]): void;
@@ -137,11 +141,7 @@ export declare class NextCenturySearch extends NextCenturyElement {
      */
     private _retrieveTableKey;
     /**
-     * Runs the given search query using the current attributes, dataset, and services.
-     */
-    private _runQuery;
-    /**
-     * Starts a new search query using the current attributes and filters in the FilterService.
+     * Starts the given search query using the current attributes, dataset, and services.
      */
     private _startQuery;
 }

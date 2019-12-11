@@ -98,7 +98,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
         if (name === 'id') {
             this._registerWithFilterService(oldValue, newValue);
         }
-        this._startQuery();
+        this.runQuery();
     };
     NextCenturySearch.prototype.connectedCallback = function () {
         _super.prototype.connectedCallback.call(this);
@@ -145,7 +145,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
         if (this.getAttribute('id')) {
             this._registerWithFilterService(null, this.getAttribute('id'));
             if (this.getAttribute('search-field-keys')) {
-                this._startQuery();
+                this.runQuery();
             }
             else {
                 console.error('Search component must have the search-field-keys attribute!');
@@ -156,18 +156,35 @@ var NextCenturySearch = /** @class */ (function (_super) {
         }
     };
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    NextCenturySearch.prototype.runQuery = function () {
+        if (!this._isReady()) {
+            return;
+        }
+        var searchObject = this._buildQuery();
+        if (searchObject) {
+            var limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
+            this._searchService.withLimit(searchObject, limit);
+            var page = Number(this.getAttribute('search-page') || 1);
+            this._searchService.withOffset(searchObject, (page - 1) * limit);
+            var searchFilters = this._retrieveSearchFilters();
+            this._startQuery(searchObject, !!searchFilters.length);
+        }
+    };
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     NextCenturySearch.prototype.updateFilters = function (id, filters) {
         this._idsToFilters.set(id, filters);
-        this._startQuery();
+        this.runQuery();
     };
     /**
      * Updates the filter designs of this search element (used to find shared filters) with the given filter designs.
      */
     NextCenturySearch.prototype.updateFilterDesigns = function (id, filterDesigns) {
         this._idsToFilterDesigns.set(id, filterDesigns);
-        this._startQuery();
+        this.runQuery();
     };
     /**
      * Returns the search query with its fields, aggregations, groups, filters, and sort.
@@ -330,7 +347,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
         if (callerId === this.getAttribute('id') && this.hasAttribute('enable-ignore-self-filter')) {
             return;
         }
-        this._startQuery();
+        this.runQuery();
     };
     /**
      * Transforms the given search query results, draws them in the visualization element, and emits an event.
@@ -587,9 +604,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
         return fieldKeys.length ? fieldKeys[0] : null;
     };
     /**
-     * Runs the given search query using the current attributes, dataset, and services.
+     * Starts the given search query using the current attributes, dataset, and services.
      */
-    NextCenturySearch.prototype._runQuery = function (searchObject, isFiltered) {
+    NextCenturySearch.prototype._startQuery = function (searchObject, isFiltered) {
         var _this = this;
         if (!this._isReady()) {
             return;
@@ -648,23 +665,6 @@ var NextCenturySearch = /** @class */ (function (_super) {
         this._runningQuery.done(function (response) {
             _this._handleQuerySuccess(_this._searchService.transformSearchResultValues(response, labels), null);
         });
-    };
-    /**
-     * Starts a new search query using the current attributes and filters in the FilterService.
-     */
-    NextCenturySearch.prototype._startQuery = function () {
-        if (!this._isReady()) {
-            return;
-        }
-        var searchObject = this._buildQuery();
-        if (searchObject) {
-            var limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
-            this._searchService.withLimit(searchObject, limit);
-            var page = Number(this.getAttribute('search-page') || 1);
-            this._searchService.withOffset(searchObject, (page - 1) * limit);
-            var searchFilters = this._retrieveSearchFilters();
-            this._runQuery(searchObject, !!searchFilters.length);
-        }
     };
     NextCenturySearch.DEFAULT_LIMIT = 10;
     NextCenturySearch.ELEMENT_NAME = 'next-century-search';
