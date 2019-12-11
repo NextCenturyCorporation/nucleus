@@ -204,6 +204,10 @@ Dispatched whenever a search is launched in this Search Component.
 
 Initializes this Search Component.
 
+**runQuery(): void**
+
+Runs the search query.  Only call this function if you want to manually trigger a requery.
+
 **updateFilters(id: string, filters: AbstractFilter[]): void**
 
 Sets the unshared filters of this Search Component corresponding with the given ID to the given filter objects.

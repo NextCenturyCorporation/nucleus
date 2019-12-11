@@ -50,6 +50,10 @@ export declare class NextCenturySearchAngularComponent extends NextCenturyCommon
      */
     protected retrieveWrappedElementObservedAttributes(): string[];
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    runQuery(id: string, filters: AbstractFilter[]): void;
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     updateFilters(id: string, filters: AbstractFilter[]): void;

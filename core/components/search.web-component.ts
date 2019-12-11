@@ -110,7 +110,7 @@ export class NextCenturySearch extends NextCenturyElement {
             this._registerWithFilterService(oldValue, newValue);
         }
 
-        this._startQuery();
+        this.runQuery();
     }
 
     public connectedCallback(): void {
@@ -167,7 +167,7 @@ export class NextCenturySearch extends NextCenturyElement {
             this._registerWithFilterService(null, this.getAttribute('id'));
 
             if (this.getAttribute('search-field-keys')) {
-                this._startQuery();
+                this.runQuery();
             } else {
                 console.error('Search component must have the search-field-keys attribute!');
             }
@@ -177,11 +177,33 @@ export class NextCenturySearch extends NextCenturyElement {
     }
 
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    public runQuery(): void {
+        if (!this._isReady()) {
+            return;
+        }
+
+        let queryPayload: QueryPayload = this._buildQuery();
+
+        if (queryPayload) {
+            const limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
+            this._searchService.updateLimit(queryPayload, limit);
+
+            const page = Number(this.getAttribute('search-page') || 1);
+            this._searchService.updateOffset(queryPayload, (page - 1) * limit);
+
+            const searchFilters: AbstractFilter[] = this._retrieveSearchFilters();
+            this._startQuery(queryPayload, !!searchFilters.length);
+        }
+    }
+
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     public updateFilters(id: string, filters: AbstractFilter[]): void {
         this._idsToFilters.set(id, filters);
-        this._startQuery();
+        this.runQuery();
     }
 
     /**
@@ -189,7 +211,7 @@ export class NextCenturySearch extends NextCenturyElement {
      */
     public updateFilterDesigns(id: string, filterDesigns: AbstractFilterDesign[]): void {
         this._idsToFilterDesigns.set(id, filterDesigns);
-        this._startQuery();
+        this.runQuery();
     }
 
     /**
@@ -324,7 +346,7 @@ export class NextCenturySearch extends NextCenturyElement {
             return;
         }
 
-        this._startQuery();
+        this.runQuery();
     }
 
     /**
@@ -601,9 +623,9 @@ export class NextCenturySearch extends NextCenturyElement {
     }
 
     /**
-     * Runs the given search query using the current attributes, dataset, and services.
+     * Starts the given search query using the current attributes, dataset, and services.
      */
-    private _runQuery(queryPayload: QueryPayload, isFiltered: boolean): void {
+    private _startQuery(queryPayload: QueryPayload, isFiltered: boolean): void {
         if (!this._isReady()) {
             return;
         }
@@ -669,28 +691,6 @@ export class NextCenturySearch extends NextCenturyElement {
             this._handleQuerySuccess(this._searchService.transformQueryResultsValues(response, labels), null);
             this._runningQuery = undefined;
         });
-    }
-
-    /**
-     * Starts a new search query using the current attributes and filters in the FilterService.
-     */
-    private _startQuery(): void {
-        if (!this._isReady()) {
-            return;
-        }
-
-        let queryPayload: QueryPayload = this._buildQuery();
-
-        if (queryPayload) {
-            const limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
-            this._searchService.updateLimit(queryPayload, limit);
-
-            const page = Number(this.getAttribute('search-page') || 1);
-            this._searchService.updateOffset(queryPayload, (page - 1) * limit);
-
-            const searchFilters: AbstractFilter[] = this._retrieveSearchFilters();
-            this._runQuery(queryPayload, !!searchFilters.length);
-        }
     }
 }
 

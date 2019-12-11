@@ -113,6 +113,13 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
         return search_web_component_1.NextCenturySearch.observedAttributes;
     };
     /**
+     * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
+     */
+    NextCenturySearchAngularComponent.prototype.runQuery = function (id, filters) {
+        var searchElement = this.findWrappedElement();
+        searchElement.runQuery();
+    };
+    /**
      * Updates the unshared filters of this search element with the given filters.
      */
     NextCenturySearchAngularComponent.prototype.updateFilters = function (id, filters) {
