@@ -17,14 +17,14 @@ import { ChangeDetectionStrategy, Component, ElementRef, ViewEncapsulation } fro
 
 // TODO Change your visualization's filenames, selector, and class name.
 @Component({
-    selector: 'app-next-century-angular-stub',
+    selector: 'app-nucleus-angular-stub',
     templateUrl: './stub.angular-component.html',
     // TODO Add the path to your CSS/SCSS/Less file to styleUrls.
     styleUrls: [],
     encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NextCenturyStubAngularComponent {
+export class NucleusStubAngularComponent {
     public data: any[] = [];
     public filteredValues: any[] = [];
 
@@ -37,7 +37,7 @@ export class NextCenturyStubAngularComponent {
      * Changes the filtered data in this visualization to the values in the given filter data.  Invoked by a Filter Component.
      */
     public changeFilteredData(filterData: any|any[]): void {
-        // Documentation on filterData:  https://github.com/NextCenturyCorporation/component-library#filter-data-array
+        // Documentation on filterData:  https://github.com/NextCenturyCorporation/nucleus#filter-data-array
 
         // TODO If the values in filterData and this.filteredValues are different, set this.filteredValues to the new values.
 
@@ -48,7 +48,7 @@ export class NextCenturyStubAngularComponent {
      * Draws the given search data as HTML elements in this visualization.  Invoked by a Search Component.
      */
     public drawData(searchData: any[]): void {
-        // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
+        // Documentation on searchData:  https://github.com/NextCenturyCorporation/nucleus#search-data-object
 
         // TODO Set this.data to the searchData array, transformed as needed by this visualization.
 

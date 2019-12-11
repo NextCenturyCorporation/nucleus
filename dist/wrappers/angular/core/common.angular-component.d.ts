@@ -15,7 +15,7 @@
 import { AfterViewInit, OnChanges } from '@angular/core';
 import { Dataset } from '../../../core/models/dataset';
 import { FilterService } from '../../../core/services/filter.service';
-export declare abstract class NextCenturyCommonAngularComponent implements AfterViewInit, OnChanges {
+export declare abstract class NucleusCommonAngularComponent implements AfterViewInit, OnChanges {
     dataset: Dataset;
     filterService: FilterService;
     id: string;

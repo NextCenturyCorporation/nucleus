@@ -28,12 +28,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var element_web_component_1 = require("./element.web-component");
-var NextCenturyAggregation = /** @class */ (function (_super) {
-    __extends(NextCenturyAggregation, _super);
-    function NextCenturyAggregation() {
+var NucleusAggregation = /** @class */ (function (_super) {
+    __extends(NucleusAggregation, _super);
+    function NucleusAggregation() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(NextCenturyAggregation, "observedAttributes", {
+    Object.defineProperty(NucleusAggregation, "observedAttributes", {
         get: function () {
             return [
                 'aggregation-field-key',
@@ -45,18 +45,18 @@ var NextCenturyAggregation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyAggregation.createElement = function (attributes) {
-        var aggregationElement = document.createElement(NextCenturyAggregation.ELEMENT_NAME);
-        NextCenturyAggregation.observedAttributes.forEach(function (attribute) {
+    NucleusAggregation.createElement = function (attributes) {
+        var aggregationElement = document.createElement(NucleusAggregation.ELEMENT_NAME);
+        NucleusAggregation.observedAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 aggregationElement.setAttribute(attribute, attributes[attribute]);
             }
         });
         return aggregationElement;
     };
-    NextCenturyAggregation.ELEMENT_NAME = 'next-century-aggregation';
-    return NextCenturyAggregation;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyAggregation = NextCenturyAggregation;
-window.customElements.define(NextCenturyAggregation.ELEMENT_NAME, NextCenturyAggregation);
+    NucleusAggregation.ELEMENT_NAME = 'nucleus-aggregation';
+    return NucleusAggregation;
+}(element_web_component_1.NucleusElement));
+exports.NucleusAggregation = NucleusAggregation;
+window.customElements.define(NucleusAggregation.ELEMENT_NAME, NucleusAggregation);
 //# sourceMappingURL=aggregation.web-component.js.map

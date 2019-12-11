@@ -14,9 +14,9 @@
  */
 import { ElementRef } from '@angular/core';
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
-import { NextCenturyCommonAngularComponent } from '../core/common.angular-component';
-import { NextCenturyTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
-export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
+import { NucleusCommonAngularComponent } from '../core/common.angular-component';
+import { NucleusTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
+export declare class NucleusTextCloudAngularComponent extends NucleusCommonAngularComponent {
     elementRef: ElementRef;
     searchService: AbstractSearchService;
     constructor(elementRef: ElementRef);
@@ -37,11 +37,11 @@ export declare class NextCenturyTextCloudAngularComponent extends NextCenturyCom
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyTextCloud;
+    protected findWrappedElement(): NucleusTextCloud;
     /**
      * @override
      */
-    protected initWrappedElement(visElement: NextCenturyTextCloud): void;
+    protected initWrappedElement(visElement: NucleusTextCloud): void;
     /**
      * @override
      */

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { NextCenturyElement } from './element.web-component';
+import { NucleusElement } from './element.web-component';
 
-export class NextCenturyGroup extends NextCenturyElement {
-    static ELEMENT_NAME = 'next-century-group';
+export class NucleusGroup extends NucleusElement {
+    static ELEMENT_NAME = 'nucleus-group';
 
     static get observedAttributes(): string[] {
         return [
@@ -27,8 +27,8 @@ export class NextCenturyGroup extends NextCenturyElement {
     }
 
     static createElement(attributes: Record<string, any>): HTMLElement {
-        const groupElement = document.createElement(NextCenturyGroup.ELEMENT_NAME);
-        NextCenturyGroup.observedAttributes.forEach((attribute) => {
+        const groupElement = document.createElement(NucleusGroup.ELEMENT_NAME);
+        NucleusGroup.observedAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 groupElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -37,5 +37,5 @@ export class NextCenturyGroup extends NextCenturyElement {
     }
 }
 
-window.customElements.define(NextCenturyGroup.ELEMENT_NAME, NextCenturyGroup);
+window.customElements.define(NucleusGroup.ELEMENT_NAME, NucleusGroup);
 

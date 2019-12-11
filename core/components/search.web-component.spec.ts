@@ -26,11 +26,11 @@ import {
     PairFilter,
     PairFilterDesign
 } from '../models/filters';
-import { NextCenturyAggregation } from './aggregation.web-component';
-import { NextCenturyElement } from './element.web-component';
-import { NextCenturyGroup } from './group.web-component';
-import { NextCenturyJoin } from './join.web-component';
-import { NextCenturySearch } from './search.web-component';
+import { NucleusAggregation } from './aggregation.web-component';
+import { NucleusElement } from './element.web-component';
+import { NucleusGroup } from './group.web-component';
+import { NucleusJoin } from './join.web-component';
+import { NucleusSearch } from './search.web-component';
 import { RequestWrapper } from '../services/connection.service';
 import { SearchObject } from '../services/abstract.search.service';
 
@@ -39,8 +39,8 @@ import { SearchServiceMock } from '../services/mock.search.service';
 
 import * as _ from 'lodash';
 
-if (!window.customElements.get('next-century-element-mock')) {
-    window.customElements.define('next-century-element-mock', NextCenturyElement);
+if (!window.customElements.get('nucleus-element-mock')) {
+    window.customElements.define('nucleus-element-mock', NucleusElement);
 }
 
 class SearchServiceMockSuccessfulSearch extends SearchServiceMock {
@@ -82,14 +82,14 @@ class SearchServiceMockSuccessfulSearch extends SearchServiceMock {
 
 describe('Search Component static createElement should return', () => {
     it('expected HTMLElement', () => {
-        const actual1 = NextCenturySearch.createElement('testId', {
+        const actual1 = NucleusSearch.createElement('testId', {
             'search-field-keys': 'datastore1.testDatabase1.testTable1.testNameField'
         });
         expect(actual1).not.toEqual(null);
         expect(actual1.getAttribute('id')).toEqual('testId');
         expect(actual1.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testNameField');
 
-        const actual2 = NextCenturySearch.createElement('testId', {
+        const actual2 = NucleusSearch.createElement('testId', {
             'enable-hide-if-unfiltered': true,
             'enable-ignore-self-filter': true,
             'search-field-keys': 'datastore1.testDatabase1.testTable1.testNameField',
@@ -116,8 +116,8 @@ describe('Search Component static createElement should return', () => {
     });
 
     it('null if the required attributes are not defined', () => {
-        expect(NextCenturySearch.createElement('testId', {})).toEqual(null);
-        expect(NextCenturySearch.createElement('', {
+        expect(NucleusSearch.createElement('testId', {})).toEqual(null);
+        expect(NucleusSearch.createElement('', {
             'search-field-keys': 'datastore1.testDatabase1.testTable1.testNameField'
         })).toEqual(null);
     });
@@ -126,11 +126,11 @@ describe('Search Component static createElement should return', () => {
 describe('Search Component init should', () => {
     let dataset: Dataset;
     let filterService: FilterService;
-    let searchComponent: NextCenturySearch;
+    let searchComponent: NucleusSearch;
     let searchService: SearchServiceMockSuccessfulSearch;
 
     beforeEach(() => {
-        searchComponent = new NextCenturySearch();
+        searchComponent = new NucleusSearch();
         searchComponent.setAttribute('id', 'testSearchElementId');
         searchComponent.setAttribute('search-field-keys', 'datastore1.testDatabase1.testTable1.testNameField');
         dataset = DATASET;
@@ -211,14 +211,14 @@ describe('Search Component init should', () => {
             filtered: false
         }];
 
-        let visElement = new NextCenturyElement();
+        let visElement = new NucleusElement();
         visElement.setAttribute('id', 'testTargetElementId');
         (visElement as any).drawData = (data: any[]) => {
             expect(data).toEqual(expected);
             done();
         };
 
-        let parentElement = new NextCenturyElement();
+        let parentElement = new NucleusElement();
         parentElement.setAttribute('id', 'testParentElementId');
         parentElement.appendChild(searchComponent);
         parentElement.appendChild(visElement);
@@ -415,7 +415,7 @@ describe('Search Component init should', () => {
             testTypeField: 'type1'
         }];
 
-        let aggregation1 = new NextCenturyAggregation();
+        let aggregation1 = new NucleusAggregation();
         aggregation1.setAttribute('aggregation-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
         aggregation1.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation1);
@@ -512,12 +512,12 @@ describe('Search Component init should', () => {
             testTypeField: 'type1'
         }];
 
-        let aggregation1 = new NextCenturyAggregation();
+        let aggregation1 = new NucleusAggregation();
         aggregation1.setAttribute('aggregation-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
         aggregation1.setAttribute('aggregation-label', '_sums');
         aggregation1.setAttribute('aggregation-operation', 'sum');
         searchComponent.appendChild(aggregation1);
-        let aggregation2 = new NextCenturyAggregation();
+        let aggregation2 = new NucleusAggregation();
         aggregation2.setAttribute('aggregation-group', '_sums');
         aggregation2.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation2);
@@ -588,7 +588,7 @@ describe('Search Component init should', () => {
     });
 
     it('build and run query with groups', () => {
-        let group1 = new NextCenturyGroup();
+        let group1 = new NucleusGroup();
         group1.setAttribute('group-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
         searchComponent.appendChild(group1);
         searchComponent.init(dataset, filterService, searchService);
@@ -650,7 +650,7 @@ describe('Search Component init should', () => {
             }
         });
 
-        let group2 = new NextCenturyGroup();
+        let group2 = new NucleusGroup();
         group2.setAttribute('group-field-key', 'datastore1.testDatabase1.testTable1.testDateField');
         group2.setAttribute('group-operation', 'dayOfMonth');
         searchComponent.appendChild(group2);
@@ -755,7 +755,7 @@ describe('Search Component init should', () => {
     });
 
     it('build and run query with joins', () => {
-        let join1 = new NextCenturyJoin();
+        let join1 = new NucleusJoin();
         join1.setAttribute('join-field-key-1', 'datastore1.testDatabase1.testTable1.testIdField');
         join1.setAttribute('join-field-key-2', 'datastore1.testDatabase2.testTable2.testIdField');
         join1.setAttribute('join-table-key', 'datastore1.testDatabase2.testTable2');
@@ -843,7 +843,7 @@ describe('Search Component init should', () => {
             }
         });
 
-        let join2 = new NextCenturyJoin();
+        let join2 = new NucleusJoin();
         join2.setAttribute('join-field-key-1', 'datastore1.testDatabase1.testTable1.testNameField');
         join2.setAttribute('join-field-key-2', 'datastore1.testDatabase2.testTable2.testTypeField');
         join2.setAttribute('join-operator', '!=');
@@ -1859,11 +1859,11 @@ describe('Search Component init should', () => {
 describe('Search Component', () => {
     let dataset: Dataset;
     let filterService: FilterService;
-    let searchComponent: NextCenturySearch;
+    let searchComponent: NucleusSearch;
     let searchService: SearchServiceMockSuccessfulSearch;
 
     beforeEach(() => {
-        searchComponent = new NextCenturySearch();
+        searchComponent = new NucleusSearch();
         searchComponent.setAttribute('id', 'testSearchElementId');
         searchComponent.setAttribute('search-field-keys', 'datastore1.testDatabase1.testTable1.testNameField');
         dataset = DATASET;
@@ -2315,11 +2315,11 @@ describe('Search Component', () => {
 describe('Search Component should have expected filtered response data', () => {
     let dataset: Dataset;
     let filterService: FilterService;
-    let searchComponent: NextCenturySearch;
+    let searchComponent: NucleusSearch;
     let searchService: SearchServiceMockSuccessfulSearch;
 
     beforeEach(() => {
-        searchComponent = new NextCenturySearch();
+        searchComponent = new NucleusSearch();
         searchComponent.setAttribute('id', 'testSearchElementId');
         searchComponent.setAttribute('search-field-keys', 'datastore1.testDatabase1.testTable1.testNameField');
         dataset = DATASET;

@@ -16,20 +16,20 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
 import { CoreUtil } from '../../../core/core.util';
-import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyFilter } from '../../../core/components/filter.web-component';
+import { NucleusCommonAngularComponent } from './common.angular-component';
+import { NucleusFilter } from '../../../core/components/filter.web-component';
 
 const FILTER_COMPONENT_TEMPLATE = `
-<next-century-filter [attr.id]="id + '-filter'"></next-century-filter>
+<nucleus-filter [attr.id]="id + '-filter'"></nucleus-filter>
 `;
 
 @Component({
-    selector: 'app-next-century-angular-filter',
+    selector: 'app-nucleus-angular-filter',
     template: FILTER_COMPONENT_TEMPLATE,
     encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularComponent {
+export class NucleusFilterAngularComponent extends NucleusCommonAngularComponent {
     @Input() searchElement: any;
     @Input() visInputElement: any;
     @Input() visOutputElement: any;
@@ -48,14 +48,14 @@ export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularC
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyFilter {
-        return this.elementRef.nativeElement.querySelector('#' + this.id + '-filter') as NextCenturyFilter;
+    protected findWrappedElement(): NucleusFilter {
+        return this.elementRef.nativeElement.querySelector('#' + this.id + '-filter') as NucleusFilter;
     }
 
     /**
      * @override
      */
-    protected initWrappedElement(filterElement: NextCenturyFilter): void {
+    protected initWrappedElement(filterElement: NucleusFilter): void {
         filterElement.init(this.dataset, this.filterService, {
             search: this.searchElement,
             visInput: this.visInputElement,
@@ -67,7 +67,7 @@ export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected onWrapperAfterViewInit(): void {
-        const filterElement: NextCenturyFilter = this.findWrappedElement();
+        const filterElement: NucleusFilter = this.findWrappedElement();
 
         // Add event propagation listeners after the HTML elements are stable.
         CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, filterElement, 'valuesFiltered');
@@ -77,14 +77,14 @@ export class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[] {
-        return NextCenturyFilter.observedAttributes;
+        return NucleusFilter.observedAttributes;
     }
 
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
     public updateFilteredValues(values: any|any[]): void {
-        const filterElement: NextCenturyFilter = this.findWrappedElement();
+        const filterElement: NucleusFilter = this.findWrappedElement();
         filterElement.updateFilteredValues(values);
     }
 }

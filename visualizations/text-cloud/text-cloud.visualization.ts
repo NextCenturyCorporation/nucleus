@@ -15,9 +15,9 @@
 
 import { ColorOptions, SizeOptions, TextCloud } from './TextCloud';
 import { CoreUtil } from '../../core/core.util';
-import { NextCenturyElement } from '../../core/components/element.web-component';
+import { NucleusElement } from '../../core/components/element.web-component';
 
-export class NextCenturyTextCloudVisualization extends NextCenturyElement {
+export class NucleusTextCloudVisualization extends NucleusElement {
     private _data: any[] = [];
     private _filtered: string[] = [];
     private _shadowRoot: ShadowRoot;
@@ -216,4 +216,4 @@ export class NextCenturyTextCloudVisualization extends NextCenturyElement {
     }
 }
 
-window.customElements.define('next-century-visualization-text-cloud', NextCenturyTextCloudVisualization);
+window.customElements.define('nucleus-visualization-text-cloud', NucleusTextCloudVisualization);

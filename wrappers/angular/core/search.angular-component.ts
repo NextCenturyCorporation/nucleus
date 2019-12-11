@@ -18,26 +18,26 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulatio
 import { AbstractFilter, AbstractFilterDesign } from '../../../core/models/filters';
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
 import { CoreUtil } from '../../../core/core.util';
-import { NextCenturyAggregation } from '../../../core/components/aggregation.web-component';
-import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyGroup } from '../../../core/components/group.web-component';
-import { NextCenturySearch } from '../../../core/components/search.web-component';
+import { NucleusAggregation } from '../../../core/components/aggregation.web-component';
+import { NucleusCommonAngularComponent } from './common.angular-component';
+import { NucleusGroup } from '../../../core/components/group.web-component';
+import { NucleusSearch } from '../../../core/components/search.web-component';
 
 const SEARCH_COMPONENT_TEMPLATE = `
-<next-century-search [attr.id]="id + '-search'">
-    <next-century-aggregation *ngFor="let aggregation of aggregations; let i = index" [attr.id]="id + '-aggregation-' + i">
-    </next-century-aggregation>
-    <next-century-group *ngFor="let group of groups; let i = index" [attr.id]="id + '-group-' + i"></next-century-group>
-</next-century-search>
+<nucleus-search [attr.id]="id + '-search'">
+    <nucleus-aggregation *ngFor="let aggregation of aggregations; let i = index" [attr.id]="id + '-aggregation-' + i">
+    </nucleus-aggregation>
+    <nucleus-group *ngFor="let group of groups; let i = index" [attr.id]="id + '-group-' + i"></nucleus-group>
+</nucleus-search>
 `;
 
 @Component({
-    selector: 'app-next-century-angular-search',
+    selector: 'app-nucleus-angular-search',
     template: SEARCH_COMPONENT_TEMPLATE,
     encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularComponent {
+export class NucleusSearchAngularComponent extends NucleusCommonAngularComponent {
     @Input() aggregations: Record<string, any>[];
     @Input() groups: Record<string, any>[];
     @Input() options: Record<string, any>;
@@ -58,14 +58,14 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturySearch {
-        return this.elementRef.nativeElement.querySelector('#' + this.id + '-search') as NextCenturySearch;
+    protected findWrappedElement(): NucleusSearch {
+        return this.elementRef.nativeElement.querySelector('#' + this.id + '-search') as NucleusSearch;
     }
 
     /**
      * @override
      */
-    protected initWrappedElement(searchElement: NextCenturySearch): void {
+    protected initWrappedElement(searchElement: NucleusSearch): void {
         searchElement.init(this.dataset, this.filterService, this.searchService, {
             visInput: this.visInputElement
         });
@@ -75,7 +75,7 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected onWrapperAfterViewInit(): void {
-        const searchElement: NextCenturySearch = this.findWrappedElement();
+        const searchElement: NucleusSearch = this.findWrappedElement();
 
         // Add event propagation listeners after the HTML elements are stable.
         CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, searchElement, 'searchCanceled');
@@ -91,9 +91,9 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
         if (this.aggregations) {
             this.aggregations.forEach((aggregationOptions, index) => {
                 const aggregationElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-aggregation-' +
-                    index) as NextCenturyAggregation;
+                    index) as NucleusAggregation;
                 if (aggregationElement) {
-                    CoreUtil.updateElementAttributes(aggregationElement, NextCenturyAggregation.observedAttributes, aggregationOptions);
+                    CoreUtil.updateElementAttributes(aggregationElement, NucleusAggregation.observedAttributes, aggregationOptions);
                 }
             });
         }
@@ -101,9 +101,9 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
         if (this.groups) {
             this.groups.forEach((groupOptions, index) => {
                 const groupElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-group-' +
-                    index) as NextCenturyGroup;
+                    index) as NucleusGroup;
                 if (groupElement) {
-                    CoreUtil.updateElementAttributes(groupElement, NextCenturyGroup.observedAttributes, groupOptions);
+                    CoreUtil.updateElementAttributes(groupElement, NucleusGroup.observedAttributes, groupOptions);
                 }
             });
         }
@@ -113,14 +113,14 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[] {
-        return NextCenturySearch.observedAttributes;
+        return NucleusSearch.observedAttributes;
     }
 
     /**
      * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
      */
     public runQuery(id: string, filters: AbstractFilter[]): void {
-        const searchElement: NextCenturySearch = this.findWrappedElement();
+        const searchElement: NucleusSearch = this.findWrappedElement();
         searchElement.runQuery();
     }
 
@@ -128,7 +128,7 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
      * Updates the unshared filters of this search element with the given filters.
      */
     public updateFilters(id: string, filters: AbstractFilter[]): void {
-        const searchElement: NextCenturySearch = this.findWrappedElement();
+        const searchElement: NucleusSearch = this.findWrappedElement();
         searchElement.updateFilters(id, filters);
     }
 
@@ -136,7 +136,7 @@ export class NextCenturySearchAngularComponent extends NextCenturyCommonAngularC
      * Updates the filter designs of this search element (used to find shared filters) with the given filter designs.
      */
     public updateFilterDesigns(id: string, filterDesigns: AbstractFilterDesign[]): void {
-        const searchElement: NextCenturySearch = this.findWrappedElement();
+        const searchElement: NucleusSearch = this.findWrappedElement();
         searchElement.updateFilterDesigns(id, filterDesigns);
     }
 }

@@ -31,22 +31,22 @@ var filters_1 = require("../models/filters");
 var config_option_1 = require("../models/config-option");
 var core_util_1 = require("../core.util");
 var element_web_component_1 = require("./element.web-component");
-var NextCenturyFilter = /** @class */ (function (_super) {
-    __extends(NextCenturyFilter, _super);
-    function NextCenturyFilter() {
+var NucleusFilter = /** @class */ (function (_super) {
+    __extends(NucleusFilter, _super);
+    function NucleusFilter() {
         var _this = _super.call(this) || this;
         _this._filterDesigns = [];
         _this._handleFilterEventFromVisualizationCallback = _this._handleFilterEventFromVisualization.bind(_this);
         return _this;
     }
-    Object.defineProperty(NextCenturyFilter, "observedAttributes", {
+    Object.defineProperty(NucleusFilter, "observedAttributes", {
         get: function () {
-            return ['id'].concat(NextCenturyFilter.requiredAttributes).concat(NextCenturyFilter.optionalAttributes);
+            return ['id'].concat(NucleusFilter.requiredAttributes).concat(NucleusFilter.optionalAttributes);
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(NextCenturyFilter, "optionalAttributes", {
+    Object.defineProperty(NucleusFilter, "optionalAttributes", {
         get: function () {
             return [
                 'bounds-field-key-x',
@@ -68,7 +68,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(NextCenturyFilter, "requiredAttributes", {
+    Object.defineProperty(NucleusFilter, "requiredAttributes", {
         get: function () {
             return [
                 'filter-type',
@@ -78,23 +78,23 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyFilter.createElement = function (id, attributes) {
-        if (!id || NextCenturyFilter.requiredAttributes.some(function (attribute) { return !attributes[attribute]; })) {
+    NucleusFilter.createElement = function (id, attributes) {
+        if (!id || NucleusFilter.requiredAttributes.some(function (attribute) { return !attributes[attribute]; })) {
             return null;
         }
-        var filterElement = document.createElement(NextCenturyFilter.ELEMENT_NAME);
+        var filterElement = document.createElement(NucleusFilter.ELEMENT_NAME);
         filterElement.setAttribute('id', id);
-        NextCenturyFilter.requiredAttributes.forEach(function (attribute) {
+        NucleusFilter.requiredAttributes.forEach(function (attribute) {
             filterElement.setAttribute(attribute, attributes[attribute]);
         });
-        NextCenturyFilter.optionalAttributes.forEach(function (attribute) {
+        NucleusFilter.optionalAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 filterElement.setAttribute(attribute, attributes[attribute]);
             }
         });
         return filterElement;
     };
-    NextCenturyFilter.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
+    NucleusFilter.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
         _super.prototype.attributeChangedCallback.call(this, name, oldValue, newValue);
         if (!this._isReady()) {
             return;
@@ -126,10 +126,10 @@ var NextCenturyFilter = /** @class */ (function (_super) {
         }
         this._updateFilterDesigns();
     };
-    NextCenturyFilter.prototype.connectedCallback = function () {
+    NucleusFilter.prototype.connectedCallback = function () {
         _super.prototype.connectedCallback.call(this);
     };
-    NextCenturyFilter.prototype.disconnectedCallback = function () {
+    NucleusFilter.prototype.disconnectedCallback = function () {
         _super.prototype.disconnectedCallback.call(this);
         if (this.getAttribute('vis-element-id') && this.getAttribute('vis-filter-output-event')) {
             core_util_1.CoreUtil.removeListener(this._handleFilterEventFromVisualizationCallback, this.parentElement, this.getAttribute('vis-element-id'), this.getAttribute('vis-filter-output-event'));
@@ -144,7 +144,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Initializes this filter element with the given dataset and services (and optional visualization and search elements).
      */
-    NextCenturyFilter.prototype.init = function (dataset, filterService, options) {
+    NucleusFilter.prototype.init = function (dataset, filterService, options) {
         this._dataset = dataset;
         this._filterService = filterService;
         if (options && typeof options === 'object') {
@@ -182,7 +182,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
-    NextCenturyFilter.prototype.updateFilteredValues = function (values) {
+    NucleusFilter.prototype.updateFilteredValues = function (values) {
         if (values === null || (Array.isArray(values) && !values.length)) {
             this._handleDeleteFilters();
         }
@@ -193,13 +193,13 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns a copy of the given array or, if not an array, the given value itself.
      */
-    NextCenturyFilter.prototype._copyArrayOrReturnValue = function (valueOrArray) {
+    NucleusFilter.prototype._copyArrayOrReturnValue = function (valueOrArray) {
         return Array.isArray(valueOrArray) ? [].concat(valueOrArray) : valueOrArray;
     };
     /**
      * Returns an array of filter designs with the given values using the current attributes.
      */
-    NextCenturyFilter.prototype._createFilterDesigns = function (values) {
+    NucleusFilter.prototype._createFilterDesigns = function (values) {
         var filterType = this._retrieveFilterType();
         if (this._isFilterTypeList(filterType)) {
             return this._createFilterDesignsOnList(this.hasAttribute('list-intersection'), this.getAttribute('list-field-key'), this.getAttribute('list-operator'), values);
@@ -219,7 +219,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns an array of zero or more bounds filter design with the given attributes.
      */
-    NextCenturyFilter.prototype._createFilterDesignsOnBounds = function (fieldKey1, fieldKey2, values) {
+    NucleusFilter.prototype._createFilterDesignsOnBounds = function (fieldKey1, fieldKey2, values) {
         var _this = this;
         if (fieldKey1 && fieldKey2 && Array.isArray(values) && values.length) {
             // Handle a nested array like [[1, 2, 3, 4], [5, 6, 7, 8]]
@@ -238,7 +238,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns an array of zero or more domain filter design with the given attributes.
      */
-    NextCenturyFilter.prototype._createFilterDesignsOnDomain = function (fieldKey, values) {
+    NucleusFilter.prototype._createFilterDesignsOnDomain = function (fieldKey, values) {
         var _this = this;
         if (fieldKey && Array.isArray(values) && values.length) {
             // Handle a nested array like [[1, 2], [3, 4]]
@@ -257,7 +257,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns an array of zero or more list filter design with the given attributes.
      */
-    NextCenturyFilter.prototype._createFilterDesignsOnList = function (intersection, fieldKey, operator, values) {
+    NucleusFilter.prototype._createFilterDesignsOnList = function (intersection, fieldKey, operator, values) {
         var _this = this;
         if (fieldKey && operator && !!(Array.isArray(values) ? values.length : values)) {
             // Handle a nested array like [[a, b], [c], [d, e, f]]
@@ -274,7 +274,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns an array of zero or more pair filter design with the given attributes.
      */
-    NextCenturyFilter.prototype._createFilterDesignsOnPair = function (intersection, fieldKey1, fieldKey2, operator1, operator2, values) {
+    NucleusFilter.prototype._createFilterDesignsOnPair = function (intersection, fieldKey1, fieldKey2, operator1, operator2, values) {
         var _this = this;
         if (fieldKey1 && fieldKey2 && operator1 && operator2 && Array.isArray(values) && values.length) {
             // Handle a nested array like [[a, b], [c, d]]
@@ -295,7 +295,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Deletes all the filters in the FilterService with the given filter designs.
      */
-    NextCenturyFilter.prototype._deleteFilters = function (filterDesigns) {
+    NucleusFilter.prototype._deleteFilters = function (filterDesigns) {
         this._filterService.deleteFilters(this.getAttribute('search-element-id'), filterDesigns);
         this.dispatchEvent(new CustomEvent('filtersChanged', {
             bubbles: true,
@@ -307,7 +307,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns values to create blank/empty filter designs.
      */
-    NextCenturyFilter.prototype._generateFilterDesignValues = function (filterType) {
+    NucleusFilter.prototype._generateFilterDesignValues = function (filterType) {
         if (this._isFilterTypeList(filterType)) {
             return [undefined];
         }
@@ -326,7 +326,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Handles the behavior to delete all the filters associated with this filter element in the FilterService.
      */
-    NextCenturyFilter.prototype._handleDeleteFilters = function (values) {
+    NucleusFilter.prototype._handleDeleteFilters = function (values) {
         if (this._isReady()) {
             var filterDesigns = this._createFilterDesigns(typeof values !== 'undefined' ? values :
                 this._generateFilterDesignValues(this._retrieveFilterType()));
@@ -338,7 +338,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Handles the behavior to exchange all the filters associated with this filter element in the FilterService.
      */
-    NextCenturyFilter.prototype._handleExchangeFilters = function (values) {
+    NucleusFilter.prototype._handleExchangeFilters = function (values) {
         if (this._isReady()) {
             var filterDesigns = this._createFilterDesigns(values);
             if (filterDesigns.length) {
@@ -356,7 +356,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
      * Handles the behavior whenever any filters in the whole application are changed by giving the relevant filter values to the
      * visualization element as needed.
      */
-    NextCenturyFilter.prototype._handleFilterChangeFromServices = function (caller) {
+    NucleusFilter.prototype._handleFilterChangeFromServices = function (caller) {
         var _this = this;
         if (!this._isReady()) {
             return;
@@ -385,7 +385,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Handles the behavior whenever any filter values are emitted from the visualization element by adding or removing filters as needed.
      */
-    NextCenturyFilter.prototype._handleFilterEventFromVisualization = function (event) {
+    NucleusFilter.prototype._handleFilterEventFromVisualization = function (event) {
         if (event && event.detail && typeof event.detail.values !== 'undefined') {
             this.updateFilteredValues(event.detail.values);
         }
@@ -393,32 +393,32 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns if the current attributes of this filter element correspond to a bounds filter.
      */
-    NextCenturyFilter.prototype._isFilterTypeBounds = function (filterType) {
+    NucleusFilter.prototype._isFilterTypeBounds = function (filterType) {
         return !!(filterType === 'bounds' && this.getAttribute('bounds-field-key-x') && this.getAttribute('bounds-field-key-y'));
     };
     /**
      * Returns if the current attributes of this filter element correspond to a domain filter.
      */
-    NextCenturyFilter.prototype._isFilterTypeDomain = function (filterType) {
+    NucleusFilter.prototype._isFilterTypeDomain = function (filterType) {
         return !!(filterType === 'domain' && this.getAttribute('domain-field-key'));
     };
     /**
      * Returns if the current attributes of this filter element correspond to a list filter.
      */
-    NextCenturyFilter.prototype._isFilterTypeList = function (filterType) {
+    NucleusFilter.prototype._isFilterTypeList = function (filterType) {
         return !!(filterType === 'list' && this.getAttribute('list-field-key') && this.getAttribute('list-operator'));
     };
     /**
      * Returns if the current attributes of this filter element correspond to a pair filter.
      */
-    NextCenturyFilter.prototype._isFilterTypePair = function (filterType) {
+    NucleusFilter.prototype._isFilterTypePair = function (filterType) {
         return !!(filterType === 'pair' && this.getAttribute('pair-field-key-1') && this.getAttribute('pair-field-key-2') &&
             this.getAttribute('pair-operator-1') && this.getAttribute('pair-operator-2'));
     };
     /**
      * Returns if the required properties have been initialized to create a filter.
      */
-    NextCenturyFilter.prototype._isReady = function () {
+    NucleusFilter.prototype._isReady = function () {
         var filterType = this._retrieveFilterType();
         return !!(this._dataset && this._filterService && this.getAttribute('id') && (this._searchElement ||
             this.getAttribute('search-element-id')) && filterType && (this._isFilterTypeBounds(filterType) ||
@@ -427,7 +427,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Unregisters the given old ID and registers the given new ID with the FilterService.
      */
-    NextCenturyFilter.prototype._registerWithFilterService = function (oldId, newId) {
+    NucleusFilter.prototype._registerWithFilterService = function (oldId, newId) {
         if (!this._filterService) {
             return;
         }
@@ -441,13 +441,13 @@ var NextCenturyFilter = /** @class */ (function (_super) {
     /**
      * Returns the current filter type attribute of this filter element.
      */
-    NextCenturyFilter.prototype._retrieveFilterType = function () {
+    NucleusFilter.prototype._retrieveFilterType = function () {
         return (this.getAttribute('filter-type') || '').toLowerCase();
     };
     /**
      * Returns the boolean/number/string values from the given list of FilterValues.
      */
-    NextCenturyFilter.prototype._retrieveValuesFromFilterValues = function (filterValues) {
+    NucleusFilter.prototype._retrieveValuesFromFilterValues = function (filterValues) {
         var _this = this;
         if (filterValues instanceof filters_1.ListOfValues) {
             return filterValues.values;
@@ -476,7 +476,7 @@ var NextCenturyFilter = /** @class */ (function (_super) {
      * Updates the filter designs using the current attributes, gives them to the search element, emits an event, and deletes all the old
      * filters created by this filter element.
      */
-    NextCenturyFilter.prototype._updateFilterDesigns = function () {
+    NucleusFilter.prototype._updateFilterDesigns = function () {
         if (this._isReady() && this.parentElement) {
             var searchElement = this._searchElement || this.parentElement.querySelector('#' +
                 this.getAttribute('search-element-id'));
@@ -493,9 +493,9 @@ var NextCenturyFilter = /** @class */ (function (_super) {
             }
         }
     };
-    NextCenturyFilter.ELEMENT_NAME = 'next-century-filter';
-    return NextCenturyFilter;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyFilter = NextCenturyFilter;
-window.customElements.define(NextCenturyFilter.ELEMENT_NAME, NextCenturyFilter);
+    NucleusFilter.ELEMENT_NAME = 'nucleus-filter';
+    return NucleusFilter;
+}(element_web_component_1.NucleusElement));
+exports.NucleusFilter = NucleusFilter;
+window.customElements.define(NucleusFilter.ELEMENT_NAME, NucleusFilter);
 //# sourceMappingURL=filter.web-component.js.map

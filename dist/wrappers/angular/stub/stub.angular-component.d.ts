@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { ElementRef } from '@angular/core';
-export declare class NextCenturyStubAngularComponent {
+export declare class NucleusStubAngularComponent {
     elementRef: ElementRef;
     data: any[];
     filteredValues: any[];

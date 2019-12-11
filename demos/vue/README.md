@@ -1,4 +1,4 @@
-# Sample Vue Demo App (Next Century Component Library)
+# Sample Vue Demo App (NUCLEUS)
 
 Coming soon!
 

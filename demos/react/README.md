@@ -1,4 +1,4 @@
-# Sample React Demo App (Next Century Component Library)
+# Sample React Demo App (NUCLEUS)
 
 Coming soon!
 

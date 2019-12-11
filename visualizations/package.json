@@ -1,12 +1,12 @@
 {
-  "name": "next-century-component-library-visualizations",
+  "name": "nucleus-visualizations",
   "version": "0.0.1",
   "author": "Next Century Corporation (https://nextcentury.com)",
   "bugs": {
-    "url": "https://github.com/NextCenturyCorporation/component-library/issues"
+    "url": "https://github.com/NextCenturyCorporation/nucleus/issues"
   },
-  "description": "The Visualizations for the Next Century Component Library",
-  "homepage": "https://github.com/NextCenturyCorporation/component-library",
+  "description": "The Visualizations for NUCLEUS",
+  "homepage": "https://github.com/NextCenturyCorporation/nucleus",
   "keywords": [
     "search",
     "filter",
@@ -20,7 +20,7 @@
   "prepublish": "npx tsc",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NextCenturyCorporation/component-library"
+    "url": "git+https://github.com/NextCenturyCorporation/nucleus"
   },
   "scripts": {
     "build": "npx tsc"

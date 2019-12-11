@@ -1,12 +1,12 @@
-# Next Century Component Library
+# NUCLEUS
 
-![NCCL Splash](./images/NCCL-Splash.jpg)
+![NUCLEUS Splash](./images/NUCLEUS-Splash.jpg)
 
 ## Table of Content
 
-* [What is the Next Century Component Library?](#what-is-the-next-century-component-library)
-* [Why should I use the Next Century Component Library?](#why-should-i-use-the-next-century-component-library)
-* [What are the parts of the Next Century Component Library?](#what-are-the-parts-of-the-next-century-component-library)
+* [What is NUCLEUS?](#what-is-nucleus)
+* [Why should I use NUCLEUS?](#why-should-i-use-nucleus)
+* [What are the parts of NUCLEUS?](#what-are-the-parts-of-nucleus)
   * [Search Component](#search-component)
   * [Filter Component](#filter-component)
   * [Aggregation Component](#aggregation-component)
@@ -15,11 +15,11 @@
   * [Services](#services)
   * [Datasets](#datasets)
   * [The Data Server](#the-data-server)
-* [How does the Next Century Component Library work?](#how-does-the-next-century-component-library-work)
-* [How can I use the Next Century Component Library too?](#how-can-i-use-the-next-century-component-library-too)
+* [How does NUCLEUS work?](#how-does-nucleus-work)
+* [How can I use NUCLEUS too?](#how-can-i-use-nucleus-too)
   * [Dependencies](#dependencies)
   * [The Basics](#the-basics)
-  * [Using NCCL Visualization Components](#using-nccl-visualization-components)
+  * [Using NUCLEUS Visualization Components](#using-nccl-visualization-components)
   * [Using My Visualization Elements](#using-my-visualization-elements)
   * [Using Custom Data Transformations](#using-custom-data-transformations)
   * [Developing in Angular](#developing-in-angular)
@@ -45,26 +45,28 @@
 * [License](#license)
 * [Contact](#contact)
 
-## What is the Next Century Component Library?
+## What is NUCLEUS?
 
-![NCCL Introduction](./images/NCCL-Introduction.jpg)
+![NUCLEUS Acronym](./images/NUCLEUS-Acronym.jpg)
 
-The **Next Century Component Library** (or NCCL) allows you to rapidly and easily integrate **aggregated searching** and **filtering** capabilities into your **big data visualization application** with **simple, "plug-and-play" components** that interact directly with your own datastores.  The NCCL also offers a collection of customizable data visualizations that you can add to your own application.
+**NUCLEUS** allows you to rapidly and easily integrate **aggregated searching** and **filtering** capabilities into your **big data visualization application** with **simple, "plug-and-play" components** that interact directly with your own datastores.  NUCLEUS also offers a collection of customizable data visualizations that you can add to your own application.
 
-The NCCL is designed for any JavaScript application that searches, filters, and visualizes data.  The NCCL's core components are **framework-agnostic** so they can be used with Angular, React, Vue, and more.
+NUCLEUS is designed for any JavaScript application that searches, filters, and visualizes data.  NUCLEUS's core components are **framework-agnostic** so they can be used with Angular, React, Vue, and more.
 
-## Why should I use the Next Century Component Library?
+## Why should I use NUCLEUS?
 
-The Next Century Component Library grants multiple unique benefits over other data visualization libraries:
+![NUCLEUS Overview](./images/NUCLEUS-Overview.jpg)
+
+NUCLEUS grants multiple unique benefits over other data visualization libraries:
 
 * It is **free** and **open-source**
 * It supports **different types of datastores** (see the full list [here](https://github.com/NextCenturyCorporation/neon-server#datastore-support))
 * It lets you **view and filter on data from separate datastores at the same time**
-* It operates on your own datastores, so it **doesn't need to load and save a copy of your data** (though we have some suggestions on how you should [configure your datastores](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) so you can make the best use of the NCCL)
+* It operates on your own datastores, so it **doesn't need to load and save a copy of your data** (though we have some suggestions on how you should [configure your datastores](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) so you can make the best use of NUCLEUS)
 
-## What are the parts of the Next Century Component Library?
+## What are the parts of NUCLEUS?
 
-![NCCL Dependencies](./images/NCCL-Dependencies.jpg)
+![NUCLEUS Dependencies](./images/NUCLEUS-Dependencies.jpg)
 
 ### Search Component
 
@@ -100,31 +102,31 @@ The **FilterService** manages all of the filters created by your frontend applic
 
 #### SearchService
 
-The **SearchService** creates the search queries that are sent to the NCCL Data Server.
+The **SearchService** creates the search queries that are sent to NUCLEUS Data Server.
 
 #### ConnectionService
 
-The **ConnectionService** facilitates the connections and communication between your frontend application and the NCCL Data Server.
+The **ConnectionService** facilitates the connections and communication between your frontend application and NUCLEUS Data Server.
 
 ### Datasets
 
-A **Dataset** contains the datastores, databases, tables, and fields that you want to show in your frontend application.  A simple Dataset may have just a single datastore, database, and table.  Each Dataset should have the **datastores object** needed for your application, the [ConnectionService](#connectionService) for your application, the [URL](#data-server-url) for your deployment of the [NCCL Data Server](#the-data-server), and, optionally, a **relations array** of [relations](#relation) for your data.
+A **Dataset** contains the datastores, databases, tables, and fields that you want to show in your frontend application.  A simple Dataset may have just a single datastore, database, and table.  Each Dataset should have the **datastores object** needed for your application, the [ConnectionService](#connectionService) for your application, the [URL](#data-server-url) for your deployment of the [NUCLEUS Data Server](#the-data-server), and, optionally, a **relations array** of [relations](#relation) for your data.
 
 The **datastores object** contains **datastore IDs** as keys and **datastore objects** as values.  Each **datastore object** must have a `host` string property containing the `hostname` or `hostname:port` of the datastore WITHOUT the `http` prefix; a `type` string property containing the [datastore type](#datastore-type); and a `databases` object property containing **database names** as keys and **database objects** as values.  Each **database object** must have a `tables` object property containing **table names** as keys and **table objects** as values.  Each **table object** may optionally have a `fields` array property of **field objects**.  Each **field object** must have a `columnName` string property containing the field name and may optionally have a `type` string property containing the [field type](#field-type).  A database object, table object, or field object may optionally have a `prettyName` string property containing the object's user-friendly name.
 
 The **relations array** contains one or more nested **relation arrays**; each **relation array** contains one or more strings or nested string arrays; each string, or each individual nested string array, is a **set of relation fields**.  A **relation array** must have more than one **set of relation fields**, and each **set of relation fields** must have the same number of array elements (or must all be single strings).  Creating a filter containing a combination of fields exactly matching one **set of relation fields** will automatically generate additional filters with the same operators and [type](#filter-type) but substituting each other **set of relation fields** (one filter per set).  See [Relation Examples](#relation-examples) below.
 
-Note that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  See the [NCCL Data Server's README file](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) on more information regarding Elasticsearch datastore configuration.
+Note that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  See the [NUCLEUS Data Server's README file](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) on more information regarding Elasticsearch datastore configuration.
 
 #### Data Server URL
 
-The **data server URL** should be the hostname of your deployed [NCCL Data Server](#the-data-server) WITH the `http` or `https` prefix if needed.  It should also have an endpoint matching the `server.servlet.context-path` set in the Data Server's [`application.properties`](https://github.com/NextCenturyCorporation/neon-server/blob/master/server/src/main/resources/application.properties) file, WITHOUT the `/services` part.  For example, if your Data Server is deployed at `http://my_server.com:1234` and its `server.servlet.context-path` is set to `/abcd/services`, then your Dataset's data server URL should be `http://my_server.com:1234/abcd`.
+The **data server URL** should be the hostname of your deployed [NUCLEUS Data Server](#the-data-server) WITH the `http` or `https` prefix if needed.  It should also have an endpoint matching the `server.servlet.context-path` set in the Data Server's [`application.properties`](https://github.com/NextCenturyCorporation/neon-server/blob/master/server/src/main/resources/application.properties) file, WITHOUT the `/services` part.  For example, if your Data Server is deployed at `http://my_server.com:1234` and its `server.servlet.context-path` is set to `/abcd/services`, then your Dataset's data server URL should be `http://my_server.com:1234/abcd`.
 
 #### Dataset Examples
 
 ```js
 // Define your datastores, databases, tables, and (optionally) fields.
-// The NCCL will automatically detect fields if they are not defined.
+// NUCLEUS will automatically detect fields if they are not defined.
 const fieldArray = [];
 const tableObject = TableConfig.get({
     prettyName: 'Table Name',
@@ -205,20 +207,20 @@ const relations = [ // relations array
 
 ### The Data Server
 
-The NCCL [**Data Server**](https://github.com/NextCenturyCorporation/neon-server), formerly called the "Neon Server", is a Java REST Server that serves as an intermediary between your frontend application and your datastores.  Its job is to provide datastore adapters, run datastore queries, transform query results, and perform optional data processing.  The [**Search Component**](#search-component) sends queries to it and receives query results from it using the [SearchService](#searchservice).  As a standalone application, the NCCL Data Server must be deployed separately from your frontend application.
+NUCLEUS [**Data Server**](https://github.com/NextCenturyCorporation/neon-server), formerly called the "Neon Server", is a Java REST Server that serves as an intermediary between your frontend application and your datastores.  Its job is to provide datastore adapters, run datastore queries, transform query results, and perform optional data processing.  The [**Search Component**](#search-component) sends queries to it and receives query results from it using the [SearchService](#searchservice).  As a standalone application, NUCLEUS Data Server must be deployed separately from your frontend application.
 
-## How does the Next Century Component Library work?
+## How does NUCLEUS work?
 
-![NCCL Sequence](./images/NCCL-Sequence.jpg)
+![NUCLEUS Sequence](./images/NUCLEUS-Sequence.jpg)
 
-![NCCL Workflow](./images/NCCL-Workflow.jpg)
+![NUCLEUS Workflow](./images/NUCLEUS-Workflow.jpg)
 
 ### Setup
 
-* Import the NCCL core components / models / services and the Web Component polyfills into your frontend application.
-* Define a [**Search Component**](#search-component) and zero or more [**Filter Components**](#filter-component) for each of your application's data visualizations (or import and use NCCL [**Visualization Components**](#visualizations)).
+* Import NUCLEUS core components / models / services and the Web Component polyfills into your frontend application.
+* Define a [**Search Component**](#search-component) and zero or more [**Filter Components**](#filter-component) for each of your application's data visualizations (or import and use NUCLEUS [**Visualization Components**](#visualizations)).
 * Create [**Dataset**](#datasets), [**FilterService**](#filterservice), and [**SearchService**](#searchservice) objects and use them to initialize your Search and Filter Components.
-* Separately, deploy the [**NCCL Data Server**](#the-data-server) so that it can communicate with your frontend application and your datastores.  You may want to change its default configuration; see [Data Server URL](#data-server-url) for information.
+* Separately, deploy the [**NUCLEUS Data Server**](#the-data-server) so that it can communicate with your frontend application and your datastores.  You may want to change its default configuration; see [Data Server URL](#data-server-url) for information.
 
 ### Runtime
 
@@ -231,21 +233,21 @@ The NCCL [**Data Server**](https://github.com/NextCenturyCorporation/neon-server
 7. When the **FilterService** is sent a filter, it notifies each relevant **Search Component** to automatically run a new search query using that filter and have its visualization re-render the search data (see 1-4).  A Search Component is relevant if the datastore, database, and table in its `search-field-keys` match a datastore, database, and table in the new filter(s).
 8. Additionally, when the **FilterService** is sent a filter, it also notifies each relevant **Filter Component** to pass the [externally filtered data](#externally-filtered-data) onto its corresponding visualization if needed.  A Filter Component is relevant if its [filter designs](#filter-design) match the new filter(s).
 
-## How can I use the Next Century Component Library too?
+## How can I use NUCLEUS too?
 
 ### Dependencies
 
 Your frontend application must import the following dependencies:
 
-* The NCCL core components / models / services
+* NUCLEUS core components / models / services
 * The [Web Components Polyfills](https://www.npmjs.com/package/@webcomponents/webcomponentsjs)
-* (Optionally) One or more NCCL Visualization Components
+* (Optionally) One or more NUCLEUS Visualization Components
 
-Additionally, you must have a deployed instance of the [NCCL Data Server](https://github.com/NextCenturyCorporation/neon-server).
+Additionally, you must have a deployed instance of the [NUCLEUS Data Server](https://github.com/NextCenturyCorporation/neon-server).
 
 ### The Basics
 
-#### Initializing NCCL Core Services and Components
+#### Initializing NUCLEUS Core Services and Components
 
 1. Create a single copy of each of the [Services](#services) to share with ALL of your Components.
 2. Create a single [Dataset](#datasets) containing each of your datastores, databases, and tables.
@@ -253,16 +255,16 @@ Additionally, you must have a deployed instance of the [NCCL Data Server](https:
 4. Initialize each of your [Search Components](#search-and-filter) with the Dataset, FilterService, and SearchService.
 
 ```js
-// Create a single copy of each core Service to share with each NCCL Component.
+// Create a single copy of each core Service to share with each NUCLEUS Component.
 const connectionService = new ConnectionService();
 const filterService = new FilterService();
 const searchService = new SearchService(connectionService);
 
-// Define your NCCL Data Server hostname.
+// Define your NUCLEUS Data Server hostname.
 const dataServer = 'http://localhost:8090';
 
 // Define your datastores, databases, tables, and (optionally) fields.
-// The NCCL will automatically detect fields if they are not defined.
+// NUCLEUS will automatically detect fields if they are not defined.
 const fieldArray = [];
 const tableObject = TableConfig.get({
     prettyName: 'Table Name',
@@ -307,13 +309,13 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-</next-century-search>
+</nucleus-search>
 ```
 
 #### Search with Aggregations and Groups
@@ -326,24 +328,24 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.username_field"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-    <next-century-group
+    <nucleus-group
         group-field-key="es.index_name.index_type.username_field"
     >
-    </next-century-group>
+    </nucleus-group>
 
-    <next-century-aggregation
+    <nucleus-aggregation
         aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
-    </next-century-aggregation>
-</next-century-search>
+    </nucleus-aggregation>
+</nucleus-search>
 ```
 
 #### Search and Filter
@@ -358,15 +360,15 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-</next-century-search>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="filter1"
     filter-type="list"
     list-field-key="es.index_name.index_type.id_field"
@@ -376,7 +378,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     vis-filter-input-function="changeSelectedData"
     vis-filter-output-event="dataSelected"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 #### Search and Filter with Aggregations and Groups
@@ -384,26 +386,26 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.username_field"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-    <next-century-aggregation
+    <nucleus-aggregation
         aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
-    </next-century-aggregation>
+    </nucleus-aggregation>
 
-    <next-century-group
+    <nucleus-group
         group-field-key="es.index_name.index_type.username_field"
     >
-    </next-century-group>
-</next-century-search>
+    </nucleus-group>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="filter1"
     filter-type="list"
     list-field-key="es.index_name.index_type.username_field"
@@ -413,7 +415,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     vis-filter-input-function="changeSelectedData"
     vis-filter-output-event="dataSelected"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 #### Search with Multiple Filters
@@ -421,31 +423,31 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-    <next-century-aggregation
+    <nucleus-aggregation
         aggregation-field-key="es.index_name.index_type.username_field"
         aggregation-label="_records"
         aggregation-operation="count"
     >
-    </next-century-aggregation>
+    </nucleus-aggregation>
 
-    <next-century-group
+    <nucleus-group
         group-field-key="es.index_name.index_type.username_field"
     >
-    </next-century-group>
+    </nucleus-group>
 
-    <next-century-group
+    <nucleus-group
         group-field-key="es.index_name.index_type.text_field"
     >
-    </next-century-group>
-</next-century-search>
+    </nucleus-group>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="filter1"
     filter-type="list"
     list-field-key="es.index_name.index_type.username_field"
@@ -455,9 +457,9 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     vis-filter-input-function="changeSelectedUsername"
     vis-filter-output-event="usernameSelected"
 >
-</next-century-filter>
+</nucleus-filter>
 
-<next-century-filter
+<nucleus-filter
     id="filter2"
     filter-type="list"
     list-field-key="es.index_name.index_type.text_field"
@@ -467,7 +469,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     vis-filter-input-function="changeSelectedText"
     vis-filter-output-event="textSelected"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 #### Search with Joins
@@ -475,37 +477,37 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name_1.index_type_1.username_field"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-    <next-century-join
+    <nucleus-join
         join-field-key-1="es.index_name_1.index_type_1.username_field"
         join-field-key-2="es.index_name_2.index_type_2.username_field"
         join-operator="="
         join-table-key="es.index_name_2.index_type_2"
         join-type="full"
     >
-    </next-century-join>
-</next-century-search>
+    </nucleus-join>
+</nucleus-search>
 ```
 
-### Using NCCL Visualization Components
+### Using NUCLEUS Visualization Components
 
 #### Framework-Agnostic Visualization Examples
 
 ```html
 <!-- Simple Examples -->
-<next-century-text-cloud
+<nucleus-text-cloud
     id="textCloud1"
     text-field-key="es.index_name.index_type.text_field"
 >
-</next-century-text-cloud>
+</nucleus-text-cloud>
 
 <!-- Advanced Examples -->
-<next-century-text-cloud
+<nucleus-text-cloud
     id="textCloud2"
     enable-hide-if-unfiltered
     enable-ignore-self-filter
@@ -515,7 +517,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
     strength-field-key="es.index_name.index_type.size_field"
     text-field-key="es.index_name.index_type.text_field"
 >
-</next-century-text-cloud>
+</nucleus-text-cloud>
 ```
 
 ```js
@@ -529,14 +531,14 @@ textCloud2.init(dataset, filterService, searchService);
 #### What Does It Render?
 
 ```html
-<next-century-base-text-cloud
+<nucleus-base-text-cloud
     id="textCloud1Vis"
     aggregation-field="aggregations._count"
     text-field="fields.text_field"
 >
-</next-century-base-text-cloud>
+</nucleus-base-text-cloud>
 
-<next-century-search
+<nucleus-search
     id="textCloud1Search"
     search-field-keys="es.index_name.index_type.text_field"
     search-limit=10000
@@ -545,18 +547,18 @@ textCloud2.init(dataset, filterService, searchService);
     vis-draw-function="drawData"
     vis-element-id="textCloud1Vis"
 >
-    <next-century-aggregation
+    <nucleus-aggregation
         aggregation-field-key="es.index_name.index_type.text_field"
         aggregation-label="_count"
     >
-    </next-century-aggregation>
-    <next-century-group
+    </nucleus-aggregation>
+    <nucleus-group
         group-field-key="es.index_name.index_type.text_field"
     >
-    </next-century-group>
-</next-century-search>
+    </nucleus-group>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="textCloud1Filter"
     filter-type="list"
     list-field-key="es.index_name.index_type.text_field"
@@ -566,7 +568,7 @@ textCloud2.init(dataset, filterService, searchService);
     vis-filter-input-function="changeFilteredText"
     vis-filter-output-event="filter"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 ```js
@@ -586,7 +588,7 @@ public init(dataset: Dataset, filterService: FilterService, searchService: Searc
 
 ### Using My Visualization Elements
 
-![NCCL Assumptions](./images/NCCL-Assumptions.jpg)
+![NUCLEUS Assumptions](./images/NUCLEUS-Assumptions.jpg)
 
 To use your own Visualization Elements:
 
@@ -596,7 +598,7 @@ To use your own Visualization Elements:
 
 ### Using Custom Data Transformations
 
-![NCCL Transformations](./images/NCCL-Transformations.jpg)
+![NUCLEUS Transformations](./images/NUCLEUS-Transformations.jpg)
 
 #### Transforming Search Data to Send to My Visualization
 
@@ -624,11 +626,11 @@ search1.addEventListener('searchFinished', transformSearchDataArray);
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
 >
-</next-century-search>
+</nucleus-search>
 ```
 
 #### Transforming Filter Data Sent from My Visualization
@@ -655,15 +657,15 @@ vis1.addEventListener('yourFilterEvent', transformFilterEventData);
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-</next-century-search>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="filter1"
     filter-type="list"
     list-field-key="es.index_name.index_type.id_field"
@@ -672,7 +674,7 @@ vis1.addEventListener('yourFilterEvent', transformFilterEventData);
     vis-element-id="vis1"
     vis-filter-input-function="changeSelectedData"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 #### Transforming Filter Data to Send to My Visualization
@@ -701,15 +703,15 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 ```html
 <visualization-element id="vis1"></visualization-element>
 
-<next-century-search
+<nucleus-search
     id="search1"
     search-field-keys="es.index_name.index_type.*"
     vis-draw-function="drawData"
     vis-element-id="vis1"
 >
-</next-century-search>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="filter1"
     filter-type="list"
     list-field-key="es.index_name.index_type.id_field"
@@ -718,7 +720,7 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
     vis-element-id="vis1"
     vis-filter-output-event="dataSelected"
 >
-</next-century-filter>
+</nucleus-filter>
 ```
 
 ### Developing in Angular
@@ -1031,7 +1033,7 @@ TODO
 
 ## License
 
-The Next Century Component Library is made available by [Next Century](http://www.nextcentury.com) under the [Apache 2 Open Source License](http://www.apache.org/licenses/LICENSE-2.0.txt). You may freely download, use, and modify, in whole or in part, the source code or release packages. Any restrictions or attribution requirements are spelled out in the license file. The Next Century Component Library attribution information can be found in the [LICENSE](./LICENSE) file. For more information about the Apache license, please visit the [The Apache Software Foundation’s License FAQ](http://www.apache.org/foundation/license-faq.html).
+NUCLEUS is made available by [Next Century](http://www.nextcentury.com) under the [Apache 2 Open Source License](http://www.apache.org/licenses/LICENSE-2.0.txt). You may freely download, use, and modify, in whole or in part, the source code or release packages. Any restrictions or attribution requirements are spelled out in the license file. NUCLEUS attribution information can be found in the [LICENSE](./LICENSE) file. For more information about the Apache license, please visit the [The Apache Software Foundation’s License FAQ](http://www.apache.org/foundation/license-faq.html).
 
 ## Contact
 

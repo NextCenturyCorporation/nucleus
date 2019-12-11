@@ -25,9 +25,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 // TODO Change your visualization's filenames, selector, and class name.
-var NextCenturyStubAngularComponent = /** @class */ (function () {
+var NucleusStubAngularComponent = /** @class */ (function () {
     // Define a public ElementRef so that parent components may call addEventListener on this visualization's elementRef.nativeElement.
-    function NextCenturyStubAngularComponent(elementRef) {
+    function NucleusStubAngularComponent(elementRef) {
         this.elementRef = elementRef;
         this.data = [];
         this.filteredValues = [];
@@ -36,23 +36,23 @@ var NextCenturyStubAngularComponent = /** @class */ (function () {
     /**
      * Changes the filtered data in this visualization to the values in the given filter data.  Invoked by a Filter Component.
      */
-    NextCenturyStubAngularComponent.prototype.changeFilteredData = function (filterData) {
-        // Documentation on filterData:  https://github.com/NextCenturyCorporation/component-library#filter-data-array
+    NucleusStubAngularComponent.prototype.changeFilteredData = function (filterData) {
+        // Documentation on filterData:  https://github.com/NextCenturyCorporation/nucleus#filter-data-array
         // TODO If the values in filterData and this.filteredValues are different, set this.filteredValues to the new values.
         // Do NOT dispatch a dataFiltered event here!
     };
     /**
      * Draws the given search data as HTML elements in this visualization.  Invoked by a Search Component.
      */
-    NextCenturyStubAngularComponent.prototype.drawData = function (searchData) {
-        // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
+    NucleusStubAngularComponent.prototype.drawData = function (searchData) {
+        // Documentation on searchData:  https://github.com/NextCenturyCorporation/nucleus#search-data-object
         // TODO Set this.data to the searchData array, transformed as needed by this visualization.
         // Note:  You may need to add a ChangeDetectorRef to your constructor and call detectChanges() on it here.
     };
     /**
      * Creates or changes the filtered values based on the given item from the visualization's data array.  Invoked by user interaction.
      */
-    NextCenturyStubAngularComponent.prototype.filterDataItem = function (item) {
+    NucleusStubAngularComponent.prototype.filterDataItem = function (item) {
         // TODO Update this.filteredValues based on the given item from this.data
         // Dispatch an event to notify this visualization's Filter Components of the new filtered values.
         this.elementRef.nativeElement.dispatchEvent(new CustomEvent('dataFiltered', {
@@ -62,9 +62,9 @@ var NextCenturyStubAngularComponent = /** @class */ (function () {
             }
         }));
     };
-    NextCenturyStubAngularComponent = __decorate([
+    NucleusStubAngularComponent = __decorate([
         core_1.Component({
-            selector: 'app-next-century-angular-stub',
+            selector: 'app-nucleus-angular-stub',
             templateUrl: './stub.angular-component.html',
             // TODO Add the path to your CSS/SCSS/Less file to styleUrls.
             styleUrls: [],
@@ -72,8 +72,8 @@ var NextCenturyStubAngularComponent = /** @class */ (function () {
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [core_1.ElementRef])
-    ], NextCenturyStubAngularComponent);
-    return NextCenturyStubAngularComponent;
+    ], NucleusStubAngularComponent);
+    return NucleusStubAngularComponent;
 }());
-exports.NextCenturyStubAngularComponent = NextCenturyStubAngularComponent;
+exports.NucleusStubAngularComponent = NucleusStubAngularComponent;
 //# sourceMappingURL=stub.angular-component.js.map

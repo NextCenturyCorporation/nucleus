@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 import { ElementRef } from '@angular/core';
-import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturyFilter } from '../../../core/components/filter.web-component';
-export declare class NextCenturyFilterAngularComponent extends NextCenturyCommonAngularComponent {
+import { NucleusCommonAngularComponent } from './common.angular-component';
+import { NucleusFilter } from '../../../core/components/filter.web-component';
+export declare class NucleusFilterAngularComponent extends NucleusCommonAngularComponent {
     elementRef: ElementRef;
     searchElement: any;
     visInputElement: any;
@@ -28,11 +28,11 @@ export declare class NextCenturyFilterAngularComponent extends NextCenturyCommon
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyFilter;
+    protected findWrappedElement(): NucleusFilter;
     /**
      * @override
      */
-    protected initWrappedElement(filterElement: NextCenturyFilter): void;
+    protected initWrappedElement(filterElement: NucleusFilter): void;
     /**
      * @override
      */

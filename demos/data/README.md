@@ -1,4 +1,4 @@
-# Demo Data (Next Century Component Library)
+# Demo Data (NUCLEUS)
 
 1. Install [Elasticsearch 6.4 - 6.8](https://www.elastic.co/downloads/past-releases/elasticsearch-6-8-1)
 2. Install [NPM](https://www.npmjs.com/get-npm)

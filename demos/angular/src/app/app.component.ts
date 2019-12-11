@@ -22,16 +22,16 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 
-import { CoreUtil } from 'component-library/dist/core/core.util';
-import { DatabaseConfig, Dataset, DatastoreConfig, TableConfig } from 'component-library/dist/core/models/dataset';
-import { DateUtil } from 'component-library/dist/core/date.util';
+import { CoreUtil } from 'nucleus/dist/core/core.util';
+import { DatabaseConfig, Dataset, DatastoreConfig, TableConfig } from 'nucleus/dist/core/models/dataset';
+import { DateUtil } from 'nucleus/dist/core/date.util';
 
-import { ConnectionService } from 'component-library/dist/core/services/connection.service';
-import { FilterService } from 'component-library/dist/core/services/filter.service';
-import { SearchService } from 'component-library/dist/core/services/search.service';
+import { ConnectionService } from 'nucleus/dist/core/services/connection.service';
+import { FilterService } from 'nucleus/dist/core/services/filter.service';
+import { SearchService } from 'nucleus/dist/core/services/search.service';
 
-import { NextCenturyFilterAngularComponent } from 'component-library/dist/wrappers/angular/core/filter.angular-component';
-import { NextCenturySearchAngularComponent } from 'component-library/dist/wrappers/angular/core/search.angular-component';
+import { NucleusFilterAngularComponent } from 'nucleus/dist/wrappers/angular/core/filter.angular-component';
+import { NucleusSearchAngularComponent } from 'nucleus/dist/wrappers/angular/core/search.angular-component';
 
 import { ExampleComponent } from './example.component';
 
@@ -60,7 +60,7 @@ export class AppComponent implements AfterViewInit {
     @ViewChild('filter5A', { static: false }) filter5A;
     @ViewChild('filter5B', { static: false }) filter5B;
 
-    // API:  https://github.com/NextCenturyCorporation/component-library/tree/master/core/components
+    // API:  https://github.com/NextCenturyCorporation/nucleus/tree/master/core/components
 
     public searchOptions1 = {
         'search-field-keys': 'es1.earthquakes.quakedata.*',
@@ -194,17 +194,17 @@ export class AppComponent implements AfterViewInit {
     constructor(private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef) { }
 
     ngAfterViewInit() {
-        // Documentation: https://github.com/NextCenturyCorporation/component-library#the-basics
-        // Create a single copy of each core Service to share with each NCCL Component.
+        // Documentation: https://github.com/NextCenturyCorporation/nucleus#the-basics
+        // Create a single copy of each core Service to share with each NUCLEUS Component.
         const connectionService = new ConnectionService();
         this.filterService = new FilterService();
         this.searchService = new SearchService(connectionService);
 
-        // Define your NCCL Data Server hostname.
+        // Define your NUCLEUS Data Server hostname.
         const dataServerUrl = 'http://localhost:8090/neon';
 
         // Define your datastores, databases, tables, and (optionally) fields.
-        // The NCCL will automatically detect fields if they are not defined.
+        // The NUCLEUS will automatically detect fields if they are not defined.
         const fieldArray = [];
         const tableObject = TableConfig.get({
             prettyName: 'Data',
@@ -237,7 +237,7 @@ export class AppComponent implements AfterViewInit {
         this.dataset = new Dataset(datastores, connectionService, dataServerUrl, []);
 
         // Example custom data transformations
-        // Documentation: https://github.com/NextCenturyCorporation/component-library#using-custom-data-transformations
+        // Documentation: https://github.com/NextCenturyCorporation/nucleus#using-custom-data-transformations
 
         this.search4.elementRef.nativeElement.addEventListener('searchFinished', this._transformSearchTimestampsToDays.bind(this));
         this.vis4.elementRef.nativeElement.addEventListener('dataFiltered', this._transformFilteredTimestampsToDayDomains.bind(this));

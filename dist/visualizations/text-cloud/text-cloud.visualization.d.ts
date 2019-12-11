@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NextCenturyElement } from '../../core/components/element.web-component';
-export declare class NextCenturyTextCloudVisualization extends NextCenturyElement {
+import { NucleusElement } from '../../core/components/element.web-component';
+export declare class NucleusTextCloudVisualization extends NucleusElement {
     private _data;
     private _filtered;
     private _shadowRoot;

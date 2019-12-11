@@ -27,25 +27,25 @@ var core_1 = require("@angular/core");
 var core_util_1 = require("../../../core/core.util");
 var dataset_1 = require("../../../core/models/dataset");
 var filter_service_1 = require("../../../core/services/filter.service");
-var NextCenturyCommonAngularComponent = /** @class */ (function () {
-    function NextCenturyCommonAngularComponent() {
+var NucleusCommonAngularComponent = /** @class */ (function () {
+    function NucleusCommonAngularComponent() {
         this._visualizationIsInitialized = false;
     }
-    NextCenturyCommonAngularComponent.prototype.doesHaveSubclassInputs = function () {
+    NucleusCommonAngularComponent.prototype.doesHaveSubclassInputs = function () {
         return true;
     };
-    NextCenturyCommonAngularComponent.prototype.onWrapperAfterViewInit = function () {
+    NucleusCommonAngularComponent.prototype.onWrapperAfterViewInit = function () {
         // Override if needed.
     };
-    NextCenturyCommonAngularComponent.prototype.onWrapperChanges = function () {
+    NucleusCommonAngularComponent.prototype.onWrapperChanges = function () {
         // Override if needed.
     };
-    NextCenturyCommonAngularComponent.prototype.ngAfterViewInit = function () {
+    NucleusCommonAngularComponent.prototype.ngAfterViewInit = function () {
         this.onWrapperAfterViewInit();
         // Call ngOnChanges to initialize the visualization if needed after the HTML elements are stable.
         this.ngOnChanges(undefined);
     };
-    NextCenturyCommonAngularComponent.prototype.ngOnChanges = function (__changes) {
+    NucleusCommonAngularComponent.prototype.ngOnChanges = function (__changes) {
         // Ensure ALL required properties are set before calling init on the visualization.
         if (this.id && this.dataset && this.filterService && this.options && this.doesHaveSubclassInputs()) {
             var wrappedElement = this.findWrappedElement();
@@ -63,20 +63,20 @@ var NextCenturyCommonAngularComponent = /** @class */ (function () {
     __decorate([
         core_1.Input(),
         __metadata("design:type", dataset_1.Dataset)
-    ], NextCenturyCommonAngularComponent.prototype, "dataset", void 0);
+    ], NucleusCommonAngularComponent.prototype, "dataset", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", filter_service_1.FilterService)
-    ], NextCenturyCommonAngularComponent.prototype, "filterService", void 0);
+    ], NucleusCommonAngularComponent.prototype, "filterService", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", String)
-    ], NextCenturyCommonAngularComponent.prototype, "id", void 0);
+    ], NucleusCommonAngularComponent.prototype, "id", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturyCommonAngularComponent.prototype, "options", void 0);
-    return NextCenturyCommonAngularComponent;
+    ], NucleusCommonAngularComponent.prototype, "options", void 0);
+    return NucleusCommonAngularComponent;
 }());
-exports.NextCenturyCommonAngularComponent = NextCenturyCommonAngularComponent;
+exports.NucleusCommonAngularComponent = NucleusCommonAngularComponent;
 //# sourceMappingURL=common.angular-component.js.map

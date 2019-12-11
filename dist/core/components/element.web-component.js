@@ -27,34 +27,34 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var NextCenturyElement = /** @class */ (function (_super) {
-    __extends(NextCenturyElement, _super);
-    function NextCenturyElement() {
+var NucleusElement = /** @class */ (function (_super) {
+    __extends(NucleusElement, _super);
+    function NucleusElement() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    NextCenturyElement.prototype.attributeChangedCallback = function (__name, __oldValue, __newValue) {
+    NucleusElement.prototype.attributeChangedCallback = function (__name, __oldValue, __newValue) {
         // Do nothing.
     };
-    NextCenturyElement.prototype.connectedCallback = function () {
+    NucleusElement.prototype.connectedCallback = function () {
         for (var _i = 0, _a = this.constructor.observedAttributes; _i < _a.length; _i++) {
             var key = _a[_i];
             this._upgradeProperty(key);
         }
     };
-    NextCenturyElement.prototype.disconnectedCallback = function () {
+    NucleusElement.prototype.disconnectedCallback = function () {
         // Do nothing.
     };
     /**
      * See https://developers.google.com/web/fundamentals/web-components/best-practices#lazy-properties
      */
-    NextCenturyElement.prototype._upgradeProperty = function (key) {
+    NucleusElement.prototype._upgradeProperty = function (key) {
         if (this.hasOwnProperty(key)) {
             var value = this[key];
             delete this[key];
             this[key] = value;
         }
     };
-    return NextCenturyElement;
+    return NucleusElement;
 }(HTMLElement));
-exports.NextCenturyElement = NextCenturyElement;
+exports.NucleusElement = NucleusElement;
 //# sourceMappingURL=element.web-component.js.map

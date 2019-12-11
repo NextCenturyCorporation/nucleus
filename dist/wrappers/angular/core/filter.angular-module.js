@@ -23,21 +23,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var filter_angular_component_1 = require("./filter.angular-component");
-var NextCenturyFilterAngularModule = /** @class */ (function () {
-    function NextCenturyFilterAngularModule() {
+var NucleusFilterAngularModule = /** @class */ (function () {
+    function NucleusFilterAngularModule() {
     }
-    NextCenturyFilterAngularModule = __decorate([
+    NucleusFilterAngularModule = __decorate([
         core_1.NgModule({
-            declarations: [filter_angular_component_1.NextCenturyFilterAngularComponent],
-            exports: [filter_angular_component_1.NextCenturyFilterAngularComponent],
-            entryComponents: [filter_angular_component_1.NextCenturyFilterAngularComponent],
+            declarations: [filter_angular_component_1.NucleusFilterAngularComponent],
+            exports: [filter_angular_component_1.NucleusFilterAngularComponent],
+            entryComponents: [filter_angular_component_1.NucleusFilterAngularComponent],
             imports: [
                 common_1.CommonModule
             ],
             schemas: [core_1.CUSTOM_ELEMENTS_SCHEMA]
         })
-    ], NextCenturyFilterAngularModule);
-    return NextCenturyFilterAngularModule;
+    ], NucleusFilterAngularModule);
+    return NucleusFilterAngularModule;
 }());
-exports.NextCenturyFilterAngularModule = NextCenturyFilterAngularModule;
+exports.NucleusFilterAngularModule = NucleusFilterAngularModule;
 //# sourceMappingURL=filter.angular-module.js.map

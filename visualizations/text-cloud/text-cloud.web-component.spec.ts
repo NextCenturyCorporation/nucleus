@@ -15,7 +15,7 @@
 
 import { Dataset } from '../../core/models/dataset';
 import { FilterService } from '../../core/services/filter.service';
-import { NextCenturyTextCloud } from './text-cloud.web-component';
+import { NucleusTextCloud } from './text-cloud.web-component';
 
 import { DATASET } from '../../core/models/mock.dataset';
 import { SearchServiceMock } from '../../core/services/mock.search.service';
@@ -24,10 +24,10 @@ describe('Text Cloud Web Component', () => {
     let dataset: Dataset;
     let filterService: FilterService;
     let searchService: SearchServiceMock;
-    let textCloudComponent: NextCenturyTextCloud;
+    let textCloudComponent: NucleusTextCloud;
 
     beforeEach(() => {
-        textCloudComponent = new NextCenturyTextCloud();
+        textCloudComponent = new NucleusTextCloud();
         textCloudComponent.setAttribute('id', 'testTextCloud');
         textCloudComponent.setAttribute('text-field-key', 'datastore1.testDatabase1.testTable1.testTextField');
         dataset = DATASET;
@@ -38,13 +38,13 @@ describe('Text Cloud Web Component', () => {
     it('init does create expected elements with default attributes', () => {
         textCloudComponent.init(dataset, filterService, searchService);
 
-        let textCloudElement = textCloudComponent.shadowRoot.querySelector('next-century-visualization-text-cloud');
+        let textCloudElement = textCloudComponent.shadowRoot.querySelector('nucleus-visualization-text-cloud');
         expect(textCloudElement.getAttribute('aggregation-field')).toEqual('aggregations._aggregation');
         expect(textCloudElement.getAttribute('aggregation-title')).toEqual(null);
         expect(textCloudElement.getAttribute('enable-show-values')).toEqual(null);
         expect(textCloudElement.getAttribute('text-field')).toEqual('fields.testTextField');
 
-        let searchComponent = textCloudComponent.shadowRoot.querySelector('next-century-search');
+        let searchComponent = textCloudComponent.shadowRoot.querySelector('nucleus-search');
         expect(searchComponent.getAttribute('enable-hide-if-unfiltered')).toEqual(null);
         expect(searchComponent.getAttribute('enable-ignore-self-filter')).toEqual(null);
         expect(searchComponent.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
@@ -56,18 +56,18 @@ describe('Text Cloud Web Component', () => {
         expect(searchComponent.getAttribute('vis-draw-function')).toEqual('drawData');
         expect(searchComponent.getAttribute('vis-element-id')).toEqual('testTextCloud_visualization');
 
-        let aggregationComponent = searchComponent.querySelector('next-century-aggregation');
+        let aggregationComponent = searchComponent.querySelector('nucleus-aggregation');
         expect(aggregationComponent.getAttribute('aggregation-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(aggregationComponent.getAttribute('aggregation-group')).toEqual(null);
         expect(aggregationComponent.getAttribute('aggregation-label')).toEqual('_aggregation');
         expect(aggregationComponent.getAttribute('aggregation-operation')).toEqual(null);
 
-        let groupComponent = searchComponent.querySelector('next-century-group');
+        let groupComponent = searchComponent.querySelector('nucleus-group');
         expect(groupComponent.getAttribute('group-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(groupComponent.getAttribute('group-label')).toEqual(null);
         expect(groupComponent.getAttribute('group-operation')).toEqual(null);
 
-        let filterComponent = textCloudComponent.shadowRoot.querySelector('next-century-filter');
+        let filterComponent = textCloudComponent.shadowRoot.querySelector('nucleus-filter');
         expect(filterComponent.getAttribute('filter-type')).toEqual('list');
         expect(filterComponent.getAttribute('list-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(filterComponent.getAttribute('list-intersection')).toEqual(null);
@@ -109,13 +109,13 @@ describe('Text Cloud Web Component', () => {
         textCloudComponent.setAttribute('vis-filter-output-event', 'test');
         textCloudComponent.init(dataset, filterService, searchService);
 
-        let textCloudElement = textCloudComponent.shadowRoot.querySelector('next-century-visualization-text-cloud');
+        let textCloudElement = textCloudComponent.shadowRoot.querySelector('nucleus-visualization-text-cloud');
         expect(textCloudElement.getAttribute('aggregation-field')).toEqual('aggregations._aggregation');
         expect(textCloudElement.getAttribute('aggregation-title')).toEqual('Label');
         expect(textCloudElement.getAttribute('enable-show-values')).toEqual('true');
         expect(textCloudElement.getAttribute('text-field')).toEqual('fields.testTextField');
 
-        let searchComponent = textCloudComponent.shadowRoot.querySelector('next-century-search');
+        let searchComponent = textCloudComponent.shadowRoot.querySelector('nucleus-search');
         expect(searchComponent.getAttribute('enable-hide-if-unfiltered')).toEqual('true');
         expect(searchComponent.getAttribute('enable-ignore-self-filter')).toEqual('true');
         expect(searchComponent.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
@@ -127,18 +127,18 @@ describe('Text Cloud Web Component', () => {
         expect(searchComponent.getAttribute('vis-draw-function')).toEqual('drawData');
         expect(searchComponent.getAttribute('vis-element-id')).toEqual('testTextCloud_visualization');
 
-        let aggregationComponent = searchComponent.querySelector('next-century-aggregation');
+        let aggregationComponent = searchComponent.querySelector('nucleus-aggregation');
         expect(aggregationComponent.getAttribute('aggregation-field-key')).toEqual('datastore1.testDatabase1.testTable1.testSizeField');
         expect(aggregationComponent.getAttribute('aggregation-group')).toEqual(null);
         expect(aggregationComponent.getAttribute('aggregation-label')).toEqual('_aggregation');
         expect(aggregationComponent.getAttribute('aggregation-operation')).toEqual('sum');
 
-        let groupComponent = searchComponent.querySelector('next-century-group');
+        let groupComponent = searchComponent.querySelector('nucleus-group');
         expect(groupComponent.getAttribute('group-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(groupComponent.getAttribute('group-label')).toEqual(null);
         expect(groupComponent.getAttribute('group-operation')).toEqual(null);
 
-        let filterComponent = textCloudComponent.shadowRoot.querySelector('next-century-filter');
+        let filterComponent = textCloudComponent.shadowRoot.querySelector('nucleus-filter');
         expect(filterComponent.getAttribute('filter-type')).toEqual('list');
         expect(filterComponent.getAttribute('list-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(filterComponent.getAttribute('list-intersection')).toEqual('true');
@@ -154,19 +154,19 @@ describe('Text Cloud Web Component', () => {
         textCloudComponent.setAttribute('aggregation-operation', 'sum');
         textCloudComponent.init(dataset, filterService, searchService);
 
-        let textCloudElement = textCloudComponent.shadowRoot.querySelector('next-century-visualization-text-cloud');
+        let textCloudElement = textCloudComponent.shadowRoot.querySelector('nucleus-visualization-text-cloud');
         expect(textCloudElement.getAttribute('aggregation-title')).toEqual('Sum of Test Size Field');
     });
 
     it('setAttribute does recreate elements', () => {
         textCloudComponent.init(dataset, filterService, searchService);
 
-        let textCloudElement = textCloudComponent.shadowRoot.querySelector('next-century-visualization-text-cloud');
+        let textCloudElement = textCloudComponent.shadowRoot.querySelector('nucleus-visualization-text-cloud');
         expect(textCloudElement.getAttribute('enable-show-values')).toEqual(null);
 
         textCloudComponent.setAttribute('enable-show-values', 'true');
 
-        textCloudElement = textCloudComponent.shadowRoot.querySelector('next-century-visualization-text-cloud');
+        textCloudElement = textCloudComponent.shadowRoot.querySelector('nucleus-visualization-text-cloud');
         expect(textCloudElement.getAttribute('enable-show-values')).toEqual('true');
     });
 });

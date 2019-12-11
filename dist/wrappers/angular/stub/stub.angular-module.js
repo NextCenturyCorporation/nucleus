@@ -23,21 +23,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var stub_angular_component_1 = require("./stub.angular-component");
-var NextCenturyStubAngularModule = /** @class */ (function () {
-    function NextCenturyStubAngularModule() {
+var NucleusStubAngularModule = /** @class */ (function () {
+    function NucleusStubAngularModule() {
     }
-    NextCenturyStubAngularModule = __decorate([
+    NucleusStubAngularModule = __decorate([
         core_1.NgModule({
-            declarations: [stub_angular_component_1.NextCenturyStubAngularComponent],
-            exports: [stub_angular_component_1.NextCenturyStubAngularComponent],
-            entryComponents: [stub_angular_component_1.NextCenturyStubAngularComponent],
+            declarations: [stub_angular_component_1.NucleusStubAngularComponent],
+            exports: [stub_angular_component_1.NucleusStubAngularComponent],
+            entryComponents: [stub_angular_component_1.NucleusStubAngularComponent],
             imports: [
                 common_1.CommonModule
             ],
             schemas: [core_1.CUSTOM_ELEMENTS_SCHEMA]
         })
-    ], NextCenturyStubAngularModule);
-    return NextCenturyStubAngularModule;
+    ], NucleusStubAngularModule);
+    return NucleusStubAngularModule;
 }());
-exports.NextCenturyStubAngularModule = NextCenturyStubAngularModule;
+exports.NucleusStubAngularModule = NucleusStubAngularModule;
 //# sourceMappingURL=stub.angular-module.js.map

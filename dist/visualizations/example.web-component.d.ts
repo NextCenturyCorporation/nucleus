@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NextCenturyElement } from '../core/components/element.web-component';
-export declare class NextCenturyExample extends NextCenturyElement {
+import { NucleusElement } from '../core/components/element.web-component';
+export declare class NucleusExample extends NucleusElement {
     private _data;
     private _selected;
     private _shadowRoot;

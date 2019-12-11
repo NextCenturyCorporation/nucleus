@@ -40,10 +40,10 @@ var core_1 = require("@angular/core");
 var core_util_1 = require("../../../core/core.util");
 var common_angular_component_1 = require("./common.angular-component");
 var filter_web_component_1 = require("../../../core/components/filter.web-component");
-var FILTER_COMPONENT_TEMPLATE = "\n<next-century-filter [attr.id]=\"id + '-filter'\"></next-century-filter>\n";
-var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
-    __extends(NextCenturyFilterAngularComponent, _super);
-    function NextCenturyFilterAngularComponent(elementRef) {
+var FILTER_COMPONENT_TEMPLATE = "\n<nucleus-filter [attr.id]=\"id + '-filter'\"></nucleus-filter>\n";
+var NucleusFilterAngularComponent = /** @class */ (function (_super) {
+    __extends(NucleusFilterAngularComponent, _super);
+    function NucleusFilterAngularComponent(elementRef) {
         var _this = _super.call(this) || this;
         _this.elementRef = elementRef;
         return _this;
@@ -51,19 +51,19 @@ var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturyFilterAngularComponent.prototype.doesHaveSubclassInputs = function () {
+    NucleusFilterAngularComponent.prototype.doesHaveSubclassInputs = function () {
         return !!(this.searchElement && this.visInputElement && this.visOutputElement);
     };
     /**
      * @override
      */
-    NextCenturyFilterAngularComponent.prototype.findWrappedElement = function () {
+    NucleusFilterAngularComponent.prototype.findWrappedElement = function () {
         return this.elementRef.nativeElement.querySelector('#' + this.id + '-filter');
     };
     /**
      * @override
      */
-    NextCenturyFilterAngularComponent.prototype.initWrappedElement = function (filterElement) {
+    NucleusFilterAngularComponent.prototype.initWrappedElement = function (filterElement) {
         filterElement.init(this.dataset, this.filterService, {
             search: this.searchElement,
             visInput: this.visInputElement,
@@ -73,7 +73,7 @@ var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturyFilterAngularComponent.prototype.onWrapperAfterViewInit = function () {
+    NucleusFilterAngularComponent.prototype.onWrapperAfterViewInit = function () {
         var filterElement = this.findWrappedElement();
         // Add event propagation listeners after the HTML elements are stable.
         core_util_1.CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, filterElement, 'valuesFiltered');
@@ -81,38 +81,38 @@ var NextCenturyFilterAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturyFilterAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
-        return filter_web_component_1.NextCenturyFilter.observedAttributes;
+    NucleusFilterAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
+        return filter_web_component_1.NucleusFilter.observedAttributes;
     };
     /**
      * Updates filters (creates and/or deletes) using the given values.
      */
-    NextCenturyFilterAngularComponent.prototype.updateFilteredValues = function (values) {
+    NucleusFilterAngularComponent.prototype.updateFilteredValues = function (values) {
         var filterElement = this.findWrappedElement();
         filterElement.updateFilteredValues(values);
     };
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturyFilterAngularComponent.prototype, "searchElement", void 0);
+    ], NucleusFilterAngularComponent.prototype, "searchElement", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturyFilterAngularComponent.prototype, "visInputElement", void 0);
+    ], NucleusFilterAngularComponent.prototype, "visInputElement", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturyFilterAngularComponent.prototype, "visOutputElement", void 0);
-    NextCenturyFilterAngularComponent = __decorate([
+    ], NucleusFilterAngularComponent.prototype, "visOutputElement", void 0);
+    NucleusFilterAngularComponent = __decorate([
         core_1.Component({
-            selector: 'app-next-century-angular-filter',
+            selector: 'app-nucleus-angular-filter',
             template: FILTER_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [core_1.ElementRef])
-    ], NextCenturyFilterAngularComponent);
-    return NextCenturyFilterAngularComponent;
-}(common_angular_component_1.NextCenturyCommonAngularComponent));
-exports.NextCenturyFilterAngularComponent = NextCenturyFilterAngularComponent;
+    ], NucleusFilterAngularComponent);
+    return NucleusFilterAngularComponent;
+}(common_angular_component_1.NucleusCommonAngularComponent));
+exports.NucleusFilterAngularComponent = NucleusFilterAngularComponent;
 //# sourceMappingURL=filter.angular-component.js.map

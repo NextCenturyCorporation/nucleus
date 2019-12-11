@@ -16,8 +16,8 @@ import { AbstractFilter, AbstractFilterDesign } from '../models/filters';
 import { AbstractSearchService } from '../services/abstract.search.service';
 import { Dataset } from '../models/dataset';
 import { FilterService } from '../services/filter.service';
-import { NextCenturyElement } from './element.web-component';
-export declare class NextCenturySearch extends NextCenturyElement {
+import { NucleusElement } from './element.web-component';
+export declare class NucleusSearch extends NucleusElement {
     static DEFAULT_LIMIT: number;
     static ELEMENT_NAME: string;
     private _dataset;
@@ -30,7 +30,7 @@ export declare class NextCenturySearch extends NextCenturyElement {
     static readonly observedAttributes: string[];
     static readonly optionalAttributes: string[];
     static readonly requiredAttributes: string[];
-    static createElement(id: string, attributes: Record<string, any>): NextCenturySearch;
+    static createElement(id: string, attributes: Record<string, any>): NucleusSearch;
     attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
     connectedCallback(): void;
     disconnectedCallback(): void;

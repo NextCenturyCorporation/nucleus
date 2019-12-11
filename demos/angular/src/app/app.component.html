@@ -7,7 +7,7 @@
     <div class="column-body">
         <app-example #vis1 id="vis1" [visTitle]="''"></app-example>
 
-        <app-next-century-angular-search #search1
+        <app-nucleus-angular-search #search1
             id="search1"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -15,7 +15,7 @@
             [searchService]="searchService"
             [visInputElement]="vis1"
         >
-        </app-next-century-angular-search>
+        </app-nucleus-angular-search>
     </div>
 </div>
 
@@ -26,7 +26,7 @@
     <div class="column-body">
         <app-example #vis2 id="vis2" [filterProperty]="'fields.id'" [visTitle]="''"></app-example>
 
-        <app-next-century-angular-search #search2
+        <app-nucleus-angular-search #search2
             id="search2"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -34,9 +34,9 @@
             [searchService]="searchService"
             [visInputElement]="vis2"
         >
-        </app-next-century-angular-search>
+        </app-nucleus-angular-search>
 
-        <app-next-century-angular-filter #filter2
+        <app-nucleus-angular-filter #filter2
             id="filter2"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -45,7 +45,7 @@
             [visInputElement]="vis2"
             [visOutputElement]="vis2.elementRef.nativeElement"
         >
-        </app-next-century-angular-filter>
+        </app-nucleus-angular-filter>
     </div>
 </div>
 
@@ -56,7 +56,7 @@
     <div class="column-body">
         <app-example #vis3 id="vis3" [filterProperty]="'fields.net'" [visTitle]="''"></app-example>
 
-        <app-next-century-angular-search #search3
+        <app-nucleus-angular-search #search3
             id="search3"
             [aggregations]="searchAggregations3"
             [dataset]="dataset"
@@ -66,9 +66,9 @@
             [searchService]="searchService"
             [visInputElement]="vis3"
         >
-        </app-next-century-angular-search>
+        </app-nucleus-angular-search>
 
-        <app-next-century-angular-filter #filter3
+        <app-nucleus-angular-filter #filter3
             id="filter3"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -77,7 +77,7 @@
             [visInputElement]="vis3"
             [visOutputElement]="vis3.elementRef.nativeElement"
         >
-        </app-next-century-angular-filter>
+        </app-nucleus-angular-filter>
     </div>
 </div>
 
@@ -88,7 +88,7 @@
     <div class="column-body">
         <app-example #vis4 id="vis4" [filterProperty]="'day'" [visTitle]="''"></app-example>
 
-        <app-next-century-angular-search #search4
+        <app-nucleus-angular-search #search4
             id="search4"
             [aggregations]="searchAggregations4"
             [dataset]="dataset"
@@ -98,9 +98,9 @@
             [searchService]="searchService"
             [visInputElement]="vis4"
         >
-        </app-next-century-angular-search>
+        </app-nucleus-angular-search>
 
-        <app-next-century-angular-filter #filter4
+        <app-nucleus-angular-filter #filter4
             id="filter4"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -109,7 +109,7 @@
             [visInputElement]="vis4"
             [visOutputElement]="vis4.elementRef.nativeElement"
         >
-        </app-next-century-angular-filter>
+        </app-nucleus-angular-filter>
     </div>
 </div>
 
@@ -120,7 +120,7 @@
     <div class="column-body">
         <app-example #vis5 id="vis5" [filterProperty]="'netLonLat'" [visTitle]="''"></app-example>
 
-        <app-next-century-angular-search #search5
+        <app-nucleus-angular-search #search5
             id="search5"
             [aggregations]="searchAggregations5"
             [dataset]="dataset"
@@ -130,9 +130,9 @@
             [searchService]="searchService"
             [visInputElement]="vis5"
         >
-        </app-next-century-angular-search>
+        </app-nucleus-angular-search>
 
-        <app-next-century-angular-filter #filter5A
+        <app-nucleus-angular-filter #filter5A
             id="filter5A"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -141,9 +141,9 @@
             [visInputElement]="vis5"
             [visOutputElement]="vis5.elementRef.nativeElement"
         >
-        </app-next-century-angular-filter>
+        </app-nucleus-angular-filter>
 
-        <app-next-century-angular-filter #filter5B
+        <app-nucleus-angular-filter #filter5B
             id="filter5B"
             [dataset]="dataset"
             [filterService]="filterService"
@@ -152,7 +152,7 @@
             [visInputElement]="vis5"
             [visOutputElement]="vis5.elementRef.nativeElement"
         >
-        </app-next-century-angular-filter>
+        </app-nucleus-angular-filter>
     </div>
 </div>
 

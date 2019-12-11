@@ -28,7 +28,7 @@ import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '..
 import { CoreUtil } from '../core.util';
 import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '../models/dataset';
 import { FilterService } from '../services/filter.service';
-import { NextCenturyElement } from './element.web-component';
+import { NucleusElement } from './element.web-component';
 import { RequestWrapper } from '../services/connection.service';
 
 import * as _ from 'lodash';
@@ -54,9 +54,9 @@ interface JoinData {
     type: string;
 }
 
-export class NextCenturySearch extends NextCenturyElement {
+export class NucleusSearch extends NucleusElement {
     static DEFAULT_LIMIT = 10;
-    static ELEMENT_NAME = 'next-century-search';
+    static ELEMENT_NAME = 'nucleus-search';
 
     private _dataset: Dataset;
     private _filterService: FilterService;
@@ -67,7 +67,7 @@ export class NextCenturySearch extends NextCenturyElement {
     private _visInputElement: any;
 
     static get observedAttributes(): string[] {
-        return ['id'].concat(NextCenturySearch.requiredAttributes).concat(NextCenturySearch.optionalAttributes);
+        return ['id'].concat(NucleusSearch.requiredAttributes).concat(NucleusSearch.optionalAttributes);
     }
 
     static get optionalAttributes(): string[] {
@@ -90,17 +90,17 @@ export class NextCenturySearch extends NextCenturyElement {
         ];
     }
 
-    static createElement(id: string, attributes: Record<string, any>): NextCenturySearch {
-        if (!id || NextCenturySearch.requiredAttributes.some((attribute) => !attributes[attribute])) {
+    static createElement(id: string, attributes: Record<string, any>): NucleusSearch {
+        if (!id || NucleusSearch.requiredAttributes.some((attribute) => !attributes[attribute])) {
             return null;
         }
 
-        const searchElement = document.createElement(NextCenturySearch.ELEMENT_NAME) as NextCenturySearch;
+        const searchElement = document.createElement(NucleusSearch.ELEMENT_NAME) as NucleusSearch;
         searchElement.setAttribute('id', id);
-        NextCenturySearch.requiredAttributes.forEach((attribute) => {
+        NucleusSearch.requiredAttributes.forEach((attribute) => {
             searchElement.setAttribute(attribute, attributes[attribute]);
         });
-        NextCenturySearch.optionalAttributes.forEach((attribute) => {
+        NucleusSearch.optionalAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 searchElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -197,7 +197,7 @@ export class NextCenturySearch extends NextCenturyElement {
         let searchObject: SearchObject = this._buildQuery();
 
         if (searchObject) {
-            const limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
+            const limit = Number(this.getAttribute('search-limit') || NucleusSearch.DEFAULT_LIMIT);
             this._searchService.withLimit(searchObject, limit);
 
             const page = Number(this.getAttribute('search-page') || 1);
@@ -321,7 +321,7 @@ export class NextCenturySearch extends NextCenturyElement {
      */
     private _findSearchAggregations(): AggregationData[] {
         let aggregations: AggregationData[] = [];
-        for (const aggregationElement of this.getElementsByTagName('next-century-aggregation') as any) {
+        for (const aggregationElement of this.getElementsByTagName('nucleus-aggregation') as any) {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(aggregationElement.getAttribute('aggregation-field-key'));
             const group = aggregationElement.getAttribute('aggregation-group');
             const label = aggregationElement.getAttribute('aggregation-label');
@@ -343,7 +343,7 @@ export class NextCenturySearch extends NextCenturyElement {
      */
     private _findSearchGroups(): GroupData[] {
         let groups: GroupData[] = [];
-        for (const groupElement of this.getElementsByTagName('next-century-group') as any) {
+        for (const groupElement of this.getElementsByTagName('nucleus-group') as any) {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(groupElement.getAttribute('group-field-key'));
             const label = groupElement.getAttribute('group-label');
             const operation = groupElement.getAttribute('group-operation');
@@ -363,7 +363,7 @@ export class NextCenturySearch extends NextCenturyElement {
      */
     private _findSearchJoins(): JoinData[] {
         let joins: JoinData[] = [];
-        for (const joinElement of this.getElementsByTagName('next-century-join') as any) {
+        for (const joinElement of this.getElementsByTagName('nucleus-join') as any) {
             const fieldKey1: FieldKey = DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-1'));
             const fieldKey2: FieldKey = DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-2'));
             const operator = joinElement.getAttribute('join-operator') || '=';
@@ -743,5 +743,5 @@ export class NextCenturySearch extends NextCenturyElement {
     }
 }
 
-window.customElements.define(NextCenturySearch.ELEMENT_NAME, NextCenturySearch);
+window.customElements.define(NucleusSearch.ELEMENT_NAME, NucleusSearch);
 

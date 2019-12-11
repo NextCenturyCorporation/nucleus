@@ -14,9 +14,9 @@
  */
 
 import { CoreUtil } from '../core/core.util';
-import { NextCenturyElement } from '../core/components/element.web-component';
+import { NucleusElement } from '../core/components/element.web-component';
 
-export class NextCenturyExample extends NextCenturyElement {
+export class NucleusExample extends NucleusElement {
     private _data: any[];
     private _selected: any[] = [];
     private _shadowRoot: ShadowRoot;
@@ -184,5 +184,5 @@ export class NextCenturyExample extends NextCenturyElement {
     }
 }
 
-window.customElements.define('next-century-example', NextCenturyExample);
+window.customElements.define('nucleus-example', NucleusExample);
 

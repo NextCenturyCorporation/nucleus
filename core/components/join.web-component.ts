@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { NextCenturyElement } from './element.web-component';
+import { NucleusElement } from './element.web-component';
 
-export class NextCenturyJoin extends NextCenturyElement {
-    static ELEMENT_NAME = 'next-century-join';
+export class NucleusJoin extends NucleusElement {
+    static ELEMENT_NAME = 'nucleus-join';
 
     static get observedAttributes(): string[] {
         return [
@@ -29,8 +29,8 @@ export class NextCenturyJoin extends NextCenturyElement {
     }
 
     static createElement(attributes: Record<string, any>): HTMLElement {
-        const joinElement = document.createElement(NextCenturyJoin.ELEMENT_NAME);
-        NextCenturyJoin.observedAttributes.forEach((attribute) => {
+        const joinElement = document.createElement(NucleusJoin.ELEMENT_NAME);
+        NucleusJoin.observedAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 joinElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -39,5 +39,5 @@ export class NextCenturyJoin extends NextCenturyElement {
     }
 }
 
-window.customElements.define(NextCenturyJoin.ELEMENT_NAME, NextCenturyJoin);
+window.customElements.define(NucleusJoin.ELEMENT_NAME, NucleusJoin);
 

@@ -35,9 +35,9 @@ var filter_web_component_1 = require("../../core/components/filter.web-component
 var group_web_component_1 = require("../../core/components/group.web-component");
 var search_web_component_1 = require("../../core/components/search.web-component");
 var text_cloud_visualization_1 = require("../../visualizations/text-cloud/text-cloud.visualization");
-var NextCenturyTextCloud = /** @class */ (function (_super) {
-    __extends(NextCenturyTextCloud, _super);
-    function NextCenturyTextCloud() {
+var NucleusTextCloud = /** @class */ (function (_super) {
+    __extends(NucleusTextCloud, _super);
+    function NucleusTextCloud() {
         var _this = _super.call(this) || this;
         var template = document.createElement('template');
         template.innerHTML = "\n            <style>\n                :host {\n                    display: block;\n                }\n\n                :host([hidden]) {\n                    display: none;\n                }\n            </style>\n        ";
@@ -49,31 +49,31 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         _this._shadowRoot.appendChild(_this._containerElement);
         return _this;
     }
-    Object.defineProperty(NextCenturyTextCloud, "observedAttributes", {
+    Object.defineProperty(NucleusTextCloud, "observedAttributes", {
         get: function () {
-            return ['text-field-key'].concat(search_web_component_1.NextCenturySearch.requiredAttributes).concat(search_web_component_1.NextCenturySearch.optionalAttributes)
-                .concat(filter_web_component_1.NextCenturyFilter.requiredAttributes).concat(filter_web_component_1.NextCenturyFilter.optionalAttributes)
-                .concat(aggregation_web_component_1.NextCenturyAggregation.observedAttributes).concat(group_web_component_1.NextCenturyGroup.observedAttributes)
-                .concat(text_cloud_visualization_1.NextCenturyTextCloudVisualization.observedAttributes);
+            return ['text-field-key'].concat(search_web_component_1.NucleusSearch.requiredAttributes).concat(search_web_component_1.NucleusSearch.optionalAttributes)
+                .concat(filter_web_component_1.NucleusFilter.requiredAttributes).concat(filter_web_component_1.NucleusFilter.optionalAttributes)
+                .concat(aggregation_web_component_1.NucleusAggregation.observedAttributes).concat(group_web_component_1.NucleusGroup.observedAttributes)
+                .concat(text_cloud_visualization_1.NucleusTextCloudVisualization.observedAttributes);
         },
         enumerable: true,
         configurable: true
     });
-    NextCenturyTextCloud.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
+    NucleusTextCloud.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
         _super.prototype.attributeChangedCallback.call(this, name, oldValue, newValue);
         this._createVisualization();
     };
     /**
      * Creates and returns the export data for the text cloud.
      */
-    NextCenturyTextCloud.prototype.createExportData = function (exportFields, filename) {
-        var searchElement = this._containerElement.querySelector('next-century-search');
+    NucleusTextCloud.prototype.createExportData = function (exportFields, filename) {
+        var searchElement = this._containerElement.querySelector('nucleus-search');
         return searchElement.createExportData(exportFields, filename);
     };
     /**
      * Initializes the text cloud and search/filter components.
      */
-    NextCenturyTextCloud.prototype.init = function (dataset, filterService, searchService) {
+    NucleusTextCloud.prototype.init = function (dataset, filterService, searchService) {
         this._dataset = dataset;
         this._filterService = filterService;
         this._searchService = searchService;
@@ -82,11 +82,11 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
     /**
      * Redraws the text cloud.
      */
-    NextCenturyTextCloud.prototype.redraw = function () {
-        var visElement = this._containerElement.querySelector('next-century-visualization-text-cloud');
+    NucleusTextCloud.prototype.redraw = function () {
+        var visElement = this._containerElement.querySelector('nucleus-visualization-text-cloud');
         visElement.redraw();
     };
-    NextCenturyTextCloud.prototype._createAggregationTitle = function (attributes) {
+    NucleusTextCloud.prototype._createAggregationTitle = function (attributes) {
         if (attributes['aggregation-title']) {
             return attributes['aggregation-title'];
         }
@@ -101,7 +101,7 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         }
         return undefined;
     };
-    NextCenturyTextCloud.prototype._createVisualization = function () {
+    NucleusTextCloud.prototype._createVisualization = function () {
         var attributes = core_util_1.CoreUtil.transformElementAttributes(this.attributes);
         var textFieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(attributes['text-field-key']);
         if (!attributes['id'] || !textFieldKey || !textFieldKey.field || !this._dataset || !this._filterService || !this._searchService) {
@@ -135,15 +135,15 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         attributes['vis-element-id'] = visElementId;
         attributes['vis-filter-input-function'] = 'changeFilteredText';
         attributes['vis-filter-output-event'] = 'filter';
-        var filterElement = filter_web_component_1.NextCenturyFilter.createElement(filterElementId, attributes);
-        var searchElement = search_web_component_1.NextCenturySearch.createElement(searchElementId, attributes);
-        var aggregationElement = aggregation_web_component_1.NextCenturyAggregation.createElement(attributes);
-        var groupElement = group_web_component_1.NextCenturyGroup.createElement(attributes);
+        var filterElement = filter_web_component_1.NucleusFilter.createElement(filterElementId, attributes);
+        var searchElement = search_web_component_1.NucleusSearch.createElement(searchElementId, attributes);
+        var aggregationElement = aggregation_web_component_1.NucleusAggregation.createElement(attributes);
+        var groupElement = group_web_component_1.NucleusGroup.createElement(attributes);
         searchElement.append(aggregationElement);
         searchElement.append(groupElement);
-        var visElement = document.createElement('next-century-visualization-text-cloud');
+        var visElement = document.createElement('nucleus-visualization-text-cloud');
         visElement.setAttribute('id', visElementId);
-        text_cloud_visualization_1.NextCenturyTextCloudVisualization.observedAttributes.forEach(function (attribute) {
+        text_cloud_visualization_1.NucleusTextCloudVisualization.observedAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 visElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -161,8 +161,8 @@ var NextCenturyTextCloud = /** @class */ (function (_super) {
         filterElement.init(this._dataset, this._filterService);
         searchElement.init(this._dataset, this._filterService, this._searchService);
     };
-    return NextCenturyTextCloud;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyTextCloud = NextCenturyTextCloud;
-window.customElements.define('next-century-text-cloud', NextCenturyTextCloud);
+    return NucleusTextCloud;
+}(element_web_component_1.NucleusElement));
+exports.NucleusTextCloud = NucleusTextCloud;
+window.customElements.define('nucleus-text-cloud', NucleusTextCloud);
 //# sourceMappingURL=text-cloud.web-component.js.map

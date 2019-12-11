@@ -28,12 +28,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var element_web_component_1 = require("./element.web-component");
-var NextCenturyJoin = /** @class */ (function (_super) {
-    __extends(NextCenturyJoin, _super);
-    function NextCenturyJoin() {
+var NucleusJoin = /** @class */ (function (_super) {
+    __extends(NucleusJoin, _super);
+    function NucleusJoin() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(NextCenturyJoin, "observedAttributes", {
+    Object.defineProperty(NucleusJoin, "observedAttributes", {
         get: function () {
             return [
                 'join-field-key-1',
@@ -46,18 +46,18 @@ var NextCenturyJoin = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyJoin.createElement = function (attributes) {
-        var joinElement = document.createElement(NextCenturyJoin.ELEMENT_NAME);
-        NextCenturyJoin.observedAttributes.forEach(function (attribute) {
+    NucleusJoin.createElement = function (attributes) {
+        var joinElement = document.createElement(NucleusJoin.ELEMENT_NAME);
+        NucleusJoin.observedAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 joinElement.setAttribute(attribute, attributes[attribute]);
             }
         });
         return joinElement;
     };
-    NextCenturyJoin.ELEMENT_NAME = 'next-century-join';
-    return NextCenturyJoin;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyJoin = NextCenturyJoin;
-window.customElements.define(NextCenturyJoin.ELEMENT_NAME, NextCenturyJoin);
+    NucleusJoin.ELEMENT_NAME = 'nucleus-join';
+    return NucleusJoin;
+}(element_web_component_1.NucleusElement));
+exports.NucleusJoin = NucleusJoin;
+window.customElements.define(NucleusJoin.ELEMENT_NAME, NucleusJoin);
 //# sourceMappingURL=join.web-component.js.map

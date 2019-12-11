@@ -29,9 +29,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_util_1 = require("../core/core.util");
 var element_web_component_1 = require("../core/components/element.web-component");
-var NextCenturyExample = /** @class */ (function (_super) {
-    __extends(NextCenturyExample, _super);
-    function NextCenturyExample() {
+var NucleusExample = /** @class */ (function (_super) {
+    __extends(NucleusExample, _super);
+    function NucleusExample() {
         var _this = _super.call(this) || this;
         _this._selected = [];
         var template = document.createElement('template');
@@ -44,7 +44,7 @@ var NextCenturyExample = /** @class */ (function (_super) {
         _this._shadowRoot.appendChild(_this._visElement);
         return _this;
     }
-    Object.defineProperty(NextCenturyExample, "observedAttributes", {
+    Object.defineProperty(NucleusExample, "observedAttributes", {
         get: function () {
             return [
                 'selection-field',
@@ -54,7 +54,7 @@ var NextCenturyExample = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyExample.prototype.changeSelectedText = function (text) {
+    NucleusExample.prototype.changeSelectedText = function (text) {
         // If text is "a", transform to ["a"]; if text is ["a", "b"], keep it; if text is [["a"], ["b", "c"]], transform to ["a", "b", "c"]
         var selected = !Array.isArray(text) ? [text] : text.reduce(function (list, part) { return list.concat(part); }, []);
         // Only redraw the visualization data if some of the selected text items have changed.
@@ -64,7 +64,7 @@ var NextCenturyExample = /** @class */ (function (_super) {
             this._redrawData();
         }
     };
-    NextCenturyExample.prototype.drawData = function (data) {
+    NucleusExample.prototype.drawData = function (data) {
         this._data = data;
         this._redrawData();
         this.dispatchEvent(new CustomEvent('draw', {
@@ -72,7 +72,7 @@ var NextCenturyExample = /** @class */ (function (_super) {
             detail: {}
         }));
     };
-    NextCenturyExample.prototype.select = function (item) {
+    NucleusExample.prototype.select = function (item) {
         var index = this._selected.indexOf(item);
         if (index >= 0) {
             this._selected.splice(index, 1);
@@ -88,7 +88,7 @@ var NextCenturyExample = /** @class */ (function (_super) {
             }
         }));
     };
-    NextCenturyExample.prototype._redrawData = function () {
+    NucleusExample.prototype._redrawData = function () {
         var _this = this;
         var newElement = document.createElement('div');
         this._shadowRoot.replaceChild(newElement, this._visElement);
@@ -141,8 +141,8 @@ var NextCenturyExample = /** @class */ (function (_super) {
         });
         this._visElement.appendChild(containerElement);
     };
-    return NextCenturyExample;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyExample = NextCenturyExample;
-window.customElements.define('next-century-example', NextCenturyExample);
+    return NucleusExample;
+}(element_web_component_1.NucleusElement));
+exports.NucleusExample = NucleusExample;
+window.customElements.define('nucleus-example', NucleusExample);
 //# sourceMappingURL=example.web-component.js.map

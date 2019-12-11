@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export declare class NextCenturyElement extends HTMLElement {
+export declare class NucleusElement extends HTMLElement {
     attributeChangedCallback(__name: string, __oldValue: any, __newValue: any): void;
     connectedCallback(): void;
     disconnectedCallback(): void;

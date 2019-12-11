@@ -23,21 +23,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var text_cloud_angular_component_1 = require("./text-cloud.angular-component");
-var NextCenturyTextCloudAngularModule = /** @class */ (function () {
-    function NextCenturyTextCloudAngularModule() {
+var NucleusTextCloudAngularModule = /** @class */ (function () {
+    function NucleusTextCloudAngularModule() {
     }
-    NextCenturyTextCloudAngularModule = __decorate([
+    NucleusTextCloudAngularModule = __decorate([
         core_1.NgModule({
-            declarations: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
-            exports: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
-            entryComponents: [text_cloud_angular_component_1.NextCenturyTextCloudAngularComponent],
+            declarations: [text_cloud_angular_component_1.NucleusTextCloudAngularComponent],
+            exports: [text_cloud_angular_component_1.NucleusTextCloudAngularComponent],
+            entryComponents: [text_cloud_angular_component_1.NucleusTextCloudAngularComponent],
             imports: [
                 common_1.CommonModule
             ],
             schemas: [core_1.CUSTOM_ELEMENTS_SCHEMA]
         })
-    ], NextCenturyTextCloudAngularModule);
-    return NextCenturyTextCloudAngularModule;
+    ], NucleusTextCloudAngularModule);
+    return NucleusTextCloudAngularModule;
 }());
-exports.NextCenturyTextCloudAngularModule = NextCenturyTextCloudAngularModule;
+exports.NucleusTextCloudAngularModule = NucleusTextCloudAngularModule;
 //# sourceMappingURL=text-cloud.angular-module.js.map

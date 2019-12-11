@@ -43,10 +43,10 @@ var aggregation_web_component_1 = require("../../../core/components/aggregation.
 var common_angular_component_1 = require("./common.angular-component");
 var group_web_component_1 = require("../../../core/components/group.web-component");
 var search_web_component_1 = require("../../../core/components/search.web-component");
-var SEARCH_COMPONENT_TEMPLATE = "\n<next-century-search [attr.id]=\"id + '-search'\">\n    <next-century-aggregation *ngFor=\"let aggregation of aggregations; let i = index\" [attr.id]=\"id + '-aggregation-' + i\">\n    </next-century-aggregation>\n    <next-century-group *ngFor=\"let group of groups; let i = index\" [attr.id]=\"id + '-group-' + i\"></next-century-group>\n</next-century-search>\n";
-var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
-    __extends(NextCenturySearchAngularComponent, _super);
-    function NextCenturySearchAngularComponent(elementRef) {
+var SEARCH_COMPONENT_TEMPLATE = "\n<nucleus-search [attr.id]=\"id + '-search'\">\n    <nucleus-aggregation *ngFor=\"let aggregation of aggregations; let i = index\" [attr.id]=\"id + '-aggregation-' + i\">\n    </nucleus-aggregation>\n    <nucleus-group *ngFor=\"let group of groups; let i = index\" [attr.id]=\"id + '-group-' + i\"></nucleus-group>\n</nucleus-search>\n";
+var NucleusSearchAngularComponent = /** @class */ (function (_super) {
+    __extends(NucleusSearchAngularComponent, _super);
+    function NucleusSearchAngularComponent(elementRef) {
         var _this = _super.call(this) || this;
         _this.elementRef = elementRef;
         return _this;
@@ -54,19 +54,19 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.doesHaveSubclassInputs = function () {
+    NucleusSearchAngularComponent.prototype.doesHaveSubclassInputs = function () {
         return !!(this.searchService && this.visInputElement);
     };
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.findWrappedElement = function () {
+    NucleusSearchAngularComponent.prototype.findWrappedElement = function () {
         return this.elementRef.nativeElement.querySelector('#' + this.id + '-search');
     };
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.initWrappedElement = function (searchElement) {
+    NucleusSearchAngularComponent.prototype.initWrappedElement = function (searchElement) {
         searchElement.init(this.dataset, this.filterService, this.searchService, {
             visInput: this.visInputElement
         });
@@ -74,7 +74,7 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.onWrapperAfterViewInit = function () {
+    NucleusSearchAngularComponent.prototype.onWrapperAfterViewInit = function () {
         var searchElement = this.findWrappedElement();
         // Add event propagation listeners after the HTML elements are stable.
         core_util_1.CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, searchElement, 'searchCanceled');
@@ -85,14 +85,14 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.onWrapperChanges = function () {
+    NucleusSearchAngularComponent.prototype.onWrapperChanges = function () {
         var _this = this;
         if (this.aggregations) {
             this.aggregations.forEach(function (aggregationOptions, index) {
                 var aggregationElement = _this.elementRef.nativeElement.querySelector('#' + _this.id + '-aggregation-' +
                     index);
                 if (aggregationElement) {
-                    core_util_1.CoreUtil.updateElementAttributes(aggregationElement, aggregation_web_component_1.NextCenturyAggregation.observedAttributes, aggregationOptions);
+                    core_util_1.CoreUtil.updateElementAttributes(aggregationElement, aggregation_web_component_1.NucleusAggregation.observedAttributes, aggregationOptions);
                 }
             });
         }
@@ -101,7 +101,7 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
                 var groupElement = _this.elementRef.nativeElement.querySelector('#' + _this.id + '-group-' +
                     index);
                 if (groupElement) {
-                    core_util_1.CoreUtil.updateElementAttributes(groupElement, group_web_component_1.NextCenturyGroup.observedAttributes, groupOptions);
+                    core_util_1.CoreUtil.updateElementAttributes(groupElement, group_web_component_1.NucleusGroup.observedAttributes, groupOptions);
                 }
             });
         }
@@ -109,60 +109,60 @@ var NextCenturySearchAngularComponent = /** @class */ (function (_super) {
     /**
      * @override
      */
-    NextCenturySearchAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
-        return search_web_component_1.NextCenturySearch.observedAttributes;
+    NucleusSearchAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
+        return search_web_component_1.NucleusSearch.observedAttributes;
     };
     /**
      * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
      */
-    NextCenturySearchAngularComponent.prototype.runQuery = function (id, filters) {
+    NucleusSearchAngularComponent.prototype.runQuery = function (id, filters) {
         var searchElement = this.findWrappedElement();
         searchElement.runQuery();
     };
     /**
      * Updates the unshared filters of this search element with the given filters.
      */
-    NextCenturySearchAngularComponent.prototype.updateFilters = function (id, filters) {
+    NucleusSearchAngularComponent.prototype.updateFilters = function (id, filters) {
         var searchElement = this.findWrappedElement();
         searchElement.updateFilters(id, filters);
     };
     /**
      * Updates the filter designs of this search element (used to find shared filters) with the given filter designs.
      */
-    NextCenturySearchAngularComponent.prototype.updateFilterDesigns = function (id, filterDesigns) {
+    NucleusSearchAngularComponent.prototype.updateFilterDesigns = function (id, filterDesigns) {
         var searchElement = this.findWrappedElement();
         searchElement.updateFilterDesigns(id, filterDesigns);
     };
     __decorate([
         core_1.Input(),
         __metadata("design:type", Array)
-    ], NextCenturySearchAngularComponent.prototype, "aggregations", void 0);
+    ], NucleusSearchAngularComponent.prototype, "aggregations", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Array)
-    ], NextCenturySearchAngularComponent.prototype, "groups", void 0);
+    ], NucleusSearchAngularComponent.prototype, "groups", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturySearchAngularComponent.prototype, "options", void 0);
+    ], NucleusSearchAngularComponent.prototype, "options", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", abstract_search_service_1.AbstractSearchService)
-    ], NextCenturySearchAngularComponent.prototype, "searchService", void 0);
+    ], NucleusSearchAngularComponent.prototype, "searchService", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
-    ], NextCenturySearchAngularComponent.prototype, "visInputElement", void 0);
-    NextCenturySearchAngularComponent = __decorate([
+    ], NucleusSearchAngularComponent.prototype, "visInputElement", void 0);
+    NucleusSearchAngularComponent = __decorate([
         core_1.Component({
-            selector: 'app-next-century-angular-search',
+            selector: 'app-nucleus-angular-search',
             template: SEARCH_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [core_1.ElementRef])
-    ], NextCenturySearchAngularComponent);
-    return NextCenturySearchAngularComponent;
-}(common_angular_component_1.NextCenturyCommonAngularComponent));
-exports.NextCenturySearchAngularComponent = NextCenturySearchAngularComponent;
+    ], NucleusSearchAngularComponent);
+    return NucleusSearchAngularComponent;
+}(common_angular_component_1.NucleusCommonAngularComponent));
+exports.NucleusSearchAngularComponent = NucleusSearchAngularComponent;
 //# sourceMappingURL=search.angular-component.js.map

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { NextCenturyElement } from './element.web-component';
+import { NucleusElement } from './element.web-component';
 
-export class NextCenturyAggregation extends NextCenturyElement {
-    static ELEMENT_NAME = 'next-century-aggregation';
+export class NucleusAggregation extends NucleusElement {
+    static ELEMENT_NAME = 'nucleus-aggregation';
 
     static get observedAttributes(): string[] {
         return [
@@ -28,8 +28,8 @@ export class NextCenturyAggregation extends NextCenturyElement {
     }
 
     static createElement(attributes: Record<string, any>): HTMLElement {
-        const aggregationElement = document.createElement(NextCenturyAggregation.ELEMENT_NAME);
-        NextCenturyAggregation.observedAttributes.forEach((attribute) => {
+        const aggregationElement = document.createElement(NucleusAggregation.ELEMENT_NAME);
+        NucleusAggregation.observedAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 aggregationElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -38,5 +38,5 @@ export class NextCenturyAggregation extends NextCenturyElement {
     }
 }
 
-window.customElements.define(NextCenturyAggregation.ELEMENT_NAME, NextCenturyAggregation);
+window.customElements.define(NucleusAggregation.ELEMENT_NAME, NucleusAggregation);
 

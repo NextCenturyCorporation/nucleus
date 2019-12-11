@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-export class NextCenturyElement extends HTMLElement {
+export class NucleusElement extends HTMLElement {
     public attributeChangedCallback(__name: string, __oldValue: any, __newValue: any): void {
         // Do nothing.
     }

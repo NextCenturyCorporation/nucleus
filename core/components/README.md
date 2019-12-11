@@ -1,4 +1,4 @@
-# NCCL Core Components API
+# NUCLEUS Core Components API
 
 ## Aggregation Component
 

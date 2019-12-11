@@ -5,8 +5,8 @@ import { AppComponent } from './app.component';
 
 import { ExampleModule } from './example.module';
 
-import { NextCenturyFilterAngularModule } from 'component-library/dist/wrappers/angular/core/filter.angular-module';
-import { NextCenturySearchAngularModule } from 'component-library/dist/wrappers/angular/core/search.angular-module';
+import { NucleusFilterAngularModule } from 'nucleus/dist/wrappers/angular/core/filter.angular-module';
+import { NucleusSearchAngularModule } from 'nucleus/dist/wrappers/angular/core/search.angular-module';
 
 @NgModule({
     declarations: [
@@ -15,8 +15,8 @@ import { NextCenturySearchAngularModule } from 'component-library/dist/wrappers/
     imports: [
         BrowserModule,
         ExampleModule,
-        NextCenturyFilterAngularModule,
-        NextCenturySearchAngularModule
+        NucleusFilterAngularModule,
+        NucleusSearchAngularModule
     ],
     providers: [],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],

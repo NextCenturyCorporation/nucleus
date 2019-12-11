@@ -1,4 +1,4 @@
-# Sample JavaScript Demo App (Next Century Component Library)
+# Sample JavaScript Demo App (NUCLEUS)
 
 Coming soon!
 

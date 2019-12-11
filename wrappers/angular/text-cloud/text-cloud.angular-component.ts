@@ -17,20 +17,20 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulatio
 
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
 import { CoreUtil } from '../../../core/core.util';
-import { NextCenturyCommonAngularComponent } from '../core/common.angular-component';
-import { NextCenturyTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
+import { NucleusCommonAngularComponent } from '../core/common.angular-component';
+import { NucleusTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
 
 const VISUALZIATON_COMPONENT_TEMPLATE = `
-<next-century-text-cloud [attr.id]="id + '-angular'"></next-century-text-cloud>
+<nucleus-text-cloud [attr.id]="id + '-angular'"></nucleus-text-cloud>
 `;
 
 @Component({
-    selector: 'app-next-century-angular-text-cloud',
+    selector: 'app-nucleus-angular-text-cloud',
     template: VISUALZIATON_COMPONENT_TEMPLATE,
     encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngularComponent {
+export class NucleusTextCloudAngularComponent extends NucleusCommonAngularComponent {
     @Input() searchService: AbstractSearchService;
 
     constructor(public elementRef: ElementRef) {
@@ -41,7 +41,7 @@ export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngul
      * Creates and returns the export data for the visualization.
      */
     public createExportData(exportFields: { columnName: string, prettyName: string }[], filename: string): { name: string, data: any }[] {
-        const visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NextCenturyTextCloud;
+        const visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NucleusTextCloud;
         return visElement.createExportData(exportFields, filename);
     }
 
@@ -55,14 +55,14 @@ export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngul
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturyTextCloud {
-        return this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NextCenturyTextCloud;
+    protected findWrappedElement(): NucleusTextCloud {
+        return this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NucleusTextCloud;
     }
 
     /**
      * @override
      */
-    protected initWrappedElement(visElement: NextCenturyTextCloud): void {
+    protected initWrappedElement(visElement: NucleusTextCloud): void {
         visElement.init(this.dataset, this.filterService, this.searchService);
     }
 
@@ -70,7 +70,7 @@ export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngul
      * @override
      */
     protected onWrapperAfterViewInit(): void {
-        const visElement: NextCenturyTextCloud = this.findWrappedElement();
+        const visElement: NucleusTextCloud = this.findWrappedElement();
 
         // Add event propagation listeners after the HTML elements are stable.
         CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, visElement, 'valuesFiltered');
@@ -84,7 +84,7 @@ export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngul
      * Redraws the visualization.
      */
     public redraw(): void {
-        const visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NextCenturyTextCloud;
+        const visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NucleusTextCloud;
         visElement.redraw();
     }
 
@@ -92,6 +92,6 @@ export class NextCenturyTextCloudAngularComponent extends NextCenturyCommonAngul
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[] {
-        return NextCenturyTextCloud.observedAttributes;
+        return NucleusTextCloud.observedAttributes;
     }
 }

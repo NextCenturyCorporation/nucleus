@@ -41,10 +41,10 @@ var abstract_search_service_1 = require("../../../core/services/abstract.search.
 var core_util_1 = require("../../../core/core.util");
 var common_angular_component_1 = require("../core/common.angular-component");
 var text_cloud_web_component_1 = require("../../../visualizations/text-cloud/text-cloud.web-component");
-var VISUALZIATON_COMPONENT_TEMPLATE = "\n<next-century-text-cloud [attr.id]=\"id + '-angular'\"></next-century-text-cloud>\n";
-var NextCenturyTextCloudAngularComponent = /** @class */ (function (_super) {
-    __extends(NextCenturyTextCloudAngularComponent, _super);
-    function NextCenturyTextCloudAngularComponent(elementRef) {
+var VISUALZIATON_COMPONENT_TEMPLATE = "\n<nucleus-text-cloud [attr.id]=\"id + '-angular'\"></nucleus-text-cloud>\n";
+var NucleusTextCloudAngularComponent = /** @class */ (function (_super) {
+    __extends(NucleusTextCloudAngularComponent, _super);
+    function NucleusTextCloudAngularComponent(elementRef) {
         var _this = _super.call(this) || this;
         _this.elementRef = elementRef;
         return _this;
@@ -52,32 +52,32 @@ var NextCenturyTextCloudAngularComponent = /** @class */ (function (_super) {
     /**
      * Creates and returns the export data for the visualization.
      */
-    NextCenturyTextCloudAngularComponent.prototype.createExportData = function (exportFields, filename) {
+    NucleusTextCloudAngularComponent.prototype.createExportData = function (exportFields, filename) {
         var visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular');
         return visElement.createExportData(exportFields, filename);
     };
     /**
      * @override
      */
-    NextCenturyTextCloudAngularComponent.prototype.doesHaveSubclassInputs = function () {
+    NucleusTextCloudAngularComponent.prototype.doesHaveSubclassInputs = function () {
         return !!this.searchService;
     };
     /**
      * @override
      */
-    NextCenturyTextCloudAngularComponent.prototype.findWrappedElement = function () {
+    NucleusTextCloudAngularComponent.prototype.findWrappedElement = function () {
         return this.elementRef.nativeElement.querySelector('#' + this.id + '-angular');
     };
     /**
      * @override
      */
-    NextCenturyTextCloudAngularComponent.prototype.initWrappedElement = function (visElement) {
+    NucleusTextCloudAngularComponent.prototype.initWrappedElement = function (visElement) {
         visElement.init(this.dataset, this.filterService, this.searchService);
     };
     /**
      * @override
      */
-    NextCenturyTextCloudAngularComponent.prototype.onWrapperAfterViewInit = function () {
+    NucleusTextCloudAngularComponent.prototype.onWrapperAfterViewInit = function () {
         var visElement = this.findWrappedElement();
         // Add event propagation listeners after the HTML elements are stable.
         core_util_1.CoreUtil.addEventPropagationListener(this.elementRef.nativeElement, visElement, 'valuesFiltered');
@@ -89,30 +89,30 @@ var NextCenturyTextCloudAngularComponent = /** @class */ (function (_super) {
     /**
      * Redraws the visualization.
      */
-    NextCenturyTextCloudAngularComponent.prototype.redraw = function () {
+    NucleusTextCloudAngularComponent.prototype.redraw = function () {
         var visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular');
         visElement.redraw();
     };
     /**
      * @override
      */
-    NextCenturyTextCloudAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
-        return text_cloud_web_component_1.NextCenturyTextCloud.observedAttributes;
+    NucleusTextCloudAngularComponent.prototype.retrieveWrappedElementObservedAttributes = function () {
+        return text_cloud_web_component_1.NucleusTextCloud.observedAttributes;
     };
     __decorate([
         core_1.Input(),
         __metadata("design:type", abstract_search_service_1.AbstractSearchService)
-    ], NextCenturyTextCloudAngularComponent.prototype, "searchService", void 0);
-    NextCenturyTextCloudAngularComponent = __decorate([
+    ], NucleusTextCloudAngularComponent.prototype, "searchService", void 0);
+    NucleusTextCloudAngularComponent = __decorate([
         core_1.Component({
-            selector: 'app-next-century-angular-text-cloud',
+            selector: 'app-nucleus-angular-text-cloud',
             template: VISUALZIATON_COMPONENT_TEMPLATE,
             encapsulation: core_1.ViewEncapsulation.Emulated,
             changeDetection: core_1.ChangeDetectionStrategy.OnPush
         }),
         __metadata("design:paramtypes", [core_1.ElementRef])
-    ], NextCenturyTextCloudAngularComponent);
-    return NextCenturyTextCloudAngularComponent;
-}(common_angular_component_1.NextCenturyCommonAngularComponent));
-exports.NextCenturyTextCloudAngularComponent = NextCenturyTextCloudAngularComponent;
+    ], NucleusTextCloudAngularComponent);
+    return NucleusTextCloudAngularComponent;
+}(common_angular_component_1.NucleusCommonAngularComponent));
+exports.NucleusTextCloudAngularComponent = NucleusTextCloudAngularComponent;
 //# sourceMappingURL=text-cloud.angular-component.js.map

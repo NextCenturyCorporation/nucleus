@@ -15,15 +15,15 @@
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NextCenturyFilterAngularComponent } from './filter.angular-component';
+import { NucleusFilterAngularComponent } from './filter.angular-component';
 
 @NgModule({
-    declarations: [NextCenturyFilterAngularComponent],
-    exports: [NextCenturyFilterAngularComponent],
-    entryComponents: [NextCenturyFilterAngularComponent],
+    declarations: [NucleusFilterAngularComponent],
+    exports: [NucleusFilterAngularComponent],
+    entryComponents: [NucleusFilterAngularComponent],
     imports: [
         CommonModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class NextCenturyFilterAngularModule { }
+export class NucleusFilterAngularModule { }

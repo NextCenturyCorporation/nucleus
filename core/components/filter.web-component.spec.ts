@@ -26,19 +26,19 @@ import {
     PairFilter,
     PairFilterDesign
 } from '../models/filters';
-import { NextCenturyElement } from './element.web-component';
-import { NextCenturyFilter } from './filter.web-component';
-import { NextCenturySearch } from './search.web-component';
+import { NucleusElement } from './element.web-component';
+import { NucleusFilter } from './filter.web-component';
+import { NucleusSearch } from './search.web-component';
 
 import { DATASET } from '../models/mock.dataset';
 
-if (!window.customElements.get('next-century-element-mock')) {
-    window.customElements.define('next-century-element-mock', NextCenturyElement);
+if (!window.customElements.get('nucleus-element-mock')) {
+    window.customElements.define('nucleus-element-mock', NucleusElement);
 }
 
 describe('Filter Component static createElement should return', () => {
     it('expected HTMLElement', () => {
-        const actual1 = NextCenturyFilter.createElement('testId', {
+        const actual1 = NucleusFilter.createElement('testId', {
             'filter-type': 'list',
             'search-element-id': 'testSearchElementId'
         });
@@ -47,7 +47,7 @@ describe('Filter Component static createElement should return', () => {
         expect(actual1.getAttribute('filter-type')).toEqual('list');
         expect(actual1.getAttribute('search-element-id')).toEqual('testSearchElementId');
 
-        const actual2 = NextCenturyFilter.createElement('testId', {
+        const actual2 = NucleusFilter.createElement('testId', {
             'bounds-field-key-x': 'datastore1.testDatabase1.testTable1.testXField',
             'bounds-field-key-y': 'datastore1.testDatabase1.testTable1.testYField',
             'domain-field-key': 'datastore1.testDatabase1.testTable1.testSizeField',
@@ -86,11 +86,11 @@ describe('Filter Component static createElement should return', () => {
     });
 
     it('null if the required attributes are not defined', () => {
-        expect(NextCenturyFilter.createElement('testId', {})).toEqual(null);
-        expect(NextCenturyFilter.createElement('', {
+        expect(NucleusFilter.createElement('testId', {})).toEqual(null);
+        expect(NucleusFilter.createElement('', {
             'filter-type': 'list'
         })).toEqual(null);
-        expect(NextCenturyFilter.createElement('', {
+        expect(NucleusFilter.createElement('', {
             'search-element-id': 'testSearchElementId'
         })).toEqual(null);
     });
@@ -98,24 +98,24 @@ describe('Filter Component static createElement should return', () => {
 
 describe('Filter Component', () => {
     let dataset: Dataset;
-    let filterComponent: NextCenturyFilter;
+    let filterComponent: NucleusFilter;
     let filterService: FilterService;
-    let parentElement: NextCenturyElement;
-    let searchComponent: NextCenturySearch;
+    let parentElement: NucleusElement;
+    let searchComponent: NucleusSearch;
     let spyOnUpdateFilterDesigns;
 
     beforeEach(() => {
-        filterComponent = new NextCenturyFilter();
+        filterComponent = new NucleusFilter();
         filterComponent.setAttribute('id', 'testFilterElementId');
         filterComponent.setAttribute('filter-type', 'list');
         filterComponent.setAttribute('list-field-key', 'datastore1.testDatabase1.testTable1.testTypeField');
         filterComponent.setAttribute('list-operator', '=');
         filterComponent.setAttribute('search-element-id', 'testSearchElementId');
 
-        searchComponent = new NextCenturySearch();
+        searchComponent = new NucleusSearch();
         searchComponent.setAttribute('id', 'testSearchElementId');
 
-        parentElement = new NextCenturyElement();
+        parentElement = new NucleusElement();
         parentElement.setAttribute('id', 'testParentElementId');
         parentElement.appendChild(filterComponent);
         parentElement.appendChild(searchComponent);
@@ -160,7 +160,7 @@ describe('Filter Component', () => {
     });
 
     it('init should register event listener on visualization element', () => {
-        let visElement = new NextCenturyElement();
+        let visElement = new NucleusElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
 
@@ -236,7 +236,7 @@ describe('Filter Component', () => {
     });
 
     it('setAttribute on vis-element-id or vis-filter-output-event should register event listener on visualization element', () => {
-        let visElement = new NextCenturyElement();
+        let visElement = new NucleusElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
 
@@ -256,7 +256,7 @@ describe('Filter Component', () => {
     });
 
     it('visualization element filter event does call updateFilteredValues with filter values', () => {
-        let visElement = new NextCenturyElement();
+        let visElement = new NucleusElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
 
@@ -295,7 +295,7 @@ describe('Filter Component', () => {
     });
 
     it('visualization element filter event does not call updateFilteredValues if filter values are not defined', () => {
-        let visElement = new NextCenturyElement();
+        let visElement = new NucleusElement();
         visElement.setAttribute('id', 'testVisElementId');
         parentElement.appendChild(visElement);
 
@@ -315,21 +315,21 @@ describe('Filter Component', () => {
 
 describe('Filter Component init should call updateFilterDesigns in searchComponent', () => {
     let dataset: Dataset;
-    let filterComponent: NextCenturyFilter;
+    let filterComponent: NucleusFilter;
     let filterService: FilterService;
-    let parentElement: NextCenturyElement;
-    let searchComponent: NextCenturySearch;
+    let parentElement: NucleusElement;
+    let searchComponent: NucleusSearch;
     let spyOnUpdateFilterDesigns;
 
     beforeEach(() => {
-        filterComponent = new NextCenturyFilter();
+        filterComponent = new NucleusFilter();
         filterComponent.setAttribute('id', 'testFilterElementId');
         filterComponent.setAttribute('search-element-id', 'testSearchElementId');
 
-        searchComponent = new NextCenturySearch();
+        searchComponent = new NucleusSearch();
         searchComponent.setAttribute('id', 'testSearchElementId');
 
-        parentElement = new NextCenturyElement();
+        parentElement = new NucleusElement();
         parentElement.setAttribute('id', 'testParentElementId');
         parentElement.appendChild(filterComponent);
         parentElement.appendChild(searchComponent);
@@ -422,13 +422,13 @@ describe('Filter Component init should call updateFilterDesigns in searchCompone
 
 describe('Filter Component updateFilteredValues should', () => {
     let dataset: Dataset;
-    let filterComponent: NextCenturyFilter;
+    let filterComponent: NucleusFilter;
     let filterService: FilterService;
     let spyOnChangeFilters;
     let spyOnDeleteFilters;
 
     beforeEach(() => {
-        filterComponent = new NextCenturyFilter();
+        filterComponent = new NucleusFilter();
         filterComponent.setAttribute('id', 'testFilterElementId');
         filterComponent.setAttribute('search-element-id', 'testSearchElementId');
         filterComponent.setAttribute('vis-element-id', 'testVisElementId');
@@ -738,22 +738,22 @@ describe('Filter Component updateFilteredValues should', () => {
 
 describe('Filter Component notification from filterService should call filter function on vis and emit valuesFiltered', () => {
     let dataset: Dataset;
-    let filterComponent: NextCenturyFilter;
+    let filterComponent: NucleusFilter;
     let filterService: FilterService;
-    let parentElement: NextCenturyElement;
-    let visElement: NextCenturyElement;
+    let parentElement: NucleusElement;
+    let visElement: NucleusElement;
 
     beforeEach(() => {
-        filterComponent = new NextCenturyFilter();
+        filterComponent = new NucleusFilter();
         filterComponent.setAttribute('id', 'testFilterElementId');
         filterComponent.setAttribute('search-element-id', 'testSearchElementId');
         filterComponent.setAttribute('vis-element-id', 'testVisElementId');
         filterComponent.setAttribute('vis-filter-input-function', 'changeFilter');
 
-        visElement = new NextCenturyElement();
+        visElement = new NucleusElement();
         visElement.setAttribute('id', 'testVisElementId');
 
-        parentElement = new NextCenturyElement();
+        parentElement = new NucleusElement();
         parentElement.setAttribute('id', 'testParentElementId');
         parentElement.appendChild(filterComponent);
         parentElement.appendChild(visElement);

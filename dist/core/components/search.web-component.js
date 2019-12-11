@@ -33,22 +33,22 @@ var core_util_1 = require("../core.util");
 var dataset_1 = require("../models/dataset");
 var element_web_component_1 = require("./element.web-component");
 var _ = require("lodash");
-var NextCenturySearch = /** @class */ (function (_super) {
-    __extends(NextCenturySearch, _super);
-    function NextCenturySearch() {
+var NucleusSearch = /** @class */ (function (_super) {
+    __extends(NucleusSearch, _super);
+    function NucleusSearch() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._idsToFilters = new Map();
         _this._idsToFilterDesigns = new Map();
         return _this;
     }
-    Object.defineProperty(NextCenturySearch, "observedAttributes", {
+    Object.defineProperty(NucleusSearch, "observedAttributes", {
         get: function () {
-            return ['id'].concat(NextCenturySearch.requiredAttributes).concat(NextCenturySearch.optionalAttributes);
+            return ['id'].concat(NucleusSearch.requiredAttributes).concat(NucleusSearch.optionalAttributes);
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(NextCenturySearch, "optionalAttributes", {
+    Object.defineProperty(NucleusSearch, "optionalAttributes", {
         get: function () {
             return [
                 'enable-hide-if-unfiltered',
@@ -65,7 +65,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(NextCenturySearch, "requiredAttributes", {
+    Object.defineProperty(NucleusSearch, "requiredAttributes", {
         get: function () {
             return [
                 'search-field-keys'
@@ -74,23 +74,23 @@ var NextCenturySearch = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturySearch.createElement = function (id, attributes) {
-        if (!id || NextCenturySearch.requiredAttributes.some(function (attribute) { return !attributes[attribute]; })) {
+    NucleusSearch.createElement = function (id, attributes) {
+        if (!id || NucleusSearch.requiredAttributes.some(function (attribute) { return !attributes[attribute]; })) {
             return null;
         }
-        var searchElement = document.createElement(NextCenturySearch.ELEMENT_NAME);
+        var searchElement = document.createElement(NucleusSearch.ELEMENT_NAME);
         searchElement.setAttribute('id', id);
-        NextCenturySearch.requiredAttributes.forEach(function (attribute) {
+        NucleusSearch.requiredAttributes.forEach(function (attribute) {
             searchElement.setAttribute(attribute, attributes[attribute]);
         });
-        NextCenturySearch.optionalAttributes.forEach(function (attribute) {
+        NucleusSearch.optionalAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 searchElement.setAttribute(attribute, attributes[attribute]);
             }
         });
         return searchElement;
     };
-    NextCenturySearch.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
+    NucleusSearch.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
         _super.prototype.attributeChangedCallback.call(this, name, oldValue, newValue);
         if (!this._isReady()) {
             return;
@@ -100,10 +100,10 @@ var NextCenturySearch = /** @class */ (function (_super) {
         }
         this.runQuery();
     };
-    NextCenturySearch.prototype.connectedCallback = function () {
+    NucleusSearch.prototype.connectedCallback = function () {
         _super.prototype.connectedCallback.call(this);
     };
-    NextCenturySearch.prototype.disconnectedCallback = function () {
+    NucleusSearch.prototype.disconnectedCallback = function () {
         _super.prototype.disconnectedCallback.call(this);
         if (this._runningQuery) {
             this._runningQuery.abort();
@@ -115,7 +115,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Creates and returns the export data for the search query built by this search element using the AbstractSearchService.
      */
-    NextCenturySearch.prototype.createExportData = function (exportFields, filename) {
+    NucleusSearch.prototype.createExportData = function (exportFields, filename) {
         var tableKey = this._retrieveTableKey();
         var datasetTableKey = tableKey ? this._dataset.retrieveDatasetFieldKey(tableKey) : null;
         var dataHost = datasetTableKey ? datasetTableKey.datastore.host : null;
@@ -129,7 +129,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
      * Initializes this search element with the given dataset and services and starts a new search query if possible (and optional
      * visualization element).
      */
-    NextCenturySearch.prototype.init = function (dataset, filterService, searchService, options) {
+    NucleusSearch.prototype.init = function (dataset, filterService, searchService, options) {
         this._dataset = dataset;
         this._filterService = filterService;
         this._searchService = searchService;
@@ -158,13 +158,13 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Runs the search query using the current attributes and filters.  Only call this function if you want to manually trigger a requery.
      */
-    NextCenturySearch.prototype.runQuery = function () {
+    NucleusSearch.prototype.runQuery = function () {
         if (!this._isReady()) {
             return;
         }
         var searchObject = this._buildQuery();
         if (searchObject) {
-            var limit = Number(this.getAttribute('search-limit') || NextCenturySearch.DEFAULT_LIMIT);
+            var limit = Number(this.getAttribute('search-limit') || NucleusSearch.DEFAULT_LIMIT);
             this._searchService.withLimit(searchObject, limit);
             var page = Number(this.getAttribute('search-page') || 1);
             this._searchService.withOffset(searchObject, (page - 1) * limit);
@@ -175,21 +175,21 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Updates the unshared filters of this search element with the given filters.
      */
-    NextCenturySearch.prototype.updateFilters = function (id, filters) {
+    NucleusSearch.prototype.updateFilters = function (id, filters) {
         this._idsToFilters.set(id, filters);
         this.runQuery();
     };
     /**
      * Updates the filter designs of this search element (used to find shared filters) with the given filter designs.
      */
-    NextCenturySearch.prototype.updateFilterDesigns = function (id, filterDesigns) {
+    NucleusSearch.prototype.updateFilterDesigns = function (id, filterDesigns) {
         this._idsToFilterDesigns.set(id, filterDesigns);
         this.runQuery();
     };
     /**
      * Returns the search query with its fields, aggregations, groups, filters, and sort.
      */
-    NextCenturySearch.prototype._buildQuery = function () {
+    NucleusSearch.prototype._buildQuery = function () {
         var _this = this;
         var searchFilters = this._retrieveSearchFilters();
         var fieldKeys = this._retrieveFieldKeys();
@@ -273,9 +273,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns the aggregation data from the aggregation elements inside this search element.
      */
-    NextCenturySearch.prototype._findSearchAggregations = function () {
+    NucleusSearch.prototype._findSearchAggregations = function () {
         var aggregations = [];
-        for (var _i = 0, _a = this.getElementsByTagName('next-century-aggregation'); _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.getElementsByTagName('nucleus-aggregation'); _i < _a.length; _i++) {
             var aggregationElement = _a[_i];
             var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(aggregationElement.getAttribute('aggregation-field-key'));
             var group = aggregationElement.getAttribute('aggregation-group');
@@ -295,9 +295,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns the group data from the group elements inside this search element.
      */
-    NextCenturySearch.prototype._findSearchGroups = function () {
+    NucleusSearch.prototype._findSearchGroups = function () {
         var groups = [];
-        for (var _i = 0, _a = this.getElementsByTagName('next-century-group'); _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.getElementsByTagName('nucleus-group'); _i < _a.length; _i++) {
             var groupElement = _a[_i];
             var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(groupElement.getAttribute('group-field-key'));
             var label = groupElement.getAttribute('group-label');
@@ -315,9 +315,9 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns the join data from the join elements inside this search element.
      */
-    NextCenturySearch.prototype._findSearchJoins = function () {
+    NucleusSearch.prototype._findSearchJoins = function () {
         var joins = [];
-        for (var _i = 0, _a = this.getElementsByTagName('next-century-join'); _i < _a.length; _i++) {
+        for (var _i = 0, _a = this.getElementsByTagName('nucleus-join'); _i < _a.length; _i++) {
             var joinElement = _a[_i];
             var fieldKey1 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-1'));
             var fieldKey2 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(joinElement.getAttribute('join-field-key-2'));
@@ -339,7 +339,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Handles the behavior whenever any filters in the whole application are changed by starting a new search query if needed.
      */
-    NextCenturySearch.prototype._handleFilterChange = function (callerId) {
+    NucleusSearch.prototype._handleFilterChange = function (callerId) {
         if (!this._isReady()) {
             return;
         }
@@ -352,7 +352,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Transforms the given search query results, draws them in the visualization element, and emits an event.
      */
-    NextCenturySearch.prototype._handleQuerySuccess = function (queryResults, info) {
+    NucleusSearch.prototype._handleQuerySuccess = function (queryResults, info) {
         var _this = this;
         var aggregations = this._findSearchAggregations();
         var filterValuesList = this._retrieveSharedFilters().reduce(function (list, filter) {
@@ -394,7 +394,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given list of filter values.
      */
-    NextCenturySearch.prototype._isFiltered = function (result, filterValuesList) {
+    NucleusSearch.prototype._isFiltered = function (result, filterValuesList) {
         for (var _i = 0, filterValuesList_1 = filterValuesList; _i < filterValuesList_1.length; _i++) {
             var filterValues = filterValuesList_1[_i];
             if (filterValues instanceof filters_1.ListOfValues && this._isFilteredByListOfValues(result, filterValues)) {
@@ -418,7 +418,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given bounds values.
      */
-    NextCenturySearch.prototype._isFilteredByBoundsValues = function (result, boundsValues) {
+    NucleusSearch.prototype._isFilteredByBoundsValues = function (result, boundsValues) {
         var fieldKey1 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(boundsValues.field1);
         var fieldKey2 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(boundsValues.field2);
         if (fieldKey1 && fieldKey2) {
@@ -437,7 +437,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given compound values.
      */
-    NextCenturySearch.prototype._isFilteredByCompoundValues = function (result, compoundValues) {
+    NucleusSearch.prototype._isFilteredByCompoundValues = function (result, compoundValues) {
         var _this = this;
         var isFilteredList = compoundValues.nested.map(function (nested) { return _this._isFiltered(result, [nested]); });
         if (isFilteredList.length) {
@@ -453,7 +453,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given domain values.
      */
-    NextCenturySearch.prototype._isFilteredByDomainValues = function (result, domainValues) {
+    NucleusSearch.prototype._isFilteredByDomainValues = function (result, domainValues) {
         var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(domainValues.field);
         if (fieldKey) {
             var value = core_util_1.CoreUtil.deepFind(result, fieldKey.field);
@@ -467,7 +467,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given list of values.
      */
-    NextCenturySearch.prototype._isFilteredByListOfValues = function (result, listOfValues) {
+    NucleusSearch.prototype._isFilteredByListOfValues = function (result, listOfValues) {
         var _this = this;
         var fieldKey = dataset_1.DatasetUtil.deconstructTableOrFieldKey(listOfValues.field);
         if (fieldKey) {
@@ -489,7 +489,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given result is filtered in the given pair of values.
      */
-    NextCenturySearch.prototype._isFilteredByPairOfValues = function (result, pairOfValues) {
+    NucleusSearch.prototype._isFilteredByPairOfValues = function (result, pairOfValues) {
         var fieldKey1 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(pairOfValues.field1);
         var fieldKey2 = dataset_1.DatasetUtil.deconstructTableOrFieldKey(pairOfValues.field2);
         if (fieldKey1 && fieldKey2) {
@@ -511,7 +511,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the given inputs work with the given operator.
      */
-    NextCenturySearch.prototype._isFilteredWithOperator = function (input1, operator, input2) {
+    NucleusSearch.prototype._isFilteredWithOperator = function (input1, operator, input2) {
         var _this = this;
         if (Array.isArray(input1)) {
             return input1.some(function (value) { return _this._isFilteredWithOperator(value, operator, input2); });
@@ -545,14 +545,14 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns if the required properties have been initialized to run a search.
      */
-    NextCenturySearch.prototype._isReady = function () {
+    NucleusSearch.prototype._isReady = function () {
         return !!(this._dataset && this._filterService && this._searchService && this.getAttribute('search-field-keys') &&
             this.getAttribute('id'));
     };
     /**
      * Unregisters the given old ID and registers the given new ID with the FilterService.
      */
-    NextCenturySearch.prototype._registerWithFilterService = function (oldId, newId) {
+    NucleusSearch.prototype._registerWithFilterService = function (oldId, newId) {
         if (!this._filterService) {
             return;
         }
@@ -566,7 +566,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns all the search field keys.
      */
-    NextCenturySearch.prototype._retrieveFieldKeys = function () {
+    NucleusSearch.prototype._retrieveFieldKeys = function () {
         var fieldKeyStrings = (this.getAttribute('search-field-keys') || '').split(',');
         return fieldKeyStrings.map(function (fieldKeyString) { return dataset_1.DatasetUtil.deconstructTableOrFieldKey(fieldKeyString); });
     };
@@ -574,7 +574,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
      * Returns the all the filters in the datastore/database/table of the search-field-keys (except the filters matching
      * the _idsToFilterDesigns, unless filter-self is true).
      */
-    NextCenturySearch.prototype._retrieveSearchFilters = function () {
+    NucleusSearch.prototype._retrieveSearchFilters = function () {
         if (!this._isReady()) {
             return [];
         }
@@ -586,7 +586,7 @@ var NextCenturySearch = /** @class */ (function (_super) {
     /**
      * Returns the filters matching the _idsToFilterDesigns.
      */
-    NextCenturySearch.prototype._retrieveSharedFilters = function () {
+    NucleusSearch.prototype._retrieveSharedFilters = function () {
         if (!this._isReady()) {
             return [];
         }
@@ -599,14 +599,14 @@ var NextCenturySearch = /** @class */ (function (_super) {
      *
      * TODO Don't assume that each fieldKey contains the same datastore, database, and table.
      */
-    NextCenturySearch.prototype._retrieveTableKey = function () {
+    NucleusSearch.prototype._retrieveTableKey = function () {
         var fieldKeys = this._retrieveFieldKeys();
         return fieldKeys.length ? fieldKeys[0] : null;
     };
     /**
      * Starts the given search query using the current attributes, dataset, and services.
      */
-    NextCenturySearch.prototype._startQuery = function (searchObject, isFiltered) {
+    NucleusSearch.prototype._startQuery = function (searchObject, isFiltered) {
         var _this = this;
         if (!this._isReady()) {
             return;
@@ -666,10 +666,10 @@ var NextCenturySearch = /** @class */ (function (_super) {
             _this._handleQuerySuccess(_this._searchService.transformSearchResultValues(response, labels), null);
         });
     };
-    NextCenturySearch.DEFAULT_LIMIT = 10;
-    NextCenturySearch.ELEMENT_NAME = 'next-century-search';
-    return NextCenturySearch;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturySearch = NextCenturySearch;
-window.customElements.define(NextCenturySearch.ELEMENT_NAME, NextCenturySearch);
+    NucleusSearch.DEFAULT_LIMIT = 10;
+    NucleusSearch.ELEMENT_NAME = 'nucleus-search';
+    return NucleusSearch;
+}(element_web_component_1.NucleusElement));
+exports.NucleusSearch = NucleusSearch;
+window.customElements.define(NucleusSearch.ELEMENT_NAME, NucleusSearch);
 //# sourceMappingURL=search.web-component.js.map

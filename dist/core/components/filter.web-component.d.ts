@@ -14,8 +14,8 @@
  */
 import { Dataset } from '../models/dataset';
 import { FilterService } from '../services/filter.service';
-import { NextCenturyElement } from './element.web-component';
-export declare class NextCenturyFilter extends NextCenturyElement {
+import { NucleusElement } from './element.web-component';
+export declare class NucleusFilter extends NucleusElement {
     static ELEMENT_NAME: string;
     private _dataset;
     private _filterDesigns;
@@ -27,7 +27,7 @@ export declare class NextCenturyFilter extends NextCenturyElement {
     static readonly observedAttributes: string[];
     static readonly optionalAttributes: string[];
     static readonly requiredAttributes: string[];
-    static createElement(id: string, attributes: Record<string, any>): NextCenturyFilter;
+    static createElement(id: string, attributes: Record<string, any>): NucleusFilter;
     constructor();
     attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
     connectedCallback(): void;

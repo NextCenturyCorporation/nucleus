@@ -14,10 +14,10 @@
  */
 
 import { CoreUtil } from '../core/core.util';
-import { NextCenturyElement } from '../core/components/element.web-component';
+import { NucleusElement } from '../core/components/element.web-component';
 
 // TODO Change your visualization element's class name.
-export class NextCenturyStub extends NextCenturyElement {
+export class NucleusStub extends NucleusElement {
     private _data: any[] = [];
     private _filteredValues: any[] = [];
     private _shadowRoot: ShadowRoot;
@@ -58,7 +58,7 @@ export class NextCenturyStub extends NextCenturyElement {
      * Changes the filtered data in this visualization to the values in the given filter data.  Invoked by a Filter Component.
      */
     public changeFilteredData(filterData: any|any[]): void {
-        // Documentation on filterData:  https://github.com/NextCenturyCorporation/component-library#filter-data-array
+        // Documentation on filterData:  https://github.com/NextCenturyCorporation/nucleus#filter-data-array
 
         // TODO If the values in filterData and this._filteredValues are different, set this._filteredValues to the new values.
 
@@ -71,7 +71,7 @@ export class NextCenturyStub extends NextCenturyElement {
      * Draws the given search data as HTML elements in this visualization.  Invoked by a Search Component.
      */
     public drawData(searchData: any[]): void {
-        // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
+        // Documentation on searchData:  https://github.com/NextCenturyCorporation/nucleus#search-data-object
 
         // TODO Set this._data to the searchData array, transformed as needed by this visualization.
 
@@ -109,5 +109,5 @@ export class NextCenturyStub extends NextCenturyElement {
 }
 
 // TODO Change your visualization element's tag and class name.
-window.customElements.define('next-century-stub', NextCenturyStub);
+window.customElements.define('nucleus-stub', NucleusStub);
 

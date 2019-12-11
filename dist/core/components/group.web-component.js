@@ -28,12 +28,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var element_web_component_1 = require("./element.web-component");
-var NextCenturyGroup = /** @class */ (function (_super) {
-    __extends(NextCenturyGroup, _super);
-    function NextCenturyGroup() {
+var NucleusGroup = /** @class */ (function (_super) {
+    __extends(NucleusGroup, _super);
+    function NucleusGroup() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(NextCenturyGroup, "observedAttributes", {
+    Object.defineProperty(NucleusGroup, "observedAttributes", {
         get: function () {
             return [
                 'group-field-key',
@@ -44,18 +44,18 @@ var NextCenturyGroup = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyGroup.createElement = function (attributes) {
-        var groupElement = document.createElement(NextCenturyGroup.ELEMENT_NAME);
-        NextCenturyGroup.observedAttributes.forEach(function (attribute) {
+    NucleusGroup.createElement = function (attributes) {
+        var groupElement = document.createElement(NucleusGroup.ELEMENT_NAME);
+        NucleusGroup.observedAttributes.forEach(function (attribute) {
             if (typeof attributes[attribute] !== 'undefined') {
                 groupElement.setAttribute(attribute, attributes[attribute]);
             }
         });
         return groupElement;
     };
-    NextCenturyGroup.ELEMENT_NAME = 'next-century-group';
-    return NextCenturyGroup;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyGroup = NextCenturyGroup;
-window.customElements.define(NextCenturyGroup.ELEMENT_NAME, NextCenturyGroup);
+    NucleusGroup.ELEMENT_NAME = 'nucleus-group';
+    return NucleusGroup;
+}(element_web_component_1.NucleusElement));
+exports.NucleusGroup = NucleusGroup;
+window.customElements.define(NucleusGroup.ELEMENT_NAME, NucleusGroup);
 //# sourceMappingURL=group.web-component.js.map

@@ -19,7 +19,7 @@ import { CoreUtil } from '../../../core/core.util';
 import { Dataset } from '../../../core/models/dataset';
 import { FilterService } from '../../../core/services/filter.service';
 
-export abstract class NextCenturyCommonAngularComponent implements AfterViewInit, OnChanges {
+export abstract class NucleusCommonAngularComponent implements AfterViewInit, OnChanges {
     @Input() dataset: Dataset;
     @Input() filterService: FilterService;
     @Input() id: string;

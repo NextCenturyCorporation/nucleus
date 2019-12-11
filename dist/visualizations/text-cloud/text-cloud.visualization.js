@@ -30,9 +30,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var TextCloud_1 = require("./TextCloud");
 var core_util_1 = require("../../core/core.util");
 var element_web_component_1 = require("../../core/components/element.web-component");
-var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
-    __extends(NextCenturyTextCloudVisualization, _super);
-    function NextCenturyTextCloudVisualization() {
+var NucleusTextCloudVisualization = /** @class */ (function (_super) {
+    __extends(NucleusTextCloudVisualization, _super);
+    function NucleusTextCloudVisualization() {
         var _this = _super.call(this) || this;
         _this._data = [];
         _this._filtered = [];
@@ -47,7 +47,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
         _this._createVisualizationAndRedrawData();
         return _this;
     }
-    Object.defineProperty(NextCenturyTextCloudVisualization, "observedAttributes", {
+    Object.defineProperty(NucleusTextCloudVisualization, "observedAttributes", {
         get: function () {
             return [
                 'aggregation-field',
@@ -62,7 +62,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    NextCenturyTextCloudVisualization.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
+    NucleusTextCloudVisualization.prototype.attributeChangedCallback = function (name, oldValue, newValue) {
         _super.prototype.attributeChangedCallback.call(this, name, oldValue, newValue);
         if (name === 'color-accent' || name === 'color-text') {
             this._createVisualizationAndRedrawData();
@@ -74,7 +74,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
     /**
      * Changes the filtered text to the given text or array of text and redraws the visualization using the existing data.
      */
-    NextCenturyTextCloudVisualization.prototype.changeFilteredText = function (text) {
+    NucleusTextCloudVisualization.prototype.changeFilteredText = function (text) {
         var _this = this;
         // If text is "a", transform to ["a"]; if text is ["a", "b"], keep it; if text is [["a"], ["b", "c"]], transform to ["a", "b", "c"]
         var filtered = !Array.isArray(text) ? [text] : text.reduce(function (list, part) { return list.concat(part); }, []);
@@ -91,7 +91,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
     /**
      * Draws the visualization using the given data array and returns the unique data items.
      */
-    NextCenturyTextCloudVisualization.prototype.drawData = function (data) {
+    NucleusTextCloudVisualization.prototype.drawData = function (data) {
         var _this = this;
         var aggregationField = this.getAttribute('aggregation-field');
         var textField = this.getAttribute('text-field');
@@ -109,7 +109,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
     /**
      * Redraws the text cloud.
      */
-    NextCenturyTextCloudVisualization.prototype.redraw = function () {
+    NucleusTextCloudVisualization.prototype.redraw = function () {
         var _this = this;
         var aggregationTitle = this.getAttribute('aggregation-title');
         var showParagraphs = this.hasAttribute('enable-show-paragraphs');
@@ -145,7 +145,7 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
     /**
      * Toggles the filtered status of the given text cloud data item.
      */
-    NextCenturyTextCloudVisualization.prototype.toggleFilter = function (text) {
+    NucleusTextCloudVisualization.prototype.toggleFilter = function (text) {
         var _this = this;
         var index = this._filtered.indexOf(text);
         if (index >= 0) {
@@ -164,14 +164,14 @@ var NextCenturyTextCloudVisualization = /** @class */ (function (_super) {
             }
         }));
     };
-    NextCenturyTextCloudVisualization.prototype._createVisualizationAndRedrawData = function () {
+    NucleusTextCloudVisualization.prototype._createVisualizationAndRedrawData = function () {
         var accentColorHex = this.getAttribute('color-accent') || '#0000FF';
         var textColorHex = this.getAttribute('color-text') || '#111111';
         this._textCloudObject = new TextCloud_1.TextCloud(new TextCloud_1.SizeOptions(80, 140, '%'), new TextCloud_1.ColorOptions(textColorHex, accentColorHex));
         this.redraw();
     };
-    return NextCenturyTextCloudVisualization;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyTextCloudVisualization = NextCenturyTextCloudVisualization;
-window.customElements.define('next-century-visualization-text-cloud', NextCenturyTextCloudVisualization);
+    return NucleusTextCloudVisualization;
+}(element_web_component_1.NucleusElement));
+exports.NucleusTextCloudVisualization = NucleusTextCloudVisualization;
+window.customElements.define('nucleus-visualization-text-cloud', NucleusTextCloudVisualization);
 //# sourceMappingURL=text-cloud.visualization.js.map

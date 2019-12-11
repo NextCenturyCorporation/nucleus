@@ -15,8 +15,8 @@
 import { AbstractSearchService } from '../../core/services/abstract.search.service';
 import { Dataset } from '../../core/models/dataset';
 import { FilterService } from '../../core/services/filter.service';
-import { NextCenturyElement } from '../../core/components/element.web-component';
-export declare class NextCenturyTextCloud extends NextCenturyElement {
+import { NucleusElement } from '../../core/components/element.web-component';
+export declare class NucleusTextCloud extends NucleusElement {
     private _containerElement;
     private _dataset;
     private _filterService;

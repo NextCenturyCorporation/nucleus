@@ -15,15 +15,15 @@
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NextCenturySearchAngularComponent } from './search.angular-component';
+import { NucleusSearchAngularComponent } from './search.angular-component';
 
 @NgModule({
-    declarations: [NextCenturySearchAngularComponent],
-    exports: [NextCenturySearchAngularComponent],
-    entryComponents: [NextCenturySearchAngularComponent],
+    declarations: [NucleusSearchAngularComponent],
+    exports: [NucleusSearchAngularComponent],
+    entryComponents: [NucleusSearchAngularComponent],
     imports: [
         CommonModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class NextCenturySearchAngularModule { }
+export class NucleusSearchAngularModule { }

@@ -23,21 +23,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var search_angular_component_1 = require("./search.angular-component");
-var NextCenturySearchAngularModule = /** @class */ (function () {
-    function NextCenturySearchAngularModule() {
+var NucleusSearchAngularModule = /** @class */ (function () {
+    function NucleusSearchAngularModule() {
     }
-    NextCenturySearchAngularModule = __decorate([
+    NucleusSearchAngularModule = __decorate([
         core_1.NgModule({
-            declarations: [search_angular_component_1.NextCenturySearchAngularComponent],
-            exports: [search_angular_component_1.NextCenturySearchAngularComponent],
-            entryComponents: [search_angular_component_1.NextCenturySearchAngularComponent],
+            declarations: [search_angular_component_1.NucleusSearchAngularComponent],
+            exports: [search_angular_component_1.NucleusSearchAngularComponent],
+            entryComponents: [search_angular_component_1.NucleusSearchAngularComponent],
             imports: [
                 common_1.CommonModule
             ],
             schemas: [core_1.CUSTOM_ELEMENTS_SCHEMA]
         })
-    ], NextCenturySearchAngularModule);
-    return NextCenturySearchAngularModule;
+    ], NucleusSearchAngularModule);
+    return NucleusSearchAngularModule;
 }());
-exports.NextCenturySearchAngularModule = NextCenturySearchAngularModule;
+exports.NucleusSearchAngularModule = NucleusSearchAngularModule;
 //# sourceMappingURL=search.angular-module.js.map

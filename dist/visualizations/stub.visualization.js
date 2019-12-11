@@ -29,9 +29,9 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var element_web_component_1 = require("../core/components/element.web-component");
 // TODO Change your visualization element's class name.
-var NextCenturyStub = /** @class */ (function (_super) {
-    __extends(NextCenturyStub, _super);
-    function NextCenturyStub() {
+var NucleusStub = /** @class */ (function (_super) {
+    __extends(NucleusStub, _super);
+    function NucleusStub() {
         var _this = _super.call(this) || this;
         _this._data = [];
         _this._filteredValues = [];
@@ -45,7 +45,7 @@ var NextCenturyStub = /** @class */ (function (_super) {
         _this._shadowRoot.appendChild(_this._visElement);
         return _this;
     }
-    Object.defineProperty(NextCenturyStub, "observedAttributes", {
+    Object.defineProperty(NucleusStub, "observedAttributes", {
         get: function () {
             return [
             // TODO Add your visualization element's attributes here.
@@ -57,8 +57,8 @@ var NextCenturyStub = /** @class */ (function (_super) {
     /**
      * Changes the filtered data in this visualization to the values in the given filter data.  Invoked by a Filter Component.
      */
-    NextCenturyStub.prototype.changeFilteredData = function (filterData) {
-        // Documentation on filterData:  https://github.com/NextCenturyCorporation/component-library#filter-data-array
+    NucleusStub.prototype.changeFilteredData = function (filterData) {
+        // Documentation on filterData:  https://github.com/NextCenturyCorporation/nucleus#filter-data-array
         // TODO If the values in filterData and this._filteredValues are different, set this._filteredValues to the new values.
         // TODO If this._filteredValues was changed, call this._redrawDataElements().
         // Do NOT dispatch a dataFiltered event here!
@@ -66,15 +66,15 @@ var NextCenturyStub = /** @class */ (function (_super) {
     /**
      * Draws the given search data as HTML elements in this visualization.  Invoked by a Search Component.
      */
-    NextCenturyStub.prototype.drawData = function (searchData) {
-        // Documentation on searchData:  https://github.com/NextCenturyCorporation/component-library#search-data-object
+    NucleusStub.prototype.drawData = function (searchData) {
+        // Documentation on searchData:  https://github.com/NextCenturyCorporation/nucleus#search-data-object
         // TODO Set this._data to the searchData array, transformed as needed by this visualization.
         this._redrawDataElements();
     };
     /**
      * Creates or changes the filtered values based on the given item from the visualization's data array.  Invoked by user interaction.
      */
-    NextCenturyStub.prototype.filterDataItem = function (item) {
+    NucleusStub.prototype.filterDataItem = function (item) {
         // TODO Update this._filteredValues based on the given item from this._data
         this._redrawDataElements();
         // Dispatch an event to update the filter components corresponding to this visualization.
@@ -88,16 +88,16 @@ var NextCenturyStub = /** @class */ (function (_super) {
     /**
      * Redraws all the HTML elements in this visualization based on the visualization's data array.
      */
-    NextCenturyStub.prototype._redrawDataElements = function () {
+    NucleusStub.prototype._redrawDataElements = function () {
         // Replace the visualization's old container element.
         var newElement = document.createElement('div');
         this._shadowRoot.replaceChild(newElement, this._visElement);
         this._visElement = newElement;
         // TODO Use this._data to create new HTML elements (document.createElement) and update this._visElement (appendChild).
     };
-    return NextCenturyStub;
-}(element_web_component_1.NextCenturyElement));
-exports.NextCenturyStub = NextCenturyStub;
+    return NucleusStub;
+}(element_web_component_1.NucleusElement));
+exports.NucleusStub = NucleusStub;
 // TODO Change your visualization element's tag and class name.
-window.customElements.define('next-century-stub', NextCenturyStub);
+window.customElements.define('nucleus-stub', NucleusStub);
 //# sourceMappingURL=stub.visualization.js.map

@@ -1,20 +1,20 @@
-# NCCL Text Cloud API
+# NUCLEUS Text Cloud API
 
 ## Text Cloud Web Component
 
-The [Text Cloud Web Component](./text-cloud.web-component.ts) is an HTMLElement that contains a [Text Cloud Visualization](#text-cloud-visualization), NCCL Search Component, and NCCL Filter Component.
+The [Text Cloud Web Component](./text-cloud.web-component.ts) is an HTMLElement that contains a [Text Cloud Visualization](#text-cloud-visualization), NUCLEUS Search Component, and NUCLEUS Filter Component.
 
 ### Text Cloud Web Component Examples
 
 Example:
 
 ```html
-<next-century-text-cloud
+<nucleus-text-cloud
     id="textCloud"
     enable-ignore-self-filter
     text-field-key="datastore.database.table.text_field"
 >
-</next-century-text-cloud>
+</nucleus-text-cloud>
 ```
 
 ```js
@@ -24,14 +24,14 @@ document.querySelector('textCloud').init(dataset, filterService, searchService);
 Example:
 
 ```html
-<next-century-text-cloud
+<nucleus-text-cloud
     id="textCloud"
     aggregation-field-key="datastore.database.table.number_field"
     aggregation-operation="max"
     enable-ignore-self-filter
     text-field-key="datastore.database.table.text_field"
 >
-</next-century-text-cloud>
+</nucleus-text-cloud>
 ```
 
 ```js
@@ -133,14 +133,14 @@ The [Text Cloud Visualization](./text-cloud.visualization.ts) is an HTMLElement 
 Example:
 
 ```html
-<next-century-visualization-text-cloud
+<nucleus-visualization-text-cloud
     id="textCloud"
     aggregation-field="aggregations._records"
     text-field="fields.topic"
 >
-</next-century-visualization-text-cloud>
+</nucleus-visualization-text-cloud>
 
-<next-century-search
+<nucleus-search
     id="textCloudSearch"
     enable-ignore-self-filter
     search-field-keys="datastore.database.table.text_field"
@@ -150,16 +150,16 @@ Example:
     vis-draw-function="drawData"
     vis-element-id="textCloud"
 >
-    <next-century-aggregation
+    <nucleus-aggregation
         aggregation-field-key="datastore.database.table.text_field"
         aggregation-label="_records"
-    ></next-century-aggregation>
-    <next-century-group
+    ></nucleus-aggregation>
+    <nucleus-group
         group-field-key="datastore.database.table.text_field"
-    ></next-century-group>
-</next-century-search>
+    ></nucleus-group>
+</nucleus-search>
 
-<next-century-filter
+<nucleus-filter
     id="textCloudFilter"
     list-field-key="datastore.database.table.text_field"
     list-operator="="
@@ -168,7 +168,7 @@ Example:
     vis-element-id="textCloud"
     vis-filter-input-function="changeFilteredText"
     vis-filter-output-event="filter"
-></next-century-filter>
+></nucleus-filter>
 ```
 
 ```js

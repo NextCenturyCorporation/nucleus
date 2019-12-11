@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-import { NextCenturyTextCloudVisualization } from './text-cloud.visualization';
+import { NucleusTextCloudVisualization } from './text-cloud.visualization';
 
 describe('Text Cloud Visualization', () => {
     let color1 = 'rgb(0, 0, 255)';
     let color2 = 'rgb(11, 11, 96)';
     let color3 = 'rgb(17, 17, 17)';
-    let textCloudVis: NextCenturyTextCloudVisualization;
+    let textCloudVis: NucleusTextCloudVisualization;
 
     beforeEach(() => {
-        textCloudVis = new NextCenturyTextCloudVisualization();
+        textCloudVis = new NucleusTextCloudVisualization();
         textCloudVis.setAttribute('aggregation-field', 'testCounts');
         textCloudVis.setAttribute('text-field', 'testText');
     });

@@ -15,9 +15,9 @@
 import { ElementRef } from '@angular/core';
 import { AbstractFilter, AbstractFilterDesign } from '../../../core/models/filters';
 import { AbstractSearchService } from '../../../core/services/abstract.search.service';
-import { NextCenturyCommonAngularComponent } from './common.angular-component';
-import { NextCenturySearch } from '../../../core/components/search.web-component';
-export declare class NextCenturySearchAngularComponent extends NextCenturyCommonAngularComponent {
+import { NucleusCommonAngularComponent } from './common.angular-component';
+import { NucleusSearch } from '../../../core/components/search.web-component';
+export declare class NucleusSearchAngularComponent extends NucleusCommonAngularComponent {
     elementRef: ElementRef;
     aggregations: Record<string, any>[];
     groups: Record<string, any>[];
@@ -32,11 +32,11 @@ export declare class NextCenturySearchAngularComponent extends NextCenturyCommon
     /**
      * @override
      */
-    protected findWrappedElement(): NextCenturySearch;
+    protected findWrappedElement(): NucleusSearch;
     /**
      * @override
      */
-    protected initWrappedElement(searchElement: NextCenturySearch): void;
+    protected initWrappedElement(searchElement: NucleusSearch): void;
     /**
      * @override
      */

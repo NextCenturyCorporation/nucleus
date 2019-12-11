@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NextCenturyElement } from './element.web-component';
-export declare class NextCenturyGroup extends NextCenturyElement {
+import { NucleusElement } from './element.web-component';
+export declare class NucleusGroup extends NucleusElement {
     static ELEMENT_NAME: string;
     static readonly observedAttributes: string[];
     static createElement(attributes: Record<string, any>): HTMLElement;

@@ -1,24 +1,24 @@
-# Sample Angular Demo App (NCCL)
+# Sample Angular Demo App (NUCLEUS)
 
 ## What Have We Changed?
 
-- Added the [Next Century Component Library](https://github.com/NextCenturyCorporation/component-library) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L22-L23) file
+- Added the [NUCLEUS](https://github.com/NextCenturyCorporation/nucleus) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L22-L23) file
 - Added `@webcomponents/custom-elements` imports to [`src/polyfills.ts`](./src/polyfills.ts#L65-L71)
-- Added the CUSTOM_ELEMENTS_SCHEMA and NCCL Angular modules to [`src/app/app.module.ts`](./src/app/app.module.ts)
-- Added an example visualization component based on the [stub component](https://github.com/NextCenturyCorporation/component-library/tree/master/wrappers/angular/stub)
+- Added the CUSTOM_ELEMENTS_SCHEMA and NUCLEUS Angular modules to [`src/app/app.module.ts`](./src/app/app.module.ts)
+- Added an example visualization component based on the [stub component](https://github.com/NextCenturyCorporation/nucleus/tree/master/wrappers/angular/stub)
   - [`src/app/example.component.html`](./src/app/example.component.html)
   - [`src/app/example.component.scss`](./src/app/example.component.scss)
   - [`src/app/example.component.ts`](./src/app/example.component.ts)
   - [`src/app/example.module.ts`](./src/app/example.module.ts)
-- Added NCCL components and the Example Component to [`src/app/app.component.html`](./src/app/app.component.html)
-- Added NCCL initialization and examples of custom data transformations to [`src/app/app.component.ts`](./src/app/app.component.ts)
+- Added NUCLEUS components and the Example Component to [`src/app/app.component.html`](./src/app/app.component.html)
+- Added NUCLEUS initialization and examples of custom data transformations to [`src/app/app.component.ts`](./src/app/app.component.ts)
 - Added custom styles to [`src/app/app.component.scss`](./src/app/app.component.scss)
 - Updated this README file
 
 ## What Else Do I Need to Run the Demo App?
 
-- Run a local NCCL [Data Server](../../README.md#the-data-server) at [http://localhost:8090](http://localhost:8090)
-- Ingest the NCCL [demo data](../data) into a local Elasticsearch instance at [http://localhost:9200](http://localhost:9200)
+- Run a local NUCLEUS [Data Server](../../README.md#the-data-server) at [http://localhost:8090](http://localhost:8090)
+- Ingest the NUCLEUS [demo data](../data) into a local Elasticsearch instance at [http://localhost:9200](http://localhost:9200)
 
 You can change either of these hostnames or ports in [`src/app/app.component.ts`](./src/app/app.component.ts)
 

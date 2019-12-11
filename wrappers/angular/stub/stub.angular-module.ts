@@ -15,16 +15,16 @@
 
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NextCenturyStubAngularComponent } from './stub.angular-component';
+import { NucleusStubAngularComponent } from './stub.angular-component';
 
 @NgModule({
-    declarations: [NextCenturyStubAngularComponent],
-    exports: [NextCenturyStubAngularComponent],
-    entryComponents: [NextCenturyStubAngularComponent],
+    declarations: [NucleusStubAngularComponent],
+    exports: [NucleusStubAngularComponent],
+    entryComponents: [NucleusStubAngularComponent],
     imports: [
         CommonModule
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class NextCenturyStubAngularModule { }
+export class NucleusStubAngularModule { }
 

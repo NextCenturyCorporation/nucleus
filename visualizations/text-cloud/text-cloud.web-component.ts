@@ -17,14 +17,14 @@ import { AbstractSearchService } from '../../core/services/abstract.search.servi
 import { CoreUtil } from '../../core/core.util';
 import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '../../core/models/dataset';
 import { FilterService } from '../../core/services/filter.service';
-import { NextCenturyAggregation } from '../../core/components/aggregation.web-component';
-import { NextCenturyElement } from '../../core/components/element.web-component';
-import { NextCenturyFilter } from '../../core/components/filter.web-component';
-import { NextCenturyGroup } from '../../core/components/group.web-component';
-import { NextCenturySearch } from '../../core/components/search.web-component';
-import { NextCenturyTextCloudVisualization } from '../../visualizations/text-cloud/text-cloud.visualization';
+import { NucleusAggregation } from '../../core/components/aggregation.web-component';
+import { NucleusElement } from '../../core/components/element.web-component';
+import { NucleusFilter } from '../../core/components/filter.web-component';
+import { NucleusGroup } from '../../core/components/group.web-component';
+import { NucleusSearch } from '../../core/components/search.web-component';
+import { NucleusTextCloudVisualization } from '../../visualizations/text-cloud/text-cloud.visualization';
 
-export class NextCenturyTextCloud extends NextCenturyElement {
+export class NucleusTextCloud extends NucleusElement {
     private _containerElement: HTMLElement;
     private _dataset: Dataset;
     private _filterService: FilterService;
@@ -32,10 +32,10 @@ export class NextCenturyTextCloud extends NextCenturyElement {
     private _shadowRoot: ShadowRoot;
 
     static get observedAttributes(): string[] {
-        return ['text-field-key'].concat(NextCenturySearch.requiredAttributes).concat(NextCenturySearch.optionalAttributes)
-            .concat(NextCenturyFilter.requiredAttributes).concat(NextCenturyFilter.optionalAttributes)
-            .concat(NextCenturyAggregation.observedAttributes).concat(NextCenturyGroup.observedAttributes)
-            .concat(NextCenturyTextCloudVisualization.observedAttributes);
+        return ['text-field-key'].concat(NucleusSearch.requiredAttributes).concat(NucleusSearch.optionalAttributes)
+            .concat(NucleusFilter.requiredAttributes).concat(NucleusFilter.optionalAttributes)
+            .concat(NucleusAggregation.observedAttributes).concat(NucleusGroup.observedAttributes)
+            .concat(NucleusTextCloudVisualization.observedAttributes);
     }
 
     constructor() {
@@ -71,7 +71,7 @@ export class NextCenturyTextCloud extends NextCenturyElement {
      * Creates and returns the export data for the text cloud.
      */
     public createExportData(exportFields: { columnName: string, prettyName: string }[], filename: string): { name: string, data: any }[] {
-        const searchElement: NextCenturySearch = this._containerElement.querySelector('next-century-search');
+        const searchElement: NucleusSearch = this._containerElement.querySelector('nucleus-search');
         return searchElement.createExportData(exportFields, filename);
     }
 
@@ -90,7 +90,7 @@ export class NextCenturyTextCloud extends NextCenturyElement {
      * Redraws the text cloud.
      */
     public redraw(): void {
-        const visElement: NextCenturyTextCloudVisualization = this._containerElement.querySelector('next-century-visualization-text-cloud');
+        const visElement: NucleusTextCloudVisualization = this._containerElement.querySelector('nucleus-visualization-text-cloud');
         visElement.redraw();
     }
 
@@ -148,16 +148,16 @@ export class NextCenturyTextCloud extends NextCenturyElement {
         attributes['vis-filter-input-function'] = 'changeFilteredText';
         attributes['vis-filter-output-event'] = 'filter';
 
-        const filterElement = NextCenturyFilter.createElement(filterElementId, attributes);
-        const searchElement = NextCenturySearch.createElement(searchElementId, attributes);
-        const aggregationElement = NextCenturyAggregation.createElement(attributes);
-        const groupElement = NextCenturyGroup.createElement(attributes);
+        const filterElement = NucleusFilter.createElement(filterElementId, attributes);
+        const searchElement = NucleusSearch.createElement(searchElementId, attributes);
+        const aggregationElement = NucleusAggregation.createElement(attributes);
+        const groupElement = NucleusGroup.createElement(attributes);
         searchElement.append(aggregationElement);
         searchElement.append(groupElement);
 
-        const visElement = document.createElement('next-century-visualization-text-cloud');
+        const visElement = document.createElement('nucleus-visualization-text-cloud');
         visElement.setAttribute('id', visElementId);
-        NextCenturyTextCloudVisualization.observedAttributes.forEach((attribute) => {
+        NucleusTextCloudVisualization.observedAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 visElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -180,4 +180,4 @@ export class NextCenturyTextCloud extends NextCenturyElement {
     }
 }
 
-window.customElements.define('next-century-text-cloud', NextCenturyTextCloud);
+window.customElements.define('nucleus-text-cloud', NucleusTextCloud);

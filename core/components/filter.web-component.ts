@@ -32,11 +32,11 @@ import { CompoundFilterType } from '../models/config-option';
 import { CoreUtil } from '../core.util';
 import { Dataset } from '../models/dataset';
 import { FilterService } from '../services/filter.service';
-import { NextCenturyElement } from './element.web-component';
-import { NextCenturySearch } from './search.web-component';
+import { NucleusElement } from './element.web-component';
+import { NucleusSearch } from './search.web-component';
 
-export class NextCenturyFilter extends NextCenturyElement {
-    static ELEMENT_NAME = 'next-century-filter';
+export class NucleusFilter extends NucleusElement {
+    static ELEMENT_NAME = 'nucleus-filter';
 
     private _dataset: Dataset;
     private _filterDesigns: AbstractFilterDesign[] = [];
@@ -48,7 +48,7 @@ export class NextCenturyFilter extends NextCenturyElement {
     private _handleFilterEventFromVisualizationCallback: (event: any) => void;
 
     static get observedAttributes(): string[] {
-        return ['id'].concat(NextCenturyFilter.requiredAttributes).concat(NextCenturyFilter.optionalAttributes);
+        return ['id'].concat(NucleusFilter.requiredAttributes).concat(NucleusFilter.optionalAttributes);
     }
 
     static get optionalAttributes(): string[] {
@@ -77,17 +77,17 @@ export class NextCenturyFilter extends NextCenturyElement {
         ];
     }
 
-    static createElement(id: string, attributes: Record<string, any>): NextCenturyFilter {
-        if (!id || NextCenturyFilter.requiredAttributes.some((attribute) => !attributes[attribute])) {
+    static createElement(id: string, attributes: Record<string, any>): NucleusFilter {
+        if (!id || NucleusFilter.requiredAttributes.some((attribute) => !attributes[attribute])) {
             return null;
         }
 
-        const filterElement = document.createElement(NextCenturyFilter.ELEMENT_NAME) as NextCenturyFilter;
+        const filterElement = document.createElement(NucleusFilter.ELEMENT_NAME) as NucleusFilter;
         filterElement.setAttribute('id', id);
-        NextCenturyFilter.requiredAttributes.forEach((attribute) => {
+        NucleusFilter.requiredAttributes.forEach((attribute) => {
             filterElement.setAttribute(attribute, attributes[attribute]);
         });
-        NextCenturyFilter.optionalAttributes.forEach((attribute) => {
+        NucleusFilter.optionalAttributes.forEach((attribute) => {
             if (typeof attributes[attribute] !== 'undefined') {
                 filterElement.setAttribute(attribute, attributes[attribute]);
             }
@@ -133,7 +133,7 @@ export class NextCenturyFilter extends NextCenturyElement {
         }
 
         if (name === 'search-element-id' && this.parentElement) {
-            const searchElement: NextCenturySearch = this.parentElement.querySelector('#' + oldValue);
+            const searchElement: NucleusSearch = this.parentElement.querySelector('#' + oldValue);
             if (searchElement) {
                 searchElement.updateFilterDesigns(this.getAttribute('id'), []);
             }
@@ -541,7 +541,7 @@ export class NextCenturyFilter extends NextCenturyElement {
      */
     private _updateFilterDesigns(): void {
         if (this._isReady() && this.parentElement) {
-            const searchElement: NextCenturySearch = this._searchElement || this.parentElement.querySelector('#' +
+            const searchElement: NucleusSearch = this._searchElement || this.parentElement.querySelector('#' +
                 this.getAttribute('search-element-id'));
             this._filterDesigns = this._createFilterDesigns(this._generateFilterDesignValues(this._retrieveFilterType()));
             if (searchElement && this._filterDesigns.length) {
@@ -558,5 +558,5 @@ export class NextCenturyFilter extends NextCenturyElement {
     }
 }
 
-window.customElements.define(NextCenturyFilter.ELEMENT_NAME, NextCenturyFilter);
+window.customElements.define(NucleusFilter.ELEMENT_NAME, NucleusFilter);
 
