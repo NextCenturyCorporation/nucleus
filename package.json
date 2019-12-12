@@ -1,14 +1,13 @@
 {
   "name": "nucleus",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Next Century, a subsidiary of CACI (https://nextcentury.com)",
   "bugs": {
     "url": "https://github.com/NextCenturyCorporation/nucleus/issues"
   },
   "description": "NUCLEUS: Next Century's (CACI's) Universal Component Library of Easily Configurable Utilities that Search, Filter, and Visualize Your Data",
   "files": [
-    "dist/*",
-    "wrappers/*"
+    "dist/*"
   ],
   "homepage": "https://github.com/NextCenturyCorporation/nucleus",
   "keywords": [
@@ -20,7 +19,7 @@
     "big data"
   ],
   "license": "Apache-2.0",
-  "main": "core/dist/index.js",
+  "main": "dist/index.js",
   "prepublish": "npx tsc",
   "repository": {
     "type": "git",
@@ -29,7 +28,7 @@
   "scripts": {
     "build": "npx tsc"
   },
-  "types": "core/dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "core-js": "~2.6.8",
     "js-yaml": "^3.13.1",
