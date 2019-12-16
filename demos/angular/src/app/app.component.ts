@@ -30,8 +30,8 @@ import { ConnectionService } from 'nucleus/dist/core/services/connection.service
 import { FilterService } from 'nucleus/dist/core/services/filter.service';
 import { SearchService } from 'nucleus/dist/core/services/search.service';
 
-import { NucleusFilterAngularComponent } from 'nucleus/dist/wrappers/angular/core/filter.angular-component';
-import { NucleusSearchAngularComponent } from 'nucleus/dist/wrappers/angular/core/search.angular-component';
+import { NucleusFilterAngularComponent } from 'nucleus-angular';
+import { NucleusSearchAngularComponent } from 'nucleus-angular';
 
 import { ExampleComponent } from './example.component';
 

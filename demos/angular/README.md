@@ -1,5 +1,7 @@
 # Sample Angular Demo App (NUCLEUS)
 
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.9.
+
 ## What Have We Changed?
 
 - Added the [NUCLEUS](https://github.com/NextCenturyCorporation/nucleus) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L22-L23) file
@@ -23,8 +25,6 @@
 You can change either of these hostnames or ports in [`src/app/app.component.ts`](./src/app/app.component.ts)
 
 ## Angular-CLI Info
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.9.
 
 ### Development Server
 

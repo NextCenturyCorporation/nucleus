@@ -5,8 +5,8 @@ import { AppComponent } from './app.component';
 
 import { ExampleModule } from './example.module';
 
-import { NucleusFilterAngularModule } from 'nucleus/dist/wrappers/angular/core/filter.angular-module';
-import { NucleusSearchAngularModule } from 'nucleus/dist/wrappers/angular/core/search.angular-module';
+import { NucleusFilterAngularModule } from 'nucleus-angular';
+import { NucleusSearchAngularModule } from 'nucleus-angular';
 
 @NgModule({
     declarations: [
