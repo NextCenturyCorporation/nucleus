@@ -1,0 +1,13 @@
+/**
+ * @fileoverview added by tsickle
+ * Generated from: public-api.ts
+ * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+ */
+export { NucleusCommonAngularComponent } from './wrappers/core/common.angular-component';
+export { NucleusFilterAngularComponent } from './wrappers/core/filter.angular-component';
+export { NucleusFilterAngularModule } from './wrappers/core/filter.angular-module';
+export { NucleusSearchAngularComponent } from './wrappers/core/search.angular-component';
+export { NucleusSearchAngularModule } from './wrappers/core/search.angular-module';
+export { NucleusTextCloudAngularComponent } from './wrappers/text-cloud/text-cloud.angular-component';
+export { NucleusTextCloudAngularModule } from './wrappers/text-cloud/text-cloud.angular-module';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiJuZzovL251Y2xldXMtYW5ndWxhci8iLCJzb3VyY2VzIjpbInB1YmxpYy1hcGkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7QUFBQSw4Q0FBYywwQ0FBMEMsQ0FBQztBQUN6RCw4Q0FBYywwQ0FBMEMsQ0FBQztBQUN6RCwyQ0FBYyx1Q0FBdUMsQ0FBQztBQUN0RCw4Q0FBYywwQ0FBMEMsQ0FBQztBQUN6RCwyQ0FBYyx1Q0FBdUMsQ0FBQztBQUN0RCxpREFBYyxvREFBb0QsQ0FBQztBQUNuRSw4Q0FBYyxpREFBaUQsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCAqIGZyb20gJy4vd3JhcHBlcnMvY29yZS9jb21tb24uYW5ndWxhci1jb21wb25lbnQnO1xuZXhwb3J0ICogZnJvbSAnLi93cmFwcGVycy9jb3JlL2ZpbHRlci5hbmd1bGFyLWNvbXBvbmVudCc7XG5leHBvcnQgKiBmcm9tICcuL3dyYXBwZXJzL2NvcmUvZmlsdGVyLmFuZ3VsYXItbW9kdWxlJztcbmV4cG9ydCAqIGZyb20gJy4vd3JhcHBlcnMvY29yZS9zZWFyY2guYW5ndWxhci1jb21wb25lbnQnO1xuZXhwb3J0ICogZnJvbSAnLi93cmFwcGVycy9jb3JlL3NlYXJjaC5hbmd1bGFyLW1vZHVsZSc7XG5leHBvcnQgKiBmcm9tICcuL3dyYXBwZXJzL3RleHQtY2xvdWQvdGV4dC1jbG91ZC5hbmd1bGFyLWNvbXBvbmVudCc7XG5leHBvcnQgKiBmcm9tICcuL3dyYXBwZXJzL3RleHQtY2xvdWQvdGV4dC1jbG91ZC5hbmd1bGFyLW1vZHVsZSc7XG4iXX0=
