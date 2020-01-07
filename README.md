@@ -70,11 +70,11 @@ NUCLEUS grants multiple unique benefits over other data visualization libraries:
 
 ### Search Component
 
-The **Search Component** is an HTML Element (JavaScript Web Component) that you define referencing a specific visualization element.  It builds and runs search queries (using the [SearchService](#searchservice)); transforms query results; sends data to its corresponding visualization element; and appends any filters (from the [FilterService](#filterservice)) to its search queries.  It saves [filter designs](#filter-design) from its corresponding [Filter Component(s)](#filter-component) so it can use them to generate the [search data](#search-data-object) and ignore filters on itself (if `enable-ignore-self-filter` is `true`).  Each visualization element should have one Search Component.
+The **Search Component** is an HTML Element (JavaScript Web Component) that you define referencing a specific visualization element.  It builds and runs search queries (using the [SearchService](#searchservice)); transforms query results; sends data to its corresponding visualization element; and appends any filters (from the [FilterService](#filterservice)) to its search queries.  It saves [filter designs](#filter-design) from its corresponding [Filter Component(s)](#filter-component) so it can use them to generate the [search data](#search-data-object) and ignore filters on itself (if `enable-ignore-self-filter` is `true`).  Although it is defined in your application's HTML, it does not show any elements in your web browser.  Each visualization element should have one Search Component.
 
 ### Filter Component
 
-The **Filter Component** is an HTML Element (JavaScript Web Component) that you define referencing a specific visualization element.  It listens to filter events from its corresponding visualization element; creates [filter designs](#filter-design) from the [filtered values](#filtered-values); and sends the filter designs to the [FilterService](#filterservice).  It also listens when filters are changed by other sources and, if they match its internal filter designs, sends the [externally filtered data](#externally-filtered-data) to the visualization element.  Each visualization element can have zero or more Filter Components.
+The **Filter Component** is an HTML Element (JavaScript Web Component) that you define referencing a specific visualization element.  It listens to filter events from its corresponding visualization element; creates [filter designs](#filter-design) from the [filtered values](#filtered-values); and sends the filter designs to the [FilterService](#filterservice).  It also listens when filters are changed by other sources and, if they match its internal filter designs, sends the [externally filtered data](#externally-filtered-data) to the visualization element.  Although it is defined in your application's HTML, it does not show any elements in your web browser.  Each visualization element can have zero or more Filter Components.
 
 ### Aggregation Component
 
@@ -116,8 +116,6 @@ The **datastores object** contains **datastore IDs** as keys and **datastore obj
 
 The **relations array** contains one or more nested **relation arrays**; each **relation array** contains one or more strings or nested string arrays; each string, or each individual nested string array, is a **set of relation fields**.  A **relation array** must have more than one **set of relation fields**, and each **set of relation fields** must have the same number of array elements (or must all be single strings).  Creating a filter containing a combination of fields exactly matching one **set of relation fields** will automatically generate additional filters with the same operators and [type](#filter-type) but substituting each other **set of relation fields** (one filter per set).  See [Relation Examples](#relation-examples) below.
 
-Note that, with Elasticsearch, we equate **indexes** with databases and **mapping types** with tables.  See the [NUCLEUS Data Server's README file](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) on more information regarding Elasticsearch datastore configuration.
-
 #### Data Server URL
 
 The **data server URL** should be the hostname of your deployed [NUCLEUS Data Server](#the-data-server) WITH the `http` or `https` prefix if needed.  It should also have an endpoint matching the `server.servlet.context-path` set in the Data Server's [`application.properties`](https://github.com/NextCenturyCorporation/neon-server/blob/master/server/src/main/resources/application.properties) file, WITHOUT the `/services` part.  For example, if your Data Server is deployed at `http://my_server.com:1234` and its `server.servlet.context-path` is set to `/abcd/services`, then your Dataset's data server URL should be `http://my_server.com:1234/abcd`.
@@ -129,26 +127,117 @@ The **data server URL** should be the hostname of your deployed [NUCLEUS Data Se
 // NUCLEUS will automatically detect fields if they are not defined.
 const fieldArray = [];
 const tableObject = TableConfig.get({
-    prettyName: 'Table Name',
     fields: fieldArray
 });
 const databaseObject = DatabaseConfig.get({
-    prettyName: 'Database Name',
     tables: {
-        table_name: tableObject
+        table_name: tableObject // Change the table_name here as needed
+        // Insert additional tables here as needed
     }
 });
 const datastoreObject = DatastoreConfig.get({
-    host: 'localhost:9200',
-    type: 'elasticsearchrest',
+    host: 'localhost:9200', // Change the host and port here as needed
+    type: 'elasticsearch', // Change the type here as needed
     databases: {
-        database_name: databaseObject
+        database_name: databaseObject // Change the database_name here as needed
+        // Insert additional databases here as needed
     }
 });
 const datastores = {
-    datastore_id: datastoreObject
+    datastore_id: datastoreObject // Change the datastore_id here as needed
+    // Insert additional datastores here as needed
 };
+// Create a single copy of the NUCLEUS ConnectionService.
+const connectionService = new ConnectionService();
+// Define your NUCLEUS Data Server hostname.
+const dataServerUrl = 'http://localhost:8090/neon';
 // Define relations to manage simultaneous filtering across datastores (if needed).
+const relations = [];
+// Create a single Dataset object with your datastores.
+const dataset = new Dataset(datastores, connectionService, dataServerUrl, relations);
+```
+
+#### Elasticsearch Datastores
+
+Elasticsearch does not have "databases" or "tables"; instead, it has "indexes" and "mapping types". In NUCLEUS, we consider "indexes" to be the equivalent of "databases" and "mapping types" to be the equivalent of "tables".  For Elasticsearch 7+, please note that the default mapping type is `'_doc'`.  See the [NUCLEUS Data Server's README file](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) on more information about configuring Elasticsearch datastores.
+
+Elasticsearch Datastore Example:
+
+```js
+const fieldArray = [];
+const tableObject = TableConfig.get({
+    fields: fieldArray
+});
+const databaseObject = DatabaseConfig.get({
+    tables: {
+        index_type: tableObject // Change the index_type here as needed
+    }
+});
+const datastoreObject = DatastoreConfig.get({
+    host: 'localhost:9200', // Change the host and port here as needed
+    type: 'elasticsearch',
+    databases: {
+        index_name: databaseObject // Change the index_name here as needed
+        // Insert additional NUCLEUS "databases" (meaning Elasticsearch indexes) here as needed
+    }
+});
+```
+
+#### PostgreSQL Datastores
+
+PostgreSQL connections are always database-specific, so any `'postgresql'` datastore must have its `host` property end with a slash and the database name (`'host:port/database'`). In NUCLEUS, we consider PostgreSQL "schemas" to be the equivalent of "databases".
+
+PostgreSQL Datastore Example:
+
+```js
+const fieldArray = [];
+const tableObject = TableConfig.get({
+    fields: fieldArray
+});
+const databaseObject = DatabaseConfig.get({
+    tables: {
+        table_name: tableObject // Change the table_name here as needed
+        // Insert additional tables here as needed
+    }
+});
+const datastoreObject = DatastoreConfig.get({
+    host: 'localhost:9200/database_name', // Change the host, port, and database_name here as needed
+    type: 'postgresql',
+    databases: {
+        schema_name: databaseObject // Change the schema_name here as needed
+        // Insert additional NUCLEUS "databases" (meaning PostgreSQL schemas) here as needed
+    }
+});
+```
+
+#### Relation Examples
+
+Basic Example:
+
+```js
+const relations = [ // relations array
+    [ // single nested relation array
+        [ // set of relation fields
+            'datastore1.database1.table1.fieldA',
+            'datastore1.database1.table1.fieldB'
+        ],
+        [
+            'datastore1.database1.table2.fieldX',
+            'datastore1.database1.table2.fieldY'
+        ]
+    ]
+];
+// Whenever the FilterService creates a filter containing both fieldA and fieldB, create a
+// relation filter by copying the filter and replacing fieldA with fieldX and fieldB with
+// fieldY.  Do the reverse whenever the FilterService creates a filter containing both
+// fieldX and fieldY.  Do not create a relation filter on a filter containing just fieldA,
+// or just fieldB, or just fieldX, or just fieldY, or more than fieldA and fieldB, or more
+// than fieldX and fieldY.
+```
+
+Complex Example:
+
+```js
 const relations = [
     [
         // Relation of two date/time fields in separate tables.
@@ -177,33 +266,6 @@ const relations = [
          ]
     ]
 ];
-// Create a single Dataset object with your datastores.
-const connectionService = new ConnectionService();
-const dataServerUrl = 'http://localhost:8090';
-const dataset = new Dataset(datastores, connectionService, dataServerUrl, relations);
-```
-
-#### Relation Examples
-
-```js
-const relations = [ // relations array
-    [ // single nested relation array
-        [ // set of relation fields
-            'datastore1.database1.table1.fieldA',
-            'datastore1.database1.table1.fieldB'
-        ],
-        [
-            'datastore1.database1.table2.fieldX',
-            'datastore1.database1.table2.fieldY'
-        ]
-    ]
-];
-// Whenever the FilterService creates a filter containing both fieldA and fieldB, create a
-// relation filter by copying the filter and replacing fieldA with fieldX and fieldB with
-// fieldY.  Do the reverse whenever the FilterService creates a filter containing both
-// fieldX and fieldY.  Do not create a relation filter on a filter containing just fieldA,
-// or just fieldB, or just fieldX, or just fieldY, or more than fieldA and fieldB, or more
-// than fieldX and fieldY.
 ```
 
 ### The Data Server
@@ -268,22 +330,26 @@ const dataServer = 'http://localhost:8090';
 // NUCLEUS will automatically detect fields if they are not defined.
 const fieldArray = [];
 const tableObject = TableConfig.get({
-    prettyName: 'Table Name',
     fields: fieldArray
 });
 const databaseObject = DatabaseConfig.get({
-    prettyName: 'Database Name',
     tables: {
-        table_name: tableObject
+        table_name: tableObject // Change the table_name here as needed
+        // Insert additional tables here as needed
     }
 });
 const datastoreObject = DatastoreConfig.get({
-    host: 'localhost:9200',
-    type: 'elasticsearchrest',
+    host: 'localhost:9200', // Change the host and port here as needed
+    type: 'elasticsearch', // Change the type here as needed
     databases: {
-        database_name: databaseObject
+        database_name: databaseObject // Change the database_name here as needed
+        // Insert additional databases here as needed
     }
 });
+const datastores = {
+    datastore_id: datastoreObject // Change the datastore_id here as needed
+    // Insert additional datastores here as needed
+};
 
 // Define relations to manage simultaneous filtering across datastores (if needed).
 const relations = [];
@@ -474,6 +540,8 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 ```
 
 #### Search with Joins
+
+Please note that NUCLEUS joins only work with SQL datastores (not Elasticsearch).
 
 ```html
 <visualization-element id="vis1"></visualization-element>
@@ -748,7 +816,9 @@ TODO
 
 ### Datastore Type
 
-* Elasticsearch 6+ (`'elasticsearchrest'`)
+* Elasticsearch 6.7+ (`'elasticsearch'` or `'elasticsearchrest'`)
+* MySQL (`'mysql'`)
+* PostgreSQL (`'postgresql'`)
 
 ### Dotted Path
 
