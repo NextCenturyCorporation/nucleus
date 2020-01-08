@@ -6,6 +6,7 @@
 
 * [What is NUCLEUS?](#what-is-nucleus)
 * [Why should I use NUCLEUS?](#why-should-i-use-nucleus)
+* [What is in this repository?](#what-is-in-this-repository)
 * [What are the parts of NUCLEUS?](#what-are-the-parts-of-nucleus)
   * [Search Component](#search-component)
   * [Filter Component](#filter-component)
@@ -63,6 +64,13 @@ NUCLEUS grants multiple unique benefits over other data visualization libraries:
 * It supports **different types of datastores** (see the full list [here](https://github.com/NextCenturyCorporation/neon-server#datastore-support))
 * It lets you **view and filter on data from separate datastores at the same time**
 * It operates on your own datastores, so it **doesn't need to load and save a copy of your data** (though we have some suggestions on how you should [configure your datastores](https://github.com/NextCenturyCorporation/neon-server#datastore-configuration) so you can make the best use of NUCLEUS)
+
+## What is in this repository?
+
+* [core](./core): Library containing the Core Components (including [Search](#search-component) and [Filter](#filter-component)), the [Services](#services), other objects like [Datasets](#datasets), and their APIs
+* [demos](./demos): Runnable demos containing NUCLEUS components and documentation in multiple frameworks
+* [visualizations](./visualizations): Library containing the [Visualization Components](#visualization-components) and their APIs
+* [wrappers](./wrappers): Libraries of framework-specific visualization wrapper components and their APIs
 
 ## What are the parts of NUCLEUS?
 
@@ -794,7 +802,16 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 
 ### Developing in Angular
 
-TODO
+To use NUCLEUS in Angular applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the (Angular wrapper components)[./wrappers/angular].  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
+
+You must also import the (Web Components Polyfills)[https://www.webcomponents.org/polyfills] into your Angular application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
+
+* Add the `@webcomponents/webcomponentsjs` to your `package.json` `devDependencies`.
+* Import the `webcomponents/webcomponents-loader.js` `script` in your application's HTML.
+
+Finally, you must add the [CUSTOM_ELEMENTS_SCHEMA](https://angular.io/api/core/CUSTOM_ELEMENTS_SCHEMA) to your App Module.
+
+You can find an example implementation (with documentation) in the [NUCLEUS Angular Demo App](./demos/angular).
 
 ### Developing in React
 
@@ -802,7 +819,27 @@ TODO
 
 ### Developing in Vue
 
-TODO
+To use NUCLEUS in Vue applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the (Vue wrapper components)[./wrappers/vue] (COMING SOON!).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
+
+You must also import the (Web Components Polyfills)[https://www.webcomponents.org/polyfills] into your Vue application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
+
+* Add the `@webcomponents/webcomponentsjs` and `copy-webpack-plugin` to your `package.json` `devDependencies`.
+* Import the `webcomponents/webcomponents-loader.js` `script` in your application's HTML.
+* Add a `configureWebpack` plugin in your `vue.config.js` file to copy the webcomponents scripts using the `CopyWebpackPlugin`.
+
+```js
+configureWebpack: {
+    plugins: [
+        new CopyWebpackPlugin([{
+            context: 'node_modules/@webcomponents/webcomponentsjs',
+            from: '**/*.js',
+            to: 'webcomponents'
+        }])
+    ]
+}
+ ```
+
+You can find an example implementation (with documentation) in the [NUCLEUS Vue Demo App](./demos/vue) (COMING SOON!).
 
 ## Definitions
 
