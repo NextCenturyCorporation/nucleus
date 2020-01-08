@@ -26,6 +26,7 @@
   * [Developing in Angular](#developing-in-angular)
   * [Developing in React](#developing-in-react)
   * [Developing in Vue](#developing-in-vue)
+* [Example Queries](#example-queries)
 * [Definitions](#definitions)
   * [Aggregation Operation](#aggregation-operation)
   * [Datastore Type](#datastore-type)
@@ -549,7 +550,7 @@ document.querySelector('search1').init(datasetObject, filterService, searchServi
 
 #### Search with Joins
 
-Please note that NUCLEUS joins only work with SQL datastores (not Elasticsearch).
+Please note that NUCLEUS joins only work with SQL datastores (not Elasticsearch).  If you would like to "join" on Elasticsearch data across multiple indexes, we recommend that you denormalize the data in your indexes and define [relations](#relations) in your [Dataset](#datasets).
 
 ```html
 <visualization-element id="vis1"></visualization-element>
@@ -802,9 +803,9 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 
 ### Developing in Angular
 
-To use NUCLEUS in Angular applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the (Angular wrapper components)[./wrappers/angular].  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
+To use NUCLEUS in Angular applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the [Angular wrapper components](./wrappers/angular).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
 
-You must also import the (Web Components Polyfills)[https://www.webcomponents.org/polyfills] into your Angular application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
+You must also import the [Web Components Polyfills](https://www.webcomponents.org/polyfills) into your Angular application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
 
 * Add the `@webcomponents/webcomponentsjs` to your `package.json` `devDependencies`.
 * Import the `webcomponents/webcomponents-loader.js` `script` in your application's HTML.
@@ -819,9 +820,9 @@ TODO
 
 ### Developing in Vue
 
-To use NUCLEUS in Vue applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the (Vue wrapper components)[./wrappers/vue] (COMING SOON!).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
+To use NUCLEUS in Vue applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the [Vue wrapper components](./wrappers/vue) (COMING SOON!).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
 
-You must also import the (Web Components Polyfills)[https://www.webcomponents.org/polyfills] into your Vue application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
+You must also import the [Web Components Polyfills](https://www.webcomponents.org/polyfills) into your Vue application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
 
 * Add the `@webcomponents/webcomponentsjs` and `copy-webpack-plugin` to your `package.json` `devDependencies`.
 * Import the `webcomponents/webcomponents-loader.js` `script` in your application's HTML.
@@ -840,6 +841,10 @@ configureWebpack: {
  ```
 
 You can find an example implementation (with documentation) in the [NUCLEUS Vue Demo App](./demos/vue) (COMING SOON!).
+
+## Example Queries
+
+Please see [this page](./NUCLEUS_EXAMPLE_QUERIES.md).
 
 ## Definitions
 
