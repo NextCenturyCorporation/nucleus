@@ -840,7 +840,7 @@ configureWebpack: {
 }
  ```
 
-You can find an example implementation (with documentation) in the [NUCLEUS Vue Demo App](./demos/vue) (COMING SOON!).
+You can find an example implementation (with documentation) in the [NUCLEUS Vue Demo App](./demos/vue).
 
 ## Example Queries
 
