@@ -289,7 +289,7 @@ NUCLEUS [**Data Server**](https://github.com/NextCenturyCorporation/neon-server)
 
 ### Setup
 
-* Import NUCLEUS core components / models / services and the Web Component polyfills into your frontend application.
+* Import the [NUCLEUS Core Components, Models, and Services](https://www.npmjs.com/package/@caci-critical-insight-solutions/nucleus-core) and the [Web Component polyfills](https://www.npmjs.com/package/@webcomponents/webcomponentsjs) into your frontend application.
 * Define a [**Search Component**](#search-component) and zero or more [**Filter Components**](#filter-component) for each of your application's data visualizations (or import and use NUCLEUS [**Visualization Components**](#visualizations)).
 * Create [**Dataset**](#datasets), [**FilterService**](#filterservice), and [**SearchService**](#searchservice) objects and use them to initialize your Search and Filter Components.
 * Separately, deploy the [**NUCLEUS Data Server**](#the-data-server) so that it can communicate with your frontend application and your datastores.  You may want to change its default configuration; see [Data Server URL](#data-server-url) for information.
@@ -311,9 +311,9 @@ NUCLEUS [**Data Server**](https://github.com/NextCenturyCorporation/neon-server)
 
 Your frontend application must import the following dependencies:
 
-* NUCLEUS core components / models / services
+* The [NUCLEUS Core Components, Models, and Services](https://www.npmjs.com/package/@caci-critical-insight-solutions/nucleus-core)
 * The [Web Components Polyfills](https://www.npmjs.com/package/@webcomponents/webcomponentsjs)
-* (Optionally) One or more NUCLEUS Visualization Components
+* (Optionally) One or more of the [NUCLEUS Visualization Components](https://www.npmjs.com/package/@caci-critical-insight-solutions/nucleus-visualizations)
 
 Additionally, you must have a deployed instance of the [NUCLEUS Data Server](https://github.com/NextCenturyCorporation/neon-server).
 
@@ -801,9 +801,77 @@ filter1.addEventListener('valuesFiltered', transformFilterDataArray);
 </nucleus-filter>
 ```
 
+### Example with a Simple Data Visualization and Custom Data Transformations
+
+Here is an example of using NUCLEUS Search and Filter Components to generate a "data visualization" of HTML `<div>` elements.
+
+```html
+<div id="vis1">
+  <div id="container1"></div>
+</div>
+
+<nucleus-search
+    id="search1"
+    search-field-keys="es.index_name.index_type.*"
+>
+</nucleus-search>
+
+<nucleus-filter
+    id="filter1"
+    filter-type="list"
+    list-field-key="es.index_name.index_type.id_field"
+    list-operator="="
+    search-element-id="search1"
+>
+</nucleus-filter>
+```
+
+```js
+const filterElement1 = document.querySelector('filter1');
+const searchElement1 = document.querySelector('search1');
+const visElement1 = document.querySelector('vis1');
+
+let containerElement1 = document.querySelector('container1');
+
+const transformSearchDataArray = function(event) {
+    // Replace the old element with a new blank element.
+    let newElement = document.createElement('div');
+    this.replaceChild(newElement, containerElement1);
+    containerElement1 = newElement;
+    
+    event.detail.data.forEach((searchDataObject) => {
+        // Add a new element to the HTML for each NUCLEUS search data object (result).
+        let resultElement = document.createElement('div');
+        resultElement.innerHTML = JSON.stringify(searchDataObject);
+        // Add an onclick attribute that dispatches a custom event for the NUCLEUS filter component.
+        resultElement.onclick = () => {
+            this.dispatchEvent(new CustomEvent('dataSelected', {
+                bubbles: true,
+                detail: {
+                    // We save a custom property ("value") with the value to filter (the value from the result's "id_field")
+                    value: searchDataObject.fields.id_field
+                }
+            }));
+        };
+        containerElement1.appendChild(resultElement);
+    });
+};
+
+const transformFilterEventData = function(event) {
+    // Use this custom filter event listener to pass the filtered values to the NUCLEUS filter component.
+    filterElement1.updateFilters([event.detail.value]);
+};
+
+// Listen to the event dispatched by the NUCLEUS search component.
+searchElement1.addEventListener('searchFinished', transformSearchDataArray);
+
+// Listen to the event dispatched by our custom HTML elements (created in the transformSearchDataArray function).
+visElement1.addEventListener('dataSelected', transformFilterEventData);
+```
+
 ### Developing in Angular
 
-To use NUCLEUS in Angular applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the [Angular wrapper components](./wrappers/angular).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
+To use NUCLEUS in Angular applications, you can import, define, and initialize the NUCLEUS web components (as described above) or the [Angular Wrapper Components](./wrappers/angular) (downloadable from NPM [here](https://www.npmjs.com/package/@caci-critical-insight-solutions/nucleus-wrappers-angular)).  The wrapper components allow you to bind the [Dataset](#datasets), [Services](#services), and options as attributes on the HTML element without the need to call the `init` function.
 
 You must also import the [Web Components Polyfills](https://www.webcomponents.org/polyfills) into your Angular application.  The specific implementation may change depending on your application's configuration, but, generally, you will need to:
 
