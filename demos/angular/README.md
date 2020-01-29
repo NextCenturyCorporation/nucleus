@@ -4,7 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## What Have We Changed?
 
-- Added the [NUCLEUS](https://github.com/NextCenturyCorporation/nucleus) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L22-L23) file
+- Added the [NUCLEUS](https://github.com/NextCenturyCorporation/nucleus) and [`@webcomponents/custom-elements`](https://github.com/webcomponents/custom-elements) to the `dependencies` in the [`package.json`](./package.json#L23-L24) file
 - Added `@webcomponents/custom-elements` imports to [`src/polyfills.ts`](./src/polyfills.ts#L65-L71)
 - Added the CUSTOM_ELEMENTS_SCHEMA and NUCLEUS Angular modules to [`src/app/app.module.ts`](./src/app/app.module.ts)
 - Added an example visualization component based on the [stub component](https://github.com/NextCenturyCorporation/nucleus/tree/master/wrappers/angular/stub)

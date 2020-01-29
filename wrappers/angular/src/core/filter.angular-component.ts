@@ -15,9 +15,9 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { CoreUtil } from '../../../core/core.util';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
 import { NucleusCommonAngularComponent } from './common.angular-component';
-import { NucleusFilter } from '../../../core/components/filter.web-component';
+import { NucleusFilter } from '@caci-critical-insight-solutions/nucleus-core';
 
 const FILTER_COMPONENT_TEMPLATE = `
 <nucleus-filter [attr.id]="id + '-filter'"></nucleus-filter>

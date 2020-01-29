@@ -22,16 +22,19 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 
-import { CoreUtil } from 'nucleus/dist/core/core.util';
-import { DatabaseConfig, Dataset, DatastoreConfig, TableConfig } from 'nucleus/dist/core/models/dataset';
-import { DateUtil } from 'nucleus/dist/core/date.util';
+import {
+    ConnectionService,
+    CoreUtil,
+    DatabaseConfig,
+    Dataset,
+    DatastoreConfig,
+    DateUtil,
+    FilterService,
+    SearchService,
+    TableConfig
+} from '@caci-critical-insight-solutions/nucleus-core';
 
-import { ConnectionService } from 'nucleus/dist/core/services/connection.service';
-import { FilterService } from 'nucleus/dist/core/services/filter.service';
-import { SearchService } from 'nucleus/dist/core/services/search.service';
-
-import { NucleusFilterAngularComponent } from 'nucleus-angular';
-import { NucleusSearchAngularComponent } from 'nucleus-angular';
+import { NucleusFilterAngularComponent, NucleusSearchAngularComponent } from '@caci-critical-insight-solutions/nucleus-wrappers-angular';
 
 import { ExampleComponent } from './example.component';
 

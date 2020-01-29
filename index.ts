@@ -13,26 +13,28 @@
  * limitations under the License.
  */
 
-import './core/core.util';
-import './core/date.util';
-import './core/components/aggregation.web-component';
-import './core/components/element.web-component';
-import './core/components/filter.web-component';
-import './core/components/group.web-component';
-import './core/components/search.web-component';
-import './core/services/abstract.color-theme.service';
-import './core/services/abstract.search.service';
-import './core/services/connection.service';
-import './core/services/filter.service';
-import './core/services/search.service';
-import './core/models/color';
-import './core/models/config-option';
-import './core/models/dataset';
-import './core/models/filters';
-import './visualizations/text-cloud/text-cloud.visualization';
-import './visualizations/text-cloud/text-cloud.web-component';
-import './wrappers/angular/core/common.angular-component';
-import './wrappers/angular/core/filter.angular-component';
-import './wrappers/angular/core/search.angular-component';
-import './wrappers/angular/text-cloud/text-cloud.angular-component';
+export * from './core/core.util';
+export * from './core/date.util';
+export * from './core/components/aggregation.web-component';
+export * from './core/components/element.web-component';
+export * from './core/components/filter.web-component';
+export * from './core/components/group.web-component';
+export * from './core/components/join.web-component';
+export * from './core/components/search.web-component';
+export * from './core/services/abstract.color-theme.service';
+export * from './core/services/abstract.search.service';
+export * from './core/services/connection.service';
+export * from './core/services/filter.service';
+export * from './core/services/search.service';
+export * from './core/models/color';
+export * from './core/models/config-option';
+export * from './core/models/dataset';
+export * from './core/models/filters';
+export * from './core/models/mock.dataset';
+export * from './visualizations/text-cloud/text-cloud.visualization';
+export * from './visualizations/text-cloud/text-cloud.web-component';
+export * from './wrappers/angular/core/common.angular-component';
+export * from './wrappers/angular/core/filter.angular-component';
+export * from './wrappers/angular/core/search.angular-component';
+export * from './wrappers/angular/text-cloud/text-cloud.angular-component';
 

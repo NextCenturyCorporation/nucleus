@@ -13,19 +13,23 @@
  * limitations under the License.
  */
 
-import './core.util';
-import './date.util';
-import './components/aggregation.web-component';
-import './components/element.web-component';
-import './components/filter.web-component';
-import './components/group.web-component';
-import './components/search.web-component';
-import './services/abstract.search.service';
-import './services/abstract.color-theme.service';
-import './services/connection.service';
-import './services/filter.service';
-import './services/search.service';
-import './models/dataset';
-import './models/filters';
-import './models/widget-option';
+export * from './core.util';
+export * from './date.util';
+export * from './components/aggregation.web-component';
+export * from './components/element.web-component';
+export * from './components/filter.web-component';
+export * from './components/group.web-component';
+export * from './components/join.web-component';
+export * from './components/search.web-component';
+export * from './services/abstract.search.service';
+export * from './services/abstract.color-theme.service';
+export * from './services/connection.service';
+export * from './services/filter.service';
+export * from './services/mock.search.service';
+export * from './services/search.service';
+export * from './models/color';
+export * from './models/config-option';
+export * from './models/dataset';
+export * from './models/filters';
+export * from './models/mock.dataset';
 

@@ -15,10 +15,10 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { AbstractSearchService } from '../../../core/services/abstract.search.service';
-import { CoreUtil } from '../../../core/core.util';
+import { AbstractSearchService } from '@caci-critical-insight-solutions/nucleus-core';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
 import { NucleusCommonAngularComponent } from '../core/common.angular-component';
-import { NucleusTextCloud } from '../../../visualizations/text-cloud/text-cloud.web-component';
+import { NucleusTextCloud } from '@caci-critical-insight-solutions/nucleus-visualizations';
 
 const VISUALZIATON_COMPONENT_TEMPLATE = `
 <nucleus-text-cloud [attr.id]="id + '-angular'"></nucleus-text-cloud>

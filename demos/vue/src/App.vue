@@ -192,20 +192,24 @@
 // eslint-disable-next-line
 import ExampleComponent from './components/ExampleComponent.vue'
 
-import { ConnectionService } from 'nucleus/dist/core/services/connection.service';
-import { DatabaseConfig, Dataset, DatastoreConfig, TableConfig } from 'nucleus/dist/core/models/dataset';
-import { DateUtil } from 'nucleus/dist/core/date.util';
-import { FilterService } from 'nucleus/dist/core/services/filter.service';
-import { SearchService } from 'nucleus/dist/core/services/search.service';
-
-// eslint-disable-next-line
-import { NucleusAggregation } from 'nucleus/dist/core/components/aggregation.web-component';
-// eslint-disable-next-line
-import { NucleusGroup } from 'nucleus/dist/core/components/group.web-component';
-// eslint-disable-next-line
-import { NucleusFilter } from 'nucleus/dist/core/components/filter.web-component';
-// eslint-disable-next-line
-import { NucleusSearch } from 'nucleus/dist/core/components/search.web-component';
+import {
+    ConnectionService,
+    DatabaseConfig,
+    Dataset,
+    DatastoreConfig,
+    DateUtil,
+    FilterService,
+    // eslint-disable-next-line
+    NucleusAggregation,
+    // eslint-disable-next-line
+    NucleusFilter,
+    // eslint-disable-next-line
+    NucleusGroup,
+    // eslint-disable-next-line
+    NucleusSearch,
+    SearchService,
+    TableConfig
+} from '@caci-critical-insight-solutions/nucleus-core';
 
 export default {
     name: 'app',

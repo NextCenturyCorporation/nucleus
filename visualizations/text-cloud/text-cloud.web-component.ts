@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-import { AbstractSearchService } from '../../core/services/abstract.search.service';
-import { CoreUtil } from '../../core/core.util';
-import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '../../core/models/dataset';
-import { FilterService } from '../../core/services/filter.service';
-import { NucleusAggregation } from '../../core/components/aggregation.web-component';
-import { NucleusElement } from '../../core/components/element.web-component';
-import { NucleusFilter } from '../../core/components/filter.web-component';
-import { NucleusGroup } from '../../core/components/group.web-component';
-import { NucleusSearch } from '../../core/components/search.web-component';
-import { NucleusTextCloudVisualization } from '../../visualizations/text-cloud/text-cloud.visualization';
+import { AbstractSearchService } from '@caci-critical-insight-solutions/nucleus-core';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
+import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '@caci-critical-insight-solutions/nucleus-core';
+import { FilterService } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusAggregation } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusElement } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusFilter } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusGroup } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusSearch } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusTextCloudVisualization } from './text-cloud.visualization';
 
 export class NucleusTextCloud extends NucleusElement {
     private _containerElement: HTMLElement;

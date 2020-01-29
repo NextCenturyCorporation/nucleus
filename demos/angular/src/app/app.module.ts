@@ -5,8 +5,7 @@ import { AppComponent } from './app.component';
 
 import { ExampleModule } from './example.module';
 
-import { NucleusFilterAngularModule } from 'nucleus-angular';
-import { NucleusSearchAngularModule } from 'nucleus-angular';
+import { NucleusFilterAngularModule, NucleusSearchAngularModule } from '@caci-critical-insight-solutions/nucleus-wrappers-angular';
 
 @NgModule({
     declarations: [

@@ -8,8 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@caci-critical-insight-solutions/nucleus-core": "0.0.5",
     "core-js": "^3.4.4",
-    "nucleus": "git+https://github.com/NextCenturyCorporation/nucleus.git#0.2.2",
     "vue": "^2.6.10"
   },
   "devDependencies": {

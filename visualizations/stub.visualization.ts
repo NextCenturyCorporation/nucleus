@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { CoreUtil } from '../core/core.util';
-import { NucleusElement } from '../core/components/element.web-component';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusElement } from '@caci-critical-insight-solutions/nucleus-core';
 
 // TODO Change your visualization element's class name.
 export class NucleusStub extends NucleusElement {

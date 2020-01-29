@@ -15,9 +15,9 @@
 
 import { AfterViewInit, ElementRef, Input, OnChanges } from '@angular/core';
 
-import { CoreUtil } from '../../../core/core.util';
-import { Dataset } from '../../../core/models/dataset';
-import { FilterService } from '../../../core/services/filter.service';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
+import { Dataset } from '@caci-critical-insight-solutions/nucleus-core';
+import { FilterService } from '@caci-critical-insight-solutions/nucleus-core';
 
 export abstract class NucleusCommonAngularComponent implements AfterViewInit, OnChanges {
     @Input() dataset: Dataset;

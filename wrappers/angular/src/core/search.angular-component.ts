@@ -15,13 +15,13 @@
 
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewEncapsulation } from '@angular/core';
 
-import { AbstractFilter, AbstractFilterDesign } from '../../../core/models/filters';
-import { AbstractSearchService } from '../../../core/services/abstract.search.service';
-import { CoreUtil } from '../../../core/core.util';
-import { NucleusAggregation } from '../../../core/components/aggregation.web-component';
+import { AbstractFilter, AbstractFilterDesign } from '@caci-critical-insight-solutions/nucleus-core';
+import { AbstractSearchService } from '@caci-critical-insight-solutions/nucleus-core';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusAggregation } from '@caci-critical-insight-solutions/nucleus-core';
 import { NucleusCommonAngularComponent } from './common.angular-component';
-import { NucleusGroup } from '../../../core/components/group.web-component';
-import { NucleusSearch } from '../../../core/components/search.web-component';
+import { NucleusGroup } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusSearch } from '@caci-critical-insight-solutions/nucleus-core';
 
 const SEARCH_COMPONENT_TEMPLATE = `
 <nucleus-search [attr.id]="id + '-search'">

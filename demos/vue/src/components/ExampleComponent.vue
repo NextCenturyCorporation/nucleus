@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { CoreUtil } from 'nucleus/dist/core/core.util';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
 
 export default {
     name: 'ExampleComponent',

@@ -14,8 +14,8 @@
  */
 
 import { ColorOptions, SizeOptions, TextCloud } from './TextCloud';
-import { CoreUtil } from '../../core/core.util';
-import { NucleusElement } from '../../core/components/element.web-component';
+import { CoreUtil } from '@caci-critical-insight-solutions/nucleus-core';
+import { NucleusElement } from '@caci-critical-insight-solutions/nucleus-core';
 
 export class NucleusTextCloudVisualization extends NucleusElement {
     private _data: any[] = [];
