@@ -156,7 +156,7 @@ A string [field key](../../README.md#field-key) on which to join.
 
 A string [table key](../../README.md#field-key) on which to join.
 
-### Group Optional Properties
+### Join Optional Properties
 
 **join-operator**
 
