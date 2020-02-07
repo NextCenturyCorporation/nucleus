@@ -59,6 +59,7 @@ export class NucleusFilter extends NucleusElement {
             'list-field-key',
             'list-intersection',
             'list-operator',
+            'no-toggle',
             'pair-field-key-1',
             'pair-field-key-2',
             'pair-intersection',
@@ -66,7 +67,8 @@ export class NucleusFilter extends NucleusElement {
             'pair-operator-2',
             'vis-element-id',
             'vis-filter-input-function',
-            'vis-filter-output-event'
+            'vis-filter-output-event',
+            'vis-filter-output-event-detail-prop'
         ];
     }
 
@@ -342,11 +344,12 @@ export class NucleusFilter extends NucleusElement {
      * Deletes all the filters in the FilterService with the given filter designs.
      */
     private _deleteFilters(filterDesigns: AbstractFilterDesign[]): void {
-        this._filterService.deleteFilters(this.getAttribute('search-element-id'), filterDesigns);
+        this._filterService.deleteFilters((this._searchElement ? this._searchElement.id : '') || this.getAttribute('search-element-id'),
+            filterDesigns);
         this.dispatchEvent(new CustomEvent('filtersChanged', {
             bubbles: true,
             detail: {
-                filters: []
+                designs: []
             }
         }));
     }
@@ -391,11 +394,12 @@ export class NucleusFilter extends NucleusElement {
         if (this._isReady()) {
             const filterDesigns: AbstractFilterDesign[] = this._createFilterDesigns(values);
             if (filterDesigns.length) {
-                this._filterService.exchangeFilters(this.getAttribute('search-element-id'), filterDesigns, this._dataset);
+                this._filterService.exchangeFilters((this._searchElement ? this._searchElement.id : '') ||
+                    this.getAttribute('search-element-id'), filterDesigns, this._dataset, [], this.hasAttribute('no-toggle'));
                 this.dispatchEvent(new CustomEvent('filtersChanged', {
                     bubbles: true,
                     detail: {
-                        filters: filterDesigns
+                        designs: filterDesigns
                     }
                 }));
             }
@@ -441,8 +445,9 @@ export class NucleusFilter extends NucleusElement {
      * Handles the behavior whenever any filter values are emitted from the visualization element by adding or removing filters as needed.
      */
     private _handleFilterEventFromVisualization(event: any) {
-        if (event && event.detail && typeof event.detail.values !== 'undefined') {
-            this.updateFilteredValues(event.detail.values);
+        const detailProperty = this.getAttribute('vis-filter-output-event-detail-prop') || 'values';
+        if (event && event.detail && typeof event.detail[detailProperty] !== 'undefined') {
+            this.updateFilteredValues(event.detail[detailProperty]);
         }
     }
 
@@ -545,7 +550,8 @@ export class NucleusFilter extends NucleusElement {
                 this.getAttribute('search-element-id'));
             this._filterDesigns = this._createFilterDesigns(this._generateFilterDesignValues(this._retrieveFilterType()));
             if (searchElement && this._filterDesigns.length) {
-                this._handleFilterChangeFromServices(this.getAttribute('search-element-id'));
+                this._handleFilterChangeFromServices((this._searchElement ? this._searchElement.id : '') ||
+                    this.getAttribute('search-element-id'));
                 searchElement.updateFilterDesigns(this.getAttribute('id'), this._filterDesigns);
                 this.dispatchEvent(new CustomEvent('designsChanged', {
                     bubbles: true,

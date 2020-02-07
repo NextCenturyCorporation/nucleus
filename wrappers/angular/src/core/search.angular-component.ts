@@ -52,7 +52,7 @@ export class NucleusSearchAngularComponent extends NucleusCommonAngularComponent
      * @override
      */
     protected doesHaveSubclassInputs(): boolean {
-        return !!(this.searchService && this.visInputElement);
+        return !!(this.searchService);
     }
 
     /**

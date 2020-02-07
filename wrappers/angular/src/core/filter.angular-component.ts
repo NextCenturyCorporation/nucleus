@@ -42,7 +42,7 @@ export class NucleusFilterAngularComponent extends NucleusCommonAngularComponent
      * @override
      */
     protected doesHaveSubclassInputs(): boolean {
-        return !!(this.searchElement && this.visInputElement && this.visOutputElement);
+        return !!(this.searchElement);
     }
 
     /**

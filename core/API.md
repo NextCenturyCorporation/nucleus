@@ -4,7 +4,7 @@
 
 Creates a SQL-like aggregation clause:  `aggregation-operation(aggregation-field-key) AS aggregation-label`
 
-### Aggregation Required Properties
+### Aggregation Component Required Properties
 
 **aggregation-field-key**
 
@@ -18,7 +18,7 @@ A string corresponding to the **group-label** of a sibling [Group Component](#gr
 
 A unique string for the aggregation's label.
 
-### Aggregation Optional Properties
+### Aggregation Component Optional Properties
 
 **aggregation-operation**
 
@@ -26,7 +26,7 @@ A string [aggregation operation](../../README.md#aggregation-operation).  Defaul
 
 ## Filter Component
 
-### Filter Required Properties
+### Filter Component Required Properties
 
 **bounds-field-key-x**
 
@@ -51,6 +51,10 @@ A string [field key](../../README.md#field-key) for the field on which to filter
 **list-operator**
 
 A string [filter operator](../../README.md#filter-operator).  Required only if **filter-type** is `"list"`.
+
+**no-toggle**
+
+If false, setting a filter on a value that is already filtered will remove the existing filter on that value.  If true, setting a filter on a value that is already filtered will do nothing (and not cause a requery).
 
 **pair-field-key-1**
 
@@ -84,7 +88,7 @@ The function in the visualization element corresponding to this Filter Component
 
 The event from the visualization element corresponding to this Filter Component that contains its [filtered values](../../README.md#filtered-values).  Required unless you are [using custom data transformations](../../README.md#using-custom-data-transformations).
 
-### Filter Optional Properties
+### Filter Component Optional Properties
 
 **list-intersection**
 
@@ -94,7 +98,11 @@ If truthy, each record in the data must match each value in this list filter in 
 
 If truthy, each record in the data must match each value in this pair filter in order to be returned by the search query.  Otherwise, each record in the data need only match one value in this pair filter.  Optional if **filter-type** is `"pair"`.  Default `false`
 
-### Filter Output Events
+**vis-filter-output-event-detail-prop**
+
+The name of the property containing the filtered values inside the `detail` object of the filter output event from the visualization element.  Default:  `'values'`
+
+### Filter Component Output Events
 
 **designsChanged**
 
@@ -108,7 +116,7 @@ Dispatched whenever filters are exchanged or deleted in this Filter Component.  
 
 Dispatched whenever filters that are compatible with the designs in this Filter Component are set in the Filter Service (see [externally filtered data](../../README.md#externally-filtered-data)).  The `event.detail.values` property contains an array of [filtered values](../../README.md#filtered-values).
 
-### Filter Public Functions
+### Filter Component Public Functions
 
 **init(dataset: Dataset, filterService: FilterService, visElement?: any, searchElement?: any): void**
 
@@ -122,13 +130,13 @@ Creates and/or deletes filters using the given [filtered values](../../README.md
 
 Creates a SQL-like group clause:  `GROUP BY group-field-key AS group-label`
 
-### Group Required Properties
+### Group Component Required Properties
 
 **group-field-key**
 
 A string [field key](../../README.md#field-key) on which to group.
 
-### Group Optional Properties
+### Group Component Optional Properties
 
 **group-label**
 
@@ -142,7 +150,7 @@ A string [group operation](../../README.md#group-operation).
 
 Creates a SQL-like join clause:  `join-type JOIN join-table-key ON join-field-key-1 join-operator join-field-key-2`
 
-### Join Required Properties
+### Join Component Required Properties
 
 **join-field-key-1**
 
@@ -156,7 +164,7 @@ A string [field key](../../README.md#field-key) on which to join.
 
 A string [table key](../../README.md#field-key) on which to join.
 
-### Group Optional Properties
+### Join Component Optional Properties
 
 **join-operator**
 
@@ -168,7 +176,7 @@ A string [join type](../../README.md#join-type).  Default `''`
 
 ## Search Component
 
-### Search Required Properties
+### Search Component Required Properties
 
 **search-field-keys**
 
@@ -182,7 +190,7 @@ The function in the visualization element corresponding to this Search Component
 
 The ID attribute of the visualization element corresponding to this Search Component.  Required unless you are [using custom data transformations](../../README.md#using-custom-data-transformations).
 
-### Search Optional Properties
+### Search Component Optional Properties
 
 **enable-hide-if-unfiltered**
 
@@ -212,7 +220,7 @@ A string [field key](../../README.md#field-key) on which to sort.  Needed to con
 
 Either `"ascending"` or `"descending"`.  Default `"descending"`
 
-### Search Output Events
+### Search Component Output Events
 
 **searchCanceled**
 
@@ -230,7 +238,7 @@ Dispatched whenever a search is finished in this Search Component.  The `event.d
 
 Dispatched whenever a search is launched in this Search Component.
 
-### Search Public Functions
+### Search Component Public Functions
 
 **init(dataset: Dataset, filterService: FilterService, searchService: SearchService, visElement?: any): void**
 

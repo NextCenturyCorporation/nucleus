@@ -1989,6 +1989,88 @@ describe('Search Component', () => {
         });
     });
 
+    it('notifying filterService listeners should build and run query with filters two times', () => {
+        searchComponent.init(dataset, filterService, searchService);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.setFilters([
+            new ListFilter(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '=', ['type1', 'type2'])
+        ]);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.notifyFilterChangeListeners('testFilterElementId');
+
+        expect(searchService.searches).toEqual(2);
+
+        filterService.setFilters([
+            new ListFilter(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type3', 'type4'])
+        ]);
+
+        expect(searchService.searches).toEqual(2);
+
+        filterService.notifyFilterChangeListeners('testFilterElementId');
+
+        expect(searchService.searches).toEqual(3);
+        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
+            datastoreHost: dataset.datastores.datastore1.host,
+            datastoreType: dataset.datastores.datastore1.type,
+            searchObject: {
+                selectClause: {
+                    database: 'testDatabase1',
+                    table: 'testTable1',
+                    fieldClauses: [{
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        field: 'testNameField'
+                    }]
+                },
+                whereClause: {
+                    type: 'and',
+                    whereClauses: [{
+                        type: 'where',
+                        lhs: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        },
+                        operator: '!=',
+                        rhs: null
+                    }, {
+                        type: 'or',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
+                            operator: '!=',
+                            rhs: 'type3'
+                        }, {
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
+                            operator: '!=',
+                            rhs: 'type4'
+                        }]
+                    }]
+                },
+                aggregateClauses: [],
+                groupByClauses: [],
+                orderByClauses: [],
+                limitClause: { limit: 10 },
+                offsetClause: { offset: 0 },
+                joinClauses: [],
+                isDistinct: false
+            }
+        });
+    });
+
     it('notifying filterService listeners should not build and run query if not initialized', () => {
         filterService.setFilters([
             new ListFilter(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '=', ['type1', 'type2'])
@@ -2049,6 +2131,46 @@ describe('Search Component', () => {
         filterService.notifyFilterChangeListeners('testFilterElementId');
 
         expect(searchService.searches).toEqual(2);
+    });
+
+    it('notifying filterService listeners should not run query if previous filters and new filters are both empty array', () => {
+        searchComponent.init(dataset, filterService, searchService);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.setFilters([]);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.notifyFilterChangeListeners('testFilterElementId');
+
+        expect(searchService.searches).toEqual(1);
+    });
+
+    it('notifying filterService listeners should not run query with if previous filters and new filters are both the same', () => {
+        searchComponent.init(dataset, filterService, searchService);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.setFilters([
+            new ListFilter(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '=', ['type1', 'type2'])
+        ]);
+
+        expect(searchService.searches).toEqual(1);
+
+        filterService.notifyFilterChangeListeners('testFilterElementId');
+
+        expect(searchService.searches).toEqual(2);
+
+        filterService.setFilters([
+            new ListFilter(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '=', ['type1', 'type2'])
+        ]);
+
+        expect(searchService.searches).toEqual(2);
+
+        filterService.notifyFilterChangeListeners('testFilterElementId');
+
+        expect(searchService.searches).toEqual(j);
     });
 
     it('updateFilters should build and run query with filters', () => {

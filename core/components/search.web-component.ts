@@ -62,6 +62,7 @@ export class NucleusSearch extends NucleusElement {
     private _filterService: FilterService;
     private _idsToFilters: Map<string, AbstractFilter[]> = new Map<string, AbstractFilter[]>();
     private _idsToFilterDesigns: Map<string, AbstractFilterDesign[]> = new Map<string, AbstractFilterDesign[]>();
+    private _previousFilters: AbstractFilter[] = [];
     private _runningQuery: RequestWrapper;
     private _searchService: AbstractSearchService;
     private _visInputElement: any;
@@ -395,7 +396,13 @@ export class NucleusSearch extends NucleusElement {
             return;
         }
 
-        this.runQuery();
+        // If the new search filters do not match the previous search filters, then run a new search query.
+        const filters: AbstractFilter[] = this._retrieveSearchFilters();
+        if (filters.length !== this._previousFilters.length || filters.some((filter, index) =>
+            !filter.isEquivalentToFilter(this._previousFilters[index]))) {
+            this.runQuery();
+        }
+        this._previousFilters = filters;
     }
 
     /**

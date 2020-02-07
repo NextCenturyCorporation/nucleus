@@ -161,8 +161,7 @@ export class Dataset {
         public fieldKeyCollection: Record<string, string> = {}
     ) {
         this._handleDataServer(this._dataServer);
-        this._datastores = this._updateDatastores(this._datastores);
-        this._relations = this._validateRelations(relations);
+        this._datastores = this._updateDatastores(this._datastores, relations);
         this.tableKeyCollection = this.tableKeyCollection || {};
         this.fieldKeyCollection = this.fieldKeyCollection || {};
     }
@@ -252,15 +251,24 @@ export class Dataset {
         }
     }
 
-    private _updateDatastores(datastores: Record<string, DatastoreConfig>): Record<string, DatastoreConfig> {
+    private _updateDatastores(
+        datastores: Record<string, DatastoreConfig>,
+        relations?: (string|string[])[][]
+    ): Record<string, DatastoreConfig> {
         const validated: Record<string, DatastoreConfig> = DatasetUtil.validateDatastores(datastores);
         if (this._connectionService) {
             Object.keys(validated).forEach((datastoreId) => {
                 const connection = this._connectionService.connect(validated[datastoreId].type, validated[datastoreId].host);
                 if (connection) {
-                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId], {});
+                    DatasetUtil.updateDatastoreFromDataServer(connection, validated[datastoreId], {}, (__failedDatabases: string[]) => {
+                        if (relations) {
+                            this._relations = this._validateRelations(relations);
+                        }
+                    });
                 }
             });
+        } else if (relations) {
+            this._relations = this._validateRelations(relations);
         }
         return validated;
     }

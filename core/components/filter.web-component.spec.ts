@@ -55,6 +55,7 @@ describe('Filter Component static createElement should return', () => {
             'list-field-key': 'datastore1.testDatabase1.testTable1.testTextField',
             'list-intersection': true,
             'list-operator': 'contains',
+            'no-toggle': true,
             'pair-field-key-1': 'datastore1.testDatabase1.testTable1.testNameField',
             'pair-field-key-2': 'datastore1.testDatabase1.testTable1.testTypeField',
             'pair-intersection': true,
@@ -63,7 +64,8 @@ describe('Filter Component static createElement should return', () => {
             'search-element-id': 'testSearchElementId',
             'vis-element-id': 'testVisElementId',
             'vis-filter-input-function': 'changeFilter',
-            'vis-filter-output-event': 'filtered'
+            'vis-filter-output-event': 'filtered',
+            'vis-filter-output-event-detail-prop': 'data'
         });
         expect(actual2).not.toEqual(null);
         expect(actual2.getAttribute('id')).toEqual('testId');
@@ -74,6 +76,7 @@ describe('Filter Component static createElement should return', () => {
         expect(actual2.getAttribute('list-field-key')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
         expect(actual2.getAttribute('list-intersection')).toEqual('true');
         expect(actual2.getAttribute('list-operator')).toEqual('contains');
+        expect(actual2.getAttribute('no-toggle')).toEqual('true');
         expect(actual2.getAttribute('pair-field-key-1')).toEqual('datastore1.testDatabase1.testTable1.testNameField');
         expect(actual2.getAttribute('pair-field-key-2')).toEqual('datastore1.testDatabase1.testTable1.testTypeField');
         expect(actual2.getAttribute('pair-intersection')).toEqual('true');
@@ -83,6 +86,7 @@ describe('Filter Component static createElement should return', () => {
         expect(actual2.getAttribute('vis-element-id')).toEqual('testVisElementId');
         expect(actual2.getAttribute('vis-filter-input-function')).toEqual('changeFilter');
         expect(actual2.getAttribute('vis-filter-output-event')).toEqual('filtered');
+        expect(actual2.getAttribute('vis-filter-output-event-detail-prop')).toEqual('data');
     });
 
     it('null if the required attributes are not defined', () => {
@@ -452,7 +456,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new BoundsFilterDesign('datastore1.testDatabase1.testTable1.testXField', 'datastore1.testDatabase1.testTable1.testYField',
                 10, 20, 30, 40)
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -470,7 +474,7 @@ describe('Filter Component updateFilteredValues should', () => {
                 10, 20, 30, 40),
             new BoundsFilterDesign('datastore1.testDatabase1.testTable1.testXField', 'datastore1.testDatabase1.testTable1.testYField',
                 50, 60, 70, 80)
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -484,7 +488,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new DomainFilterDesign('datastore1.testDatabase1.testTable1.testXField', 10, 20)
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -499,7 +503,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new DomainFilterDesign('datastore1.testDatabase1.testTable1.testXField', 10, 20),
             new DomainFilterDesign('datastore1.testDatabase1.testTable1.testXField', 30, 40)
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -514,7 +518,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new ListFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type1'])
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -530,7 +534,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new ListFilterDesign(CompoundFilterType.AND, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type1'])
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -545,7 +549,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new ListFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type1', 'type2'])
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -561,7 +565,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.count()).toEqual(1);
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new ListFilterDesign(CompoundFilterType.AND, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type1', 'type2'])
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -577,7 +581,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new ListFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type1']),
             new ListFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '!=', ['type2', 'type3'])
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -595,7 +599,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new PairFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testNameField',
                 'datastore1.testDatabase1.testTable1.testTypeField', 'contains', 'not contains', 'name1', 'type1')
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -614,7 +618,7 @@ describe('Filter Component updateFilteredValues should', () => {
         expect(spyOnChangeFilters.calls.argsFor(0)).toEqual(['testSearchElementId', [
             new PairFilterDesign(CompoundFilterType.AND, 'datastore1.testDatabase1.testTable1.testNameField',
                 'datastore1.testDatabase1.testTable1.testTypeField', 'contains', 'not contains', 'name1', 'type1')
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
@@ -634,7 +638,7 @@ describe('Filter Component updateFilteredValues should', () => {
                 'datastore1.testDatabase1.testTable1.testTypeField', 'contains', 'not contains', 'name1', 'type1'),
             new PairFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testNameField',
                 'datastore1.testDatabase1.testTable1.testTypeField', 'contains', 'not contains', 'name2', 'type2')
-        ], dataset]);
+        ], dataset, [], false]);
         expect(spyOnDeleteFilters.calls.count()).toEqual(0);
     });
 
