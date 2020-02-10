@@ -1,6 +1,6 @@
 {
   "name": "@caci-critical-insight-solutions/nucleus-core",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "author": "Next Century, a subsidiary of CACI (https://nextcentury.com)",
   "bugs": {
     "url": "https://github.com/NextCenturyCorporation/nucleus/issues"
@@ -31,7 +31,7 @@
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
-    "neon-framework": "git+https://github.com/NextCenturyCorporation/neon-framework.git#1.0.3",
+    "neon-framework": "git+https://github.com/NextCenturyCorporation/neon-framework.git",
     "npx": "^10.2.0"
   },
   "devDependencies": {
