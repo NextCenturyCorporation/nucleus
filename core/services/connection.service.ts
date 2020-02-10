@@ -21,6 +21,17 @@ export interface RequestWrapper {
     fail(callback: Function): void;
 }
 
+// TODO Generalize this.
+export interface MutateObject {
+    datastoreHost: string;
+    datastoreType: string;
+    databaseName: string;
+    tableName: string;
+    idFieldName: string;
+    dataId: any;
+    fieldsWithValues: Record<string, any>;
+}
+
 export interface Connection<T extends {} = {}> {
 
     /**
@@ -129,6 +140,28 @@ export interface Connection<T extends {} = {}> {
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
     ): RequestWrapper;
+
+    /**
+     * Runs an import query with the given payload.
+     *
+     * @arg {ImportQuery} importObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @abstract
+     */
+    runImportQuery(importQuery: ImportQuery, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+
+    /**
+     * Runs a mutate query with the given payload.
+     *
+     * @arg {MutateObject} mutateObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @abstract
+     */
+    runMutate(mutateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
 
     /**
      * Runs a search query with the given payload.
@@ -299,8 +332,7 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
     /**
      * Runs an import query with the given data and format.
      *
-     * @arg {any} exportData
-     * @arg {any} exportFormat
+     * @arg {ImportQuery} importQuery
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {RequestWrapper}
@@ -312,6 +344,23 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
         onError?: (response: any) => void
     ): RequestWrapper {
         return this.connection.executeImport(importQuery, onSuccess, onError);
+    }
+
+    /**
+     * Runs a mutate query with the given data and format.
+     *
+     * @arg {MutateObject} MutateObject,
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {RequestWrapper}
+     * @override
+     */
+    public runMutate(
+        mutateObject: MutateObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): RequestWrapper {
+        return this.connection.executeMutateById(mutateObject, onSuccess, onError);
     }
 
     /**
