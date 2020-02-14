@@ -311,22 +311,14 @@ export class ConfigOptionNumber extends ConfigOption {
     }
 
     get intermediateValue() {
-        if (this._intermediateValue === undefined) {
-            try {
-                const value = this.valueCurrent || this.valueDefault;
-                this._intermediateValue = _.isNumber(_.toNumber(value)) ? value : null;
-            } catch {
-                console.error('ERROR WidgetNumberOption: get intermediateValue() failed');
-            }
-            this._intermediateValue = this._intermediateValue;
-        }
-        return this._intermediateValue;
+        return this._intermediateValue || this.valueCurrent || '';
     }
 
     set intermediateValue(value) {
         this._intermediateValue = value;
         try {
-            this.valueCurrent = !_.isNaN(Number(value)) ? this._intermediateValue : null;
+            const valueNumerical = _.toNumber(value);
+            this.valueCurrent = _.isNumber(valueNumerical) ? valueNumerical : null;
         } catch {
             console.error('ERROR WidgetNumberOption: set intermediateValue() failed');
         }
