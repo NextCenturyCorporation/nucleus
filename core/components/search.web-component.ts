@@ -37,7 +37,7 @@ interface AggregationData {
     fieldKey: FieldKey;
     group: string;
     label: string;
-    operation: AggregationType;
+    operation: string;
 }
 
 interface GroupData {
@@ -268,8 +268,11 @@ export class NucleusSearch extends NucleusElement {
         }
 
         for (const aggregation of aggregations) {
-            if (aggregation.fieldKey && aggregation.fieldKey.field) {
-                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.label, aggregation.operation);
+            if (aggregation.operation === 'total') {
+                this._searchService.withAggregationByTotalCount(searchObject, aggregation.label);
+            } else if (aggregation.fieldKey && aggregation.fieldKey.field) {
+                this._searchService.withAggregation(searchObject, aggregation.fieldKey, aggregation.label,
+                    (aggregation.operation as AggregationType || AggregationType.COUNT));
             } else if (aggregation.group) {
                 this._searchService.withAggregationByGroupCount(searchObject, aggregation.group, aggregation.label);
             }
@@ -326,8 +329,8 @@ export class NucleusSearch extends NucleusElement {
             const fieldKey: FieldKey = DatasetUtil.deconstructTableOrFieldKey(aggregationElement.getAttribute('aggregation-field-key'));
             const group = aggregationElement.getAttribute('aggregation-group');
             const label = aggregationElement.getAttribute('aggregation-label');
-            const operation = (aggregationElement.getAttribute('aggregation-operation') || AggregationType.COUNT) as AggregationType;
-            if ((fieldKey || group) && label) {
+            const operation = aggregationElement.getAttribute('aggregation-operation');
+            if ((fieldKey || group || operation === 'total') && label) {
                 aggregations.push({
                     fieldKey,
                     group,
