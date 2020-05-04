@@ -424,7 +424,15 @@ export class NucleusSearch extends NucleusElement {
                 }, {}),
                 fields: Object.keys(result).reduce((collection, key) => {
                     if (aggregations.every((aggregation) => aggregation.label !== key)) {
-                        collection[key] = result[key];
+                        let lastCollection = collection;
+                        let lastKey = key;
+                        while (lastKey.indexOf('.') >= 0) {
+                            const parentKey = lastKey.substring(0, lastKey.indexOf('.'));
+                            lastCollection[parentKey] = lastCollection[parentKey] || {};
+                            lastCollection = lastCollection[parentKey];
+                            lastKey = lastKey.substring(lastKey.indexOf('.') + 1);
+                        }
+                        lastCollection[lastKey]= result[key];
                     }
                     return collection;
                 }, {}),
