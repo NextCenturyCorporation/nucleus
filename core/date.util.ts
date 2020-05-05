@@ -49,7 +49,7 @@ export class DateUtil {
             return moment.parseZone(input).local().format(outputFormat as string);
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).format(outputFormat as string);
+        return DateUtil.fromUnknownInputToMoment(input).format(outputFormat as string);
     }
 
     /**
@@ -60,7 +60,7 @@ export class DateUtil {
             return moment.parseZone(input).local().toDate();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).toDate();
+        return DateUtil.fromUnknownInputToMoment(input).toDate();
     }
 
     /**
@@ -71,7 +71,7 @@ export class DateUtil {
             return moment.parseZone(input).local().date();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).date();
+        return DateUtil.fromUnknownInputToMoment(input).date();
     }
 
     /**
@@ -82,7 +82,7 @@ export class DateUtil {
             return moment.parseZone(input).local().hour();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).hour();
+        return DateUtil.fromUnknownInputToMoment(input).hour();
     }
 
     /**
@@ -93,7 +93,7 @@ export class DateUtil {
             return moment.parseZone(input).local().minute();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).minute();
+        return DateUtil.fromUnknownInputToMoment(input).minute();
     }
 
     /**
@@ -104,7 +104,7 @@ export class DateUtil {
             return moment.parseZone(input).local().month();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).month();
+        return DateUtil.fromUnknownInputToMoment(input).month();
     }
 
     /**
@@ -115,7 +115,7 @@ export class DateUtil {
             return moment.parseZone(input).local().second();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).second();
+        return DateUtil.fromUnknownInputToMoment(input).second();
     }
 
     /**
@@ -126,7 +126,7 @@ export class DateUtil {
             return moment.parseZone(input).local().valueOf();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).valueOf();
+        return DateUtil.fromUnknownInputToMoment(input).valueOf();
     }
 
     /**
@@ -137,7 +137,17 @@ export class DateUtil {
             return moment.parseZone(input).local().year();
         }
 
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).year();
+        return DateUtil.fromUnknownInputToMoment(input).year();
+    }
+
+    /**
+     * Returns the moment object for the given input.
+     */
+    static fromUnknownInputToMoment(input: any): any {
+        if (isNaN(input)) {
+            return moment.utc(input, DateUtil.STANDARD_FORMAT as string);
+        }
+        return moment.utc(input);
     }
 
     /**
@@ -151,10 +161,10 @@ export class DateUtil {
             return moment.parseZone(input).local().fromNow();
         }
 
-        if (moment.utc(input, DateUtil.STANDARD_FORMAT as string).diff(Date.now(), 'd', true) < -3) {
+        if (DateUtil.fromUnknownInputToMoment(input).diff(Date.now(), 'd', true) < -3) {
             return DateUtil.fromDateToString(input, outputFormat);
         }
-        return moment.utc(input, DateUtil.STANDARD_FORMAT as string).fromNow();
+        return DateUtil.fromUnknownInputToMoment(input).fromNow();
     }
 
     /**
