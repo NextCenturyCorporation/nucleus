@@ -94,6 +94,16 @@ export class NucleusTextCloud extends NucleusElement {
         visElement.redraw();
     }
 
+    /**
+     * Runs the text cloud search query.
+     */
+    public runQuery(): void {
+        const searchElement: NucleusSearch = this._containerElement.querySelector('nucleus-search');
+        if (searchElement) {
+            searchElement.runQuery();
+        }
+    }
+
     private _createAggregationTitle(attributes: Record<string, any>): string {
         if (attributes['aggregation-title']) {
             return attributes['aggregation-title'];
