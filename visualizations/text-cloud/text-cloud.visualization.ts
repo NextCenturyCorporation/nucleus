@@ -135,7 +135,7 @@ export class NucleusTextCloudVisualization extends NucleusElement {
                 selected: this._filtered.indexOf(text) >= 0,
                 value: aggregationField ? CoreUtil.deepFind(item, aggregationField) : 1
             };
-        }).filter((item) => !!item.key);
+        }).filter((item) => typeof item.key !== 'undefined');
 
         this.redraw();
 
