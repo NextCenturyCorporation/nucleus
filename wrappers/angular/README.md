@@ -16,7 +16,7 @@ Then, from the `wrappers/angular` folder, run `ng build`.
 
 ## Publish
 
-First, build the project.  Then, move to the build directory:
+First, update the package.json file version.  Then, build the project.  Next, move to the build directory:
 
 ```
 cd dist/nucleus-wrappers-angular/

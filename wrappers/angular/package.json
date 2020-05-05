@@ -1,6 +1,6 @@
 {
   "name": "@caci-critical-insight-solutions/nucleus-wrappers-angular",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Next Century, a subsidiary of CACI (https://nextcentury.com)",
   "bugs": {
     "url": "https://github.com/NextCenturyCorporation/nucleus/issues"
@@ -38,8 +38,8 @@
     "@angular/platform-browser": "~8.2.13",
     "@angular/platform-browser-dynamic": "~8.2.13",
     "@angular/router": "~8.2.13",
-    "@caci-critical-insight-solutions/nucleus-core": "~0.0.7",
-    "@caci-critical-insight-solutions/nucleus-visualizations": "~0.0.2",
+    "@caci-critical-insight-solutions/nucleus-core": "~0.0.17",
+    "@caci-critical-insight-solutions/nucleus-visualizations": "~0.0.3",
     "core-js": "~2.6.8",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",

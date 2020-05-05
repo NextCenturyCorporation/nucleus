@@ -89,6 +89,14 @@ export class NucleusTextCloudAngularComponent extends NucleusCommonAngularCompon
     }
 
     /**
+     * Runs the visualization's search query.
+     */
+    public runQuery(): void {
+        const visElement = this.elementRef.nativeElement.querySelector('#' + this.id + '-angular') as NucleusTextCloud;
+        visElement.runQuery();
+    }
+
+    /**
      * @override
      */
     protected retrieveWrappedElementObservedAttributes(): string[] {
