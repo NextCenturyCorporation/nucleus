@@ -141,6 +141,7 @@ export class NucleusTextCloud extends NucleusElement {
         attributes['aggregation-group'] = undefined;
         attributes['aggregation-label'] = '_aggregation';
         attributes['aggregation-title'] = this._createAggregationTitle(attributes);
+        attributes['data-limit'] = attributes['data-limit'];
         attributes['filter-type'] = 'list';
         attributes['group-field-key'] = attributes['text-field-key'];
         attributes['group-label'] = undefined;

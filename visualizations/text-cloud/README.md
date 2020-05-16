@@ -56,6 +56,10 @@ A string [field key](../../README.md#field-key) on which to aggregate.  Required
 
 A string [aggregation operation](../../README.md#aggregation-operation).  Default `"count"`
 
+**data-limit**
+
+A number corresponding to the visualization display data limit.
+
 **enable-hide-if-unfiltered**
 
 If truthy, hides the visualization unless its dataset is filtered.  Default `false`
@@ -74,7 +78,7 @@ A string [filter operator](../../README.md#filter-operator).
 
 **search-limit**
 
-A number corresponding to the search limit.  Default `10`
+A number corresponding to the search limit.  Default `10000`
 
 **search-page**
 

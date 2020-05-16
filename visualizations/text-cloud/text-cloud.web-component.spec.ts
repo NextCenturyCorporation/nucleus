@@ -45,6 +45,7 @@ describe('Text Cloud Web Component', () => {
         expect(textCloudElement.getAttribute('text-field')).toEqual('fields.testTextField');
 
         let searchComponent = textCloudComponent.shadowRoot.querySelector('nucleus-search');
+        expect(searchComponent.getAttribute('data-limit')).toEqual(null);
         expect(searchComponent.getAttribute('enable-hide-if-unfiltered')).toEqual(null);
         expect(searchComponent.getAttribute('enable-ignore-self-filter')).toEqual(null);
         expect(searchComponent.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testTextField');
@@ -85,6 +86,7 @@ describe('Text Cloud Web Component', () => {
         textCloudComponent.setAttribute('aggregation-label', 'test');
         textCloudComponent.setAttribute('aggregation-title', 'Label');
         textCloudComponent.setAttribute('aggregation-operation', 'sum');
+        textCloudComponent.setAttribute('data-limit', '50');
         textCloudComponent.setAttribute('enable-hide-if-unfiltered', 'true');
         textCloudComponent.setAttribute('enable-ignore-self-filter', 'true');
         textCloudComponent.setAttribute('enable-show-values', 'true');
@@ -116,6 +118,7 @@ describe('Text Cloud Web Component', () => {
         expect(textCloudElement.getAttribute('text-field')).toEqual('fields.testTextField');
 
         let searchComponent = textCloudComponent.shadowRoot.querySelector('nucleus-search');
+        expect(searchComponent.getAttribute('data-limit')).toEqual('50');
         expect(searchComponent.getAttribute('enable-hide-if-unfiltered')).toEqual('true');
         expect(searchComponent.getAttribute('enable-ignore-self-filter')).toEqual('true');
         expect(searchComponent.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testTextField');

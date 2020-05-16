@@ -1,6 +1,6 @@
 {
   "name": "@caci-critical-insight-solutions/nucleus-visualizations",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Next Century, a subsidiary of CACI (https://nextcentury.com)",
   "bugs": {
     "url": "https://github.com/NextCenturyCorporation/nucleus/issues"
@@ -27,7 +27,7 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@caci-critical-insight-solutions/nucleus-core": "~0.0.7",
+    "@caci-critical-insight-solutions/nucleus-core": "~0.0.18",
     "core-js": "~2.6.8",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
