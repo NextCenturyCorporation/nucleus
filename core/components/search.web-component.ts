@@ -73,6 +73,7 @@ export class NucleusSearch extends NucleusElement {
 
     static get optionalAttributes(): string[] {
         return [
+            'data-limit',
             'enable-hide-if-unfiltered',
             'enable-ignore-self-filter',
             'search-limit',
@@ -198,11 +199,11 @@ export class NucleusSearch extends NucleusElement {
         let searchObject: SearchObject = this._buildQuery();
 
         if (searchObject) {
-            const limit = Number(this.getAttribute('search-limit') || NucleusSearch.DEFAULT_LIMIT);
-            this._searchService.withLimit(searchObject, limit);
+            const searchLimit = Number(this.getAttribute('search-limit') || NucleusSearch.DEFAULT_LIMIT);
+            this._searchService.withLimit(searchObject, searchLimit);
 
             const page = Number(this.getAttribute('search-page') || 1);
-            this._searchService.withOffset(searchObject, (page - 1) * limit);
+            this._searchService.withOffset(searchObject, (page - 1) * searchLimit);
 
             const searchFilters: AbstractFilter[] = this._retrieveSearchFilters();
             this._startQuery(searchObject, !!searchFilters.length);
@@ -416,7 +417,8 @@ export class NucleusSearch extends NucleusElement {
         const filterValuesList: FilterValues[] = this._retrieveSharedFilters().reduce((list, filter) =>
             list.concat(filter.retrieveValues()), []);
 
-        const data = queryResults.data.map((result) => {
+        const dataLimit = Number(this.getAttribute('data-limit') || queryResults.data.length);
+        const data = queryResults.data.slice(0, dataLimit).map((result) => {
             let item = {
                 aggregations: aggregations.reduce((collection, aggregation) => {
                     collection[aggregation.label] = result[aggregation.label];

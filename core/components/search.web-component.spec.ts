@@ -90,6 +90,7 @@ describe('Search Component static createElement should return', () => {
         expect(actual1.getAttribute('search-field-keys')).toEqual('datastore1.testDatabase1.testTable1.testNameField');
 
         const actual2 = NucleusSearch.createElement('testId', {
+            'data-limit': 1000,
             'enable-hide-if-unfiltered': true,
             'enable-ignore-self-filter': true,
             'search-field-keys': 'datastore1.testDatabase1.testTable1.testNameField',
@@ -102,6 +103,7 @@ describe('Search Component static createElement should return', () => {
             'vis-element-id': 'testVisElementId'
         });
         expect(actual2).not.toEqual(null);
+        expect(actual2.getAttribute('data-limit')).toEqual('1000');
         expect(actual2.getAttribute('enable-hide-if-unfiltered')).toEqual('true');
         expect(actual2.getAttribute('enable-ignore-self-filter')).toEqual('true');
         expect(actual2.getAttribute('id')).toEqual('testId');
@@ -1889,32 +1891,35 @@ describe('Search Component', () => {
         searchComponent.setAttribute('search-field-keys', 'datastore1.testDatabase1.testTable1.testTypeField');
         expect(searchService.searches).toEqual(3);
 
-        searchComponent.setAttribute('enable-ignore-self-filter', 'true');
+        searchComponent.setAttribute('data-limit', '10000');
         expect(searchService.searches).toEqual(4);
 
-        searchComponent.removeAttribute('enable-ignore-self-filter');
+        searchComponent.setAttribute('enable-ignore-self-filter', 'true');
         expect(searchService.searches).toEqual(5);
 
-        searchComponent.setAttribute('search-limit', '10000');
+        searchComponent.removeAttribute('enable-ignore-self-filter');
         expect(searchService.searches).toEqual(6);
 
-        searchComponent.setAttribute('search-page', '2');
+        searchComponent.setAttribute('search-limit', '10000');
         expect(searchService.searches).toEqual(7);
 
-        searchComponent.setAttribute('sort-aggregation', 'testAgg');
+        searchComponent.setAttribute('search-page', '2');
         expect(searchService.searches).toEqual(8);
 
-        searchComponent.setAttribute('sort-field-key', 'datastore1.testDatabase1.testTable1.testNameField');
+        searchComponent.setAttribute('sort-aggregation', 'testAgg');
         expect(searchService.searches).toEqual(9);
 
-        searchComponent.setAttribute('sort-order', 'descending');
+        searchComponent.setAttribute('sort-field-key', 'datastore1.testDatabase1.testTable1.testNameField');
         expect(searchService.searches).toEqual(10);
 
-        searchComponent.setAttribute('vis-draw-function', 'drawData');
+        searchComponent.setAttribute('sort-order', 'descending');
         expect(searchService.searches).toEqual(11);
 
-        searchComponent.setAttribute('vis-element-id', 'testVisElementId');
+        searchComponent.setAttribute('vis-draw-function', 'drawData');
         expect(searchService.searches).toEqual(12);
+
+        searchComponent.setAttribute('vis-element-id', 'testVisElementId');
+        expect(searchService.searches).toEqual(13);
     });
 
     it('notifying filterService listeners should build and run query with filters', () => {

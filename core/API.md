@@ -192,6 +192,10 @@ The ID attribute of the visualization element corresponding to this Search Compo
 
 ### Search Component Optional Properties
 
+**data-limit**
+
+A number corresponding to the visualization display data limit.
+
 **enable-hide-if-unfiltered**
 
 If truthy, hides the visualization unless its dataset is filtered.  Default `false`
