@@ -16,7 +16,6 @@
 import { AbstractFilter, BoundsFilter, CompoundFilter, DomainFilter, ListFilter, PairFilter } from '../models/filters';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
 import { DatasetUtil, FieldKey } from '../models/dataset';
-import { RequestWrapper } from './connection.service';
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 export interface FilterClause { }
@@ -52,7 +51,7 @@ export abstract class AbstractSearchService {
      *
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
-     * @return {RequestWrapper}
+     * @return {boolean}
      * @abstract
      */
     public abstract canRunSearch(datastoreType: string, datastoreHost: string): boolean;
@@ -133,10 +132,18 @@ export abstract class AbstractSearchService {
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
      * @arg {SearchObject} queryPayload
-     * @return {RequestWrapper}
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    public abstract runSearch(datastoreType: string, datastoreHost: string, search: SearchObject): RequestWrapper;
+    public abstract runSearch(
+        datastoreType: string,
+        datastoreHost: string,
+        searchObject: SearchObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest;
 
     /**
      * Transforms the values in the filter clauses in the given search object using the given map of keys-to-values-to-labels.

@@ -261,7 +261,7 @@ describe('Service: Search', () => {
     });
 
     it('canRunSearch does return true with active connection', () => {
-        let spy = spyOn(service['connectionService'], 'connect').and.returnValue(new CoreConnection(null));
+        let spy = spyOn(service['connectionService'], 'connect').and.returnValue(new CoreConnection('server', 'type', 'host'));
 
         expect(service.canRunSearch('type', 'host')).toEqual(true);
 
@@ -271,7 +271,7 @@ describe('Service: Search', () => {
 
     it('runSearch does call expected function', () => {
         let searchObject = new CoreSearch('testDatabase1', 'testTable1');
-        let connection = new CoreConnection(null);
+        let connection = new CoreConnection('testServer', 'testDatabase1', 'testTable1');
         let called = 0;
         spyOn(connection, 'runSearch').and.callFake((queryInput, __options) => {
             expect(queryInput).toEqual(searchObject);
@@ -280,7 +280,7 @@ describe('Service: Search', () => {
         });
         let spy = spyOn(service['connectionService'], 'connect').and.returnValue(connection);
 
-        service.runSearch('type', 'host', searchObject);
+        service.runSearch('type', 'host', searchObject, null, null);
 
         expect(spy.calls.count()).toEqual(1);
         expect(spy.calls.argsFor(0)).toEqual(['type', 'host']);

@@ -29,7 +29,6 @@ import { CoreUtil } from '../core.util';
 import { Dataset, DatasetFieldKey, DatasetUtil, FieldKey } from '../models/dataset';
 import { FilterService } from '../services/filter.service';
 import { NucleusElement } from './element.web-component';
-import { RequestWrapper } from '../services/connection.service';
 
 import * as _ from 'lodash';
 
@@ -63,7 +62,7 @@ export class NucleusSearch extends NucleusElement {
     private _idsToFilters: Map<string, AbstractFilter[]> = new Map<string, AbstractFilter[]>();
     private _idsToFilterDesigns: Map<string, AbstractFilterDesign[]> = new Map<string, AbstractFilterDesign[]>();
     private _previousFilters: AbstractFilter[] = [];
-    private _runningQuery: RequestWrapper;
+    private _runningQuery: XMLHttpRequest;
     private _searchService: AbstractSearchService;
     private _visInputElement: any;
 
@@ -734,13 +733,8 @@ export class NucleusSearch extends NucleusElement {
 
         this._searchService.transformFilterClauseValues(searchObject, labels);
 
-        this._runningQuery = this._searchService.runSearch(dataType, dataHost, searchObject);
-
-        this._runningQuery.always(() => {
+        const onError = (response) => {
             this._runningQuery = undefined;
-        });
-
-        this._runningQuery.fail((response) => {
             if (response.statusText === 'abort') {
                 this.dispatchEvent(new CustomEvent('searchCanceled', {
                     bubbles: true,
@@ -755,11 +749,14 @@ export class NucleusSearch extends NucleusElement {
                     }
                 }));
             }
-        });
+        };
 
-        this._runningQuery.done((response) => {
+        const onSuccess = (response) => {
+            this._runningQuery = undefined;
             this._handleQuerySuccess(this._searchService.transformSearchResultValues(response, labels), null);
-        });
+        };
+
+        this._runningQuery = this._searchService.runSearch(dataType, dataHost, searchObject, onSuccess, onError);
     }
 }
 

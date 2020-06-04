@@ -12,8 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { query } from 'neon-framework';
-
 import { ConnectionService, CoreConnection } from './connection.service';
 
 describe('ConnectionService', () => {
@@ -24,29 +22,15 @@ describe('ConnectionService', () => {
     });
 
     it('createConnection does return a new connection', () => {
-        let connection = new query.Connection();
-        spyOn(service, 'neonConnection').and.returnValue(connection);
-        let spy = spyOn(connection, 'connect');
+        let connection = service.connect('elasticsearch', 'localhost');
 
-        let output = service.connect('elasticsearchrest', 'localhost');
-
-        expect(output.connection).toEqual(connection);
-        expect(spy.calls.count()).toEqual(1);
-        expect(spy.calls.argsFor(0)).toEqual(['elasticsearchrest', 'localhost', true]);
+        expect(connection instanceof CoreConnection).toEqual(true);
     });
 
     it('createConnection does return an existing connection', () => {
-        let existingConnection = new CoreConnection(new query.Connection());
-        service['connections'].set('elasticsearchrest', new Map<string, any>());
-        service['connections'].get('elasticsearchrest').set('localhost', existingConnection);
+        let connection1 = service.connect('elasticsearch', 'localhost');
+        let connection2 = service.connect('elasticsearch', 'localhost');
 
-        let connection = new query.Connection();
-        spyOn(service, 'neonConnection').and.returnValue(connection);
-        let spy = spyOn(connection, 'connect');
-
-        let output = service.connect('elasticsearchrest', 'localhost');
-
-        expect(output).toEqual(existingConnection);
-        expect(spy.calls.count()).toEqual(0);
+        expect(connection1).toEqual(connection2);
     });
 });

@@ -12,16 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { query, ImportQuery } from 'neon-framework';
 
-export interface RequestWrapper {
-    abort(): void;
-    always(callback: Function): void;
-    done(callback: Function): void;
-    fail(callback: Function): void;
-}
+const runRequest = (
+    type: string,
+    endpoint: string, 
+    body: any,
+    onSuccess: (response: any) => void,
+    onError?: (response: any) => void
+): XMLHttpRequest => {
+    var xhr = new XMLHttpRequest();
+    xhr.open(type, endpoint, true);
+    xhr.responseType = 'json';
+    if (type === 'POST') {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+    }
+    if (onSuccess) {
+        xhr.onload = () => {
+            onSuccess(xhr.response);
+        };
+    }
+    if (onError) {
+        xhr.onerror = () => {
+            onError(xhr.response);
+        };
+    }
+    xhr.send(body);
+    return xhr;
+};
 
-// TODO Generalize this.
 export interface MutateObject {
     datastoreHost: string;
     datastoreType: string;
@@ -33,27 +51,26 @@ export interface MutateObject {
 }
 
 export interface Connection<T extends {} = {}> {
-
     /**
      * Deletes the saved dashboard state with the given name.
      *
      * @arg {string} stateName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    deleteState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    deleteState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Returns the accessible database names.
      *
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Returns the names of the fields in the given database/table.
@@ -62,11 +79,11 @@ export interface Connection<T extends {} = {}> {
      * @arg {string} tableName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
     getFieldNames(databaseName: string, tableName: string, onSuccess: (response: any) => void,
-        onError?: (response: any) => void): RequestWrapper;
+        onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Returns the types of the fields in the given database/table.
@@ -75,21 +92,11 @@ export interface Connection<T extends {} = {}> {
      * @arg {string} tableName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
     getFieldTypes(databaseName: string, tableName: string, onSuccess: (response: any) => void,
-        onError?: (response: any) => void): RequestWrapper;
-
-    /**
-     * Returns the saved dashboard states.
-     *
-     * @arg {(response: any) => void} onSuccess
-     * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
-     * @abstract
-     */
-    listStates(limit: number, offset: number, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+        onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Returns the table names in the given database.
@@ -97,10 +104,10 @@ export interface Connection<T extends {} = {}> {
      * @arg {string} databaseName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Returns the table and field names in the given database.
@@ -108,10 +115,20 @@ export interface Connection<T extends {} = {}> {
      * @arg {string} databaseName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    getTableNamesAndFieldNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    getTableNamesAndFieldNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+
+    /**
+     * Returns the saved dashboard states.
+     *
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @abstract
+     */
+    listStates(limit: number, offset: number, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Loads the saved state with the given name.
@@ -119,10 +136,10 @@ export interface Connection<T extends {} = {}> {
      * @arg {string} stateName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    loadState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    loadState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Runs an export query with the given data and format.
@@ -131,7 +148,7 @@ export interface Connection<T extends {} = {}> {
      * @arg {any} exportFormat
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
     runExportQuery(
@@ -139,18 +156,22 @@ export interface Connection<T extends {} = {}> {
         exportFormat: any,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper;
+    ): XMLHttpRequest;
 
     /**
      * Runs an import query with the given payload.
      *
-     * @arg {ImportQuery} importObject
+     * @arg {{ hostName: string, dataStoreType: string, database: string, table: string, source: string[], isNew: boolean }} importData
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    runImportQuery(importQuery: ImportQuery, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    runImportQuery(
+        importData: { hostName: string, dataStoreType: string, database: string, table: string, source: string[], isNew: boolean },
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest;
 
     /**
      * Runs a mutate query with the given payload.
@@ -158,10 +179,10 @@ export interface Connection<T extends {} = {}> {
      * @arg {MutateObject} mutateObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    runMutate(mutateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    runMutate(mutateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Runs a search query with the given payload.
@@ -169,25 +190,26 @@ export interface Connection<T extends {} = {}> {
      * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    runSearch(searchObject: T, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    runSearch(searchObject: T, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Saves (or overwrites) a state with the given data.
      *
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @abstract
      */
-    saveState(stateData: any, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper;
+    saveState(stateData: any, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 }
 
 // Internal class that wraps AbstractSearchService.Connection.  Exported to use in the unit tests.
 export class CoreConnection<T extends {} = {}> implements Connection<T> {
-    constructor(public connection: query.Connection) { }
+
+    constructor(private dataServerHost: string, private datastoreType: string, private datastoreHost: string) { }
 
     /**
      * Deletes the saved dashboard state with the given name.
@@ -195,11 +217,11 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} stateName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
-    public deleteState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
-        return this.connection.deleteState(stateName, onSuccess, onError);
+    public deleteState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest {
+        return runRequest('DELETE', this.dataServerHost + 'stateservice/deleteState/' + stateName, null, onSuccess, onError);
     }
 
     /**
@@ -207,11 +229,13 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      *
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
-    public getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
-        return this.connection.getDatabaseNames(onSuccess, onError);
+    public getDatabaseNames(onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/databasenames/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType);
+        return runRequest('GET', endpoint, null, onSuccess, onError);
     }
 
     /**
@@ -221,7 +245,7 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} tableName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public getFieldNames(
@@ -229,8 +253,10 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
         tableName: string,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.getFieldNames(databaseName, tableName, onSuccess, onError);
+    ): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/fields/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType) + '/' + encodeURIComponent(databaseName) + '/' + encodeURIComponent(tableName);
+        return runRequest('GET', endpoint, null, onSuccess, onError);
     }
 
     /**
@@ -240,7 +266,7 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} tableName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public getFieldTypes(
@@ -248,21 +274,10 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
         tableName: string,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.getFieldTypes(databaseName, tableName, onSuccess, onError);
-    }
-
-    /**
-     * Returns the saved dashboard states.
-     *
-     * @arg {(response: any) => void} onSuccess
-     * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
-     * @override
-     */
-    public listStates(limit: number, offset: number, onSuccess: (response: any) => void,
-        onError?: (response: any) => void): RequestWrapper {
-        return this.connection.listStates(limit, offset, onSuccess, onError);
+    ): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/fields/types/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType) + '/' + encodeURIComponent(databaseName) + '/' + encodeURIComponent(tableName);
+        return runRequest('GET', endpoint, null, onSuccess, onError);
     }
 
     /**
@@ -271,11 +286,13 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} databaseName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
-    public getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
-        return this.connection.getTableNames(databaseName, onSuccess, onError);
+    public getTableNames(databaseName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/tablenames/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType) + '/' + encodeURIComponent(databaseName);
+        return runRequest('GET', endpoint, null, onSuccess, onError);
     }
 
     /**
@@ -284,15 +301,37 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} databaseName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public getTableNamesAndFieldNames(
         databaseName: string,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.getTableNamesAndFieldNames(databaseName, onSuccess, onError);
+    ): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/tablesandfields/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType) + '/' + encodeURIComponent(databaseName);
+        return runRequest('GET', endpoint, null, onSuccess, onError);
+    }
+
+    /**
+     * Returns the saved dashboard states.
+     *
+     * @arg {number} limit
+     * @arg {number} offset
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @override
+     */
+    public listStates(
+        limit: number,
+        offset: number,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return runRequest('GET', this.dataServerHost + 'stateservice/liststates?limit=' + limit + '&offset=' + offset, null, onSuccess,
+            onError);
     }
 
     /**
@@ -301,13 +340,11 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {string} stateName
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
-    public loadState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
-        return this.connection.loadState({
-            stateName: stateName
-        }, onSuccess, onError);
+    public loadState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest {
+        return runRequest('GET', this.dataServerHost + 'stateservice/loadstate?stateName=' + stateName, null, onSuccess, onError);
     }
 
     /**
@@ -317,7 +354,7 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {any} exportFormat
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public runExportQuery(
@@ -325,25 +362,25 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
         exportFormat: any,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.executeExport(exportData, onSuccess, onError, exportFormat);
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'exportservice/' + exportFormat, exportData, onSuccess, onError);
     }
 
     /**
      * Runs an import query with the given data and format.
      *
-     * @arg {ImportQuery} importQuery
+     * @arg {{ hostName: string, dataStoreType: string, database: string, table: string, source: string[], isNew: boolean }} importData
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public runImportQuery(
-        importQuery: ImportQuery,
+        importData: { hostName: string, dataStoreType: string, database: string, table: string, source: string[], isNew: boolean },
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.executeImport(importQuery, onSuccess, onError);
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'importservice/', importData, onSuccess, onError);
     }
 
     /**
@@ -352,15 +389,15 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {MutateObject} MutateObject,
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public runMutate(
         mutateObject: MutateObject,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.executeMutateById(mutateObject, onSuccess, onError);
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'mutateservice/byid', mutateObject, onSuccess, onError);
     }
 
     /**
@@ -369,55 +406,56 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
      * @arg {T} searchObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public runSearch(
         searchObject: T,
-        __onSuccess: (response: any) => void,
-        __onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.executeQuery(searchObject, null);
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        const endpoint = this.dataServerHost + 'queryservice/query/' + encodeURIComponent(this.datastoreHost) + '/' +
+            encodeURIComponent(this.datastoreType);
+        return runRequest('POST', endpoint, searchObject, onSuccess, onError);
     }
 
     /**
      * Saves (or overwrites) a state with the given data.
      *
+     * @arg {any} stateData
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
-     * @return {RequestWrapper}
+     * @return {XMLHttpRequest}
      * @override
      */
     public saveState(
         stateData: any,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
-    ): RequestWrapper {
-        return this.connection.saveState(stateData, onSuccess, onError);
+    ): XMLHttpRequest {
+        const parameters = (stateData.stateName ? ('?stateName=' + stateData.stateName) : '');
+        return runRequest('POST', this.dataServerHost + 'stateservice/savestate' + parameters, stateData, onSuccess, onError);
     }
 }
 
 export class ConnectionService {
     // Maps the datastore types to datastore hosts to connections.
     private connections = new Map<string, Map<string, CoreConnection<any>>>();
+    private dataServerHost: string = 'http://localhost:8080/neon/services/';
+    private dataUpdateSource;
 
     /**
      * Returns an existing connection to the REST server using the given host and the given datastore type (like elasticsearch or sql), or
      * creates and returns a connection if none exists.
      */
-    public connect<T extends {} = {}>(
-        datastoreType: string,
-        datastoreHost: string,
-        startListener: boolean = false
-    ): CoreConnection<T> {
+    public connect<T extends {} = {}>(datastoreType: string, datastoreHost: string): CoreConnection<T> {
         if (datastoreType && datastoreHost) {
             if (!this.connections.has(datastoreType)) {
                 this.connections.set(datastoreType, new Map<string, CoreConnection<T>>());
             }
             if (!this.connections.get(datastoreType).has(datastoreHost)) {
-                let connection = this.neonConnection();
-                connection.connect(datastoreType, datastoreHost, !startListener);
-                this.connections.get(datastoreType).set(datastoreHost, new CoreConnection<T>(connection));
+                const connection: CoreConnection = new CoreConnection<T>(this.dataServerHost, datastoreType, datastoreHost);
+                this.connections.get(datastoreType).set(datastoreHost, connection);
             }
             return this.connections.get(datastoreType).get(datastoreHost);
         }
@@ -425,13 +463,26 @@ export class ConnectionService {
     }
 
     /**
-     * Returns the server status.
+     * Returns the NUCLEUS Data Server status.
      */
-    public getServerStatus(onSuccess: (response: any) => void, onError?: (response: any) => void): RequestWrapper {
-        return query.getServerStatus(onSuccess, onError);
+    public getServerStatus(onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest {
+        return runRequest('GET', this.dataServerHost + 'admin/status', null, onSuccess, onError);
     }
 
-    private neonConnection(): query.Connection {
-        return new query.Connection();
+    /**
+     * Registers a new HTML server-sent event (EventSource) listener for data updates from the NUCLEUS Data Server.
+     */
+    public listenOnDataUpdate(onUpdate: (response: any) => void, reset: boolean = false) {
+        if (!this.dataUpdateSource || reset) {
+            this.dataUpdateSource = new EventSource(this.dataServerHost + '/dataset/listen');
+            this.dataUpdateSource.addEventListener('message', onUpdate);
+        }
+    }
+
+    /**
+     * Sets the hostname for the NUCLEUS Data Server. Examples: http://localhost:8080/neon, ../neon
+     */
+    public setDataServerHost(dataServerHost: string): void {
+        this.dataServerHost = dataServerHost + '/services/';
     }
 }

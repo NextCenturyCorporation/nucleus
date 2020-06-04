@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RequestWrapper } from './connection.service';
 import { SearchService } from './search.service';
 import { SearchObject } from './abstract.search.service';
 
@@ -25,20 +24,13 @@ export class SearchServiceMock extends SearchService {
         return !!(datastoreType && datastoreHost);
     }
 
-    public runSearch(__datastoreType: string, __datastoreHost: string, __searchObject: SearchObject): RequestWrapper {
-        return {
-            always: () => {
-                // Do nothing.
-            },
-            abort: () => {
-                // Do nothing.
-            },
-            done: () => {
-                // Do nothing.
-            },
-            fail: () => {
-                // Do nothing.
-            }
-        };
+    public runSearch(
+        __datastoreType: string,
+        __datastoreHost: string,
+        __searchObject: SearchObject,
+        __onSuccess: (response: any) => void,
+        __onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return new XMLHttpRequest();
     }
 }

@@ -15,7 +15,7 @@
 
 import { AbstractSearchService, FilterClause, SearchObject } from './abstract.search.service';
 import { AggregationType, CompoundFilterType, SortOrder, TimeInterval } from '../models/config-option';
-import { ConnectionService, CoreConnection, RequestWrapper } from './connection.service';
+import { ConnectionService, CoreConnection } from './connection.service';
 import { FieldKey } from '../models/dataset';
 
 class CoreFieldClause {
@@ -185,7 +185,7 @@ export class SearchService extends AbstractSearchService {
      *
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
-     * @return {RequestWrapper}
+     * @return {boolean}
      * @override
      */
     public canRunSearch(datastoreType: string, datastoreHost: string): boolean {
@@ -211,12 +211,20 @@ export class SearchService extends AbstractSearchService {
      * @arg {string} datastoreType
      * @arg {string} datastoreHost
      * @arg {CoreSearch} searchObject
-     * @return {RequestWrapper}
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
      * @override
      */
-    public runSearch(datastoreType: string, datastoreHost: string, searchObject: CoreSearch): RequestWrapper {
+    public runSearch(
+        datastoreType: string,
+        datastoreHost: string,
+        searchObject: CoreSearch,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
         let connection: CoreConnection<CoreSearch> = this.connectionService.connect(datastoreType, datastoreHost);
-        return connection ? connection.runSearch(searchObject, null) : null;
+        return connection ? connection.runSearch(searchObject, onSuccess, onError) : null;
     }
 
     /**

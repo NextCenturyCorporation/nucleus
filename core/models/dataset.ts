@@ -17,9 +17,6 @@ import { Connection, ConnectionService } from '../services/connection.service';
 
 import * as _ from 'lodash';
 
-// Needed to call setNeonServerUrl
-import * as neon from 'neon-framework';
-
 type Primitive = number | string | Date | boolean | undefined;
 
 /**
@@ -160,7 +157,9 @@ export class Dataset {
         public tableKeyCollection: Record<string, string> = {},
         public fieldKeyCollection: Record<string, string> = {}
     ) {
-        this._handleDataServer(this._dataServer);
+        if (this._connectionService) {
+            this._connectionService.setDataServerHost(this._dataServer);
+        }
         this._datastores = this._updateDatastores(this._datastores, relations);
         this.tableKeyCollection = this.tableKeyCollection || {};
         this.fieldKeyCollection = this.fieldKeyCollection || {};
@@ -179,8 +178,10 @@ export class Dataset {
     }
 
     set dataServer(newDataServer: string) {
-        this._handleDataServer(newDataServer);
         this._dataServer = newDataServer;
+        if (this._connectionService) {
+            this._connectionService.setDataServerHost(this._dataServer);
+        }
     }
 
     /**
@@ -243,12 +244,6 @@ export class Dataset {
      */
     public setRelations(relations: (string|string[])[][]): void {
         this._relations = this._validateRelations(relations);
-    }
-
-    private _handleDataServer(dataServer: string): void {
-        if (dataServer) {
-            neon.setNeonServerUrl(dataServer);
-        }
     }
 
     private _updateDatastores(

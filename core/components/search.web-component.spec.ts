@@ -31,7 +31,6 @@ import { NucleusElement } from './element.web-component';
 import { NucleusGroup } from './group.web-component';
 import { NucleusJoin } from './join.web-component';
 import { NucleusSearch } from './search.web-component';
-import { RequestWrapper } from '../services/connection.service';
 import { SearchObject } from '../services/abstract.search.service';
 
 import { DATASET } from '../models/mock.dataset';
@@ -53,7 +52,13 @@ class SearchServiceMockSuccessfulSearch extends SearchServiceMock {
 
     public searches: number = 0;
 
-    public runSearch(datastoreType: string, datastoreHost: string, searchObject: SearchObject): RequestWrapper {
+    public runSearch(
+        datastoreType: string,
+        datastoreHost: string,
+        searchObject: SearchObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
         this.searches++;
         this.searchArguments = {
             datastoreHost,
@@ -61,22 +66,9 @@ class SearchServiceMockSuccessfulSearch extends SearchServiceMock {
             searchObject
         };
 
-        return {
-            always: () => {
-                // Do nothing.
-            },
-            abort: () => {
-                // Do nothing.
-            },
-            done: (callback) => {
-                if (callback) {
-                    callback({ data: this.responseData });
-                }
-            },
-            fail: () => {
-                // Do nothing.
-            }
-        };
+        onSuccess({ data: this.responseData });
+
+        return new XMLHttpRequest();
     }
 }
 
@@ -217,6 +209,7 @@ describe('Search Component init should', () => {
         visElement.setAttribute('id', 'testTargetElementId');
         (visElement as any).drawData = (data: any[]) => {
             expect(data).toEqual(expected);
+            expect(searchService.searches).toEqual(1);
             done();
         };
 
@@ -235,8 +228,6 @@ describe('Search Component init should', () => {
         searchComponent.setAttribute('vis-element-id', 'testTargetElementId');
         searchComponent.setAttribute('vis-draw-function', 'drawData');
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('build and run query', () => {
@@ -406,6 +397,66 @@ describe('Search Component init should', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(1);
+
+            expect(searchService.searches).toEqual(1);
+            expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
+                datastoreHost: dataset.datastores.datastore1.host,
+                datastoreType: dataset.datastores.datastore1.type,
+                searchObject: {
+                    selectClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        fieldClauses: [{
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        }, {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        }]
+                    },
+                    whereClause: {
+                        type: 'and',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
+                            operator: '!=',
+                            rhs: null
+                        }, {
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
+                            operator: '!=',
+                            rhs: null
+                        }]
+                    },
+                    aggregateClauses: [{
+                        type: 'field',
+                        fieldClause: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        label: '_counts',
+                        operation: 'count'
+                    }],
+                    groupByClauses: [],
+                    orderByClauses: [],
+                    limitClause: { limit: 10 },
+                    offsetClause: { offset: 0 },
+                    joinClauses: [],
+                    isDistinct: false
+                }
+            });
+
             done();
         });
 
@@ -422,65 +473,6 @@ describe('Search Component init should', () => {
         aggregation1.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation1);
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
-        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
-            datastoreHost: dataset.datastores.datastore1.host,
-            datastoreType: dataset.datastores.datastore1.type,
-            searchObject: {
-                selectClause: {
-                    database: 'testDatabase1',
-                    table: 'testTable1',
-                    fieldClauses: [{
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testNameField'
-                    }, {
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testTypeField'
-                    }]
-                },
-                whereClause: {
-                    type: 'and',
-                    whereClauses: [{
-                        type: 'where',
-                        lhs: {
-                            database: 'testDatabase1',
-                            table: 'testTable1',
-                            field: 'testNameField'
-                        },
-                        operator: '!=',
-                        rhs: null
-                    }, {
-                        type: 'where',
-                        lhs: {
-                            database: 'testDatabase1',
-                            table: 'testTable1',
-                            field: 'testTypeField'
-                        },
-                        operator: '!=',
-                        rhs: null
-                    }]
-                },
-                aggregateClauses: [{
-                    type: 'field',
-                    fieldClause: {
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testTypeField'
-                    },
-                    label: '_counts',
-                    operation: 'count'
-                }],
-                groupByClauses: [],
-                orderByClauses: [],
-                limitClause: { limit: 10 },
-                offsetClause: { offset: 0 },
-                joinClauses: [],
-                isDistinct: false
-            }
-        });
     });
 
     it('build and run query with multiple aggregations and set expected aggregations in response data', (done) => {
@@ -502,6 +494,70 @@ describe('Search Component init should', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(1);
+
+            expect(searchService.searches).toEqual(1);
+            expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
+                datastoreHost: dataset.datastores.datastore1.host,
+                datastoreType: dataset.datastores.datastore1.type,
+                searchObject: {
+                    selectClause: {
+                        database: 'testDatabase1',
+                        table: 'testTable1',
+                        fieldClauses: [{
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testNameField'
+                        }, {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        }]
+                    },
+                    whereClause: {
+                        type: 'and',
+                        whereClauses: [{
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testNameField'
+                            },
+                            operator: '!=',
+                            rhs: null
+                        }, {
+                            type: 'where',
+                            lhs: {
+                                database: 'testDatabase1',
+                                table: 'testTable1',
+                                field: 'testTypeField'
+                            },
+                            operator: '!=',
+                            rhs: null
+                        }]
+                    },
+                    aggregateClauses: [{
+                        type: 'field',
+                        fieldClause: {
+                            database: 'testDatabase1',
+                            table: 'testTable1',
+                            field: 'testTypeField'
+                        },
+                        label: '_sums',
+                        operation: 'sum'
+                    }, {
+                        type: 'group',
+                        group: '_sums',
+                        label: '_counts'
+                    }],
+                    groupByClauses: [],
+                    orderByClauses: [],
+                    limitClause: { limit: 10 },
+                    offsetClause: { offset: 0 },
+                    joinClauses: [],
+                    isDistinct: false
+                }
+            });
+
             done();
         });
 
@@ -524,69 +580,6 @@ describe('Search Component init should', () => {
         aggregation2.setAttribute('aggregation-label', '_counts');
         searchComponent.appendChild(aggregation2);
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
-        expect(JSON.parse(JSON.stringify(searchService.searchArguments))).toEqual({
-            datastoreHost: dataset.datastores.datastore1.host,
-            datastoreType: dataset.datastores.datastore1.type,
-            searchObject: {
-                selectClause: {
-                    database: 'testDatabase1',
-                    table: 'testTable1',
-                    fieldClauses: [{
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testNameField'
-                    }, {
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testTypeField'
-                    }]
-                },
-                whereClause: {
-                    type: 'and',
-                    whereClauses: [{
-                        type: 'where',
-                        lhs: {
-                            database: 'testDatabase1',
-                            table: 'testTable1',
-                            field: 'testNameField'
-                        },
-                        operator: '!=',
-                        rhs: null
-                    }, {
-                        type: 'where',
-                        lhs: {
-                            database: 'testDatabase1',
-                            table: 'testTable1',
-                            field: 'testTypeField'
-                        },
-                        operator: '!=',
-                        rhs: null
-                    }]
-                },
-                aggregateClauses: [{
-                    type: 'field',
-                    fieldClause: {
-                        database: 'testDatabase1',
-                        table: 'testTable1',
-                        field: 'testTypeField'
-                    },
-                    label: '_sums',
-                    operation: 'sum'
-                }, {
-                    type: 'group',
-                    group: '_sums',
-                    label: '_counts'
-                }],
-                groupByClauses: [],
-                orderByClauses: [],
-                limitClause: { limit: 10 },
-                offsetClause: { offset: 0 },
-                joinClauses: [],
-                isDistinct: false
-            }
-        });
     });
 
     it('build and run query with groups', () => {
@@ -1693,11 +1686,11 @@ describe('Search Component init should', () => {
 
         searchComponent.addEventListener('searchFailed', (event: any) => {
             expect(event.detail.error).toEqual('Cannot Connect to Datastore');
+            expect(searchService.searches).toEqual(0);
             done();
         });
 
         searchComponent.init(datasetCopy, filterService, searchService);
-        expect(searchService.searches).toEqual(0);
     });
 
     it('not build and run query if datastore type is invalid', (done) => {
@@ -1706,11 +1699,11 @@ describe('Search Component init should', () => {
 
         searchComponent.addEventListener('searchFailed', (event: any) => {
             expect(event.detail.error).toEqual('Cannot Connect to Datastore');
+            expect(searchService.searches).toEqual(0);
             done();
         });
 
         searchComponent.init(datasetCopy, filterService, searchService);
-        expect(searchService.searches).toEqual(0);
     });
 
     it('not build and run query if it is not filtered and enable-hide-if-unfiltered', (done) => {
@@ -1720,11 +1713,11 @@ describe('Search Component init should', () => {
             expect(event.detail.data).toEqual([]);
             expect(event.detail.info).toEqual('Please Filter');
             expect(event.detail.size).toEqual(0);
+            expect(searchService.searches).toEqual(0);
             done();
         });
 
         searchComponent.init(dataset, filterService, searchService);
-        expect(searchService.searches).toEqual(0);
     });
 
     it('build and run query if it is filtered and enable-hide-if-unfiltered', () => {
@@ -2175,7 +2168,7 @@ describe('Search Component', () => {
 
         filterService.notifyFilterChangeListeners('testFilterElementId');
 
-        expect(searchService.searches).toEqual(j);
+        expect(searchService.searches).toEqual(2);
     });
 
     it('updateFilters should build and run query with filters', () => {
@@ -2365,6 +2358,7 @@ describe('Search Component', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(2);
+            expect(searchService.searches).toEqual(2);
             done();
         });
 
@@ -2383,8 +2377,6 @@ describe('Search Component', () => {
         searchComponent.updateFilterDesigns('testFilterElementId', [
             new ListFilterDesign(CompoundFilterType.AND, 'datastore1.testDatabase1.testTable1.testTypeField', '=', [undefined])
         ]);
-
-        expect(searchService.searches).toEqual(2);
     });
 
     it('updateFilterDesigns should have no effect on response data without filters from filterService', (done) => {
@@ -2416,6 +2408,7 @@ describe('Search Component', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(2);
+            expect(searchService.searches).toEqual(2);
             done();
         });
 
@@ -2434,8 +2427,6 @@ describe('Search Component', () => {
         searchComponent.updateFilterDesigns('testFilterElementId', [
             new ListFilterDesign(CompoundFilterType.OR, 'datastore1.testDatabase1.testTable1.testTypeField', '=', [undefined])
         ]);
-
-        expect(searchService.searches).toEqual(2);
     });
 });
 
@@ -2479,6 +2470,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2499,8 +2491,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple AND list filter values', (done) => {
@@ -2528,6 +2518,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2548,8 +2539,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with one OR list filter value', (done) => {
@@ -2577,6 +2566,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2597,8 +2587,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple OR list filter values', (done) => {
@@ -2626,6 +2614,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2646,8 +2635,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple list filters', (done) => {
@@ -2675,6 +2662,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2696,8 +2684,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with one bounds filter', (done) => {
@@ -2735,6 +2721,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2763,8 +2750,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple bounds filters', (done) => {
@@ -2802,6 +2787,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2832,8 +2818,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with one domain filter', (done) => {
@@ -2867,6 +2851,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2889,8 +2874,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple domain filters', (done) => {
@@ -2924,6 +2907,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -2947,8 +2931,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with AND pair filter values', (done) => {
@@ -2993,6 +2975,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(5);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3024,8 +3007,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with OR pair filter values', (done) => {
@@ -3070,6 +3051,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(5);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3101,8 +3083,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with multiple pair filters', (done) => {
@@ -3133,6 +3113,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3160,8 +3141,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with filters on multiple distinct fields', (done) => {
@@ -3196,6 +3175,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3227,8 +3207,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with NOT-EQUALS filter values', (done) => {
@@ -3256,6 +3234,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(3);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3276,8 +3255,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with CONTAINS filter values', (done) => {
@@ -3311,6 +3288,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3333,8 +3311,6 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 
     it('with NOT-CONTAINS filter values', (done) => {
@@ -3368,6 +3344,7 @@ describe('Search Component should have expected filtered response data', () => {
             expect(event.detail.data).toEqual(expected);
             expect(event.detail.info).toEqual(null);
             expect(event.detail.size).toEqual(4);
+            expect(searchService.searches).toEqual(1);
             done();
         });
 
@@ -3390,7 +3367,5 @@ describe('Search Component should have expected filtered response data', () => {
         ]);
 
         searchComponent.init(dataset, filterService, searchService);
-
-        expect(searchService.searches).toEqual(1);
     });
 });
