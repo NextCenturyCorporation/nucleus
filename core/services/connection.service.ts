@@ -36,7 +36,7 @@ const runRequest = (
             onError(xhr.response);
         };
     }
-    xhr.send(body);
+    xhr.send(type === 'POST' ? JSON.stringify(body) : body);
     return xhr;
 };
 
@@ -474,7 +474,7 @@ export class ConnectionService {
      */
     public listenOnDataUpdate(onUpdate: (response: any) => void, reset: boolean = false) {
         if (!this.dataUpdateSource || reset) {
-            this.dataUpdateSource = new EventSource(this.dataServerHost + '/dataset/listen');
+            this.dataUpdateSource = new EventSource(this.dataServerHost + 'dataset/listen');
             this.dataUpdateSource.addEventListener('message', onUpdate);
         }
     }
@@ -483,6 +483,6 @@ export class ConnectionService {
      * Sets the hostname for the NUCLEUS Data Server. Examples: http://localhost:8080/neon, ../neon
      */
     public setDataServerHost(dataServerHost: string): void {
-        this.dataServerHost = dataServerHost + '/services/';
+        this.dataServerHost = dataServerHost + (dataServerHost.substr(-1) === '/' ? '' : '/') + 'services/';
     }
 }

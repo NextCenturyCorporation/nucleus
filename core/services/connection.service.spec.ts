@@ -21,13 +21,13 @@ describe('ConnectionService', () => {
         service = new ConnectionService();
     });
 
-    it('createConnection does return a new connection', () => {
+    it('connect does return a new connection', () => {
         let connection = service.connect('elasticsearch', 'localhost');
 
         expect(connection instanceof CoreConnection).toEqual(true);
     });
 
-    it('createConnection does return an existing connection', () => {
+    it('connect does return an existing connection', () => {
         let connection1 = service.connect('elasticsearch', 'localhost');
         let connection2 = service.connect('elasticsearch', 'localhost');
 
