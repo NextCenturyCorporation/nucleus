@@ -45,9 +45,10 @@ export interface MutateObject {
     datastoreType: string;
     databaseName: string;
     tableName: string;
-    idFieldName: string;
-    dataId: any;
-    fieldsWithValues: Record<string, any>;
+    idFieldName?: string;
+    dataId?: any;
+    fieldsWithValues?: Record<string, any>;
+    whereClause?: any;
 }
 
 export interface Connection<T extends {} = {}> {
@@ -142,6 +143,28 @@ export interface Connection<T extends {} = {}> {
     loadState(stateName: string, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
+     * Runs a delete-by-filter query with the given payload.
+     *
+     * @arg {MutateObject} deleteObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @abstract
+     */
+    runDeleteByFilter(deleteObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+
+    /**
+     * Runs a delete-by-id query with the given payload.
+     *
+     * @arg {MutateObject} deleteObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @abstract
+     */
+    runDeleteById(deleteObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+
+    /**
      * Runs an export query with the given data and format.
      *
      * @arg {any} exportData
@@ -174,15 +197,15 @@ export interface Connection<T extends {} = {}> {
     ): XMLHttpRequest;
 
     /**
-     * Runs a mutate query with the given payload.
+     * Runs an insert query with the given payload.
      *
-     * @arg {MutateObject} mutateObject
+     * @arg {MutateObject} insertObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {XMLHttpRequest}
      * @abstract
      */
-    runMutate(mutateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+    runInsert(insertObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Runs a search query with the given payload.
@@ -194,6 +217,28 @@ export interface Connection<T extends {} = {}> {
      * @abstract
      */
     runSearch(searchObject: T, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+
+    /**
+     * Runs an update-by-filter query with the given payload.
+     *
+     * @arg {MutateObject} updateObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @abstract
+     */
+    runUpdateByFilter(updateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
+
+    /**
+     * Runs an update-by-id query with the given payload.
+     *
+     * @arg {MutateObject} updateObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @abstract
+     */
+    runUpdateById(updateObject: MutateObject, onSuccess: (response: any) => void, onError?: (response: any) => void): XMLHttpRequest;
 
     /**
      * Saves (or overwrites) a state with the given data.
@@ -348,6 +393,40 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
     }
 
     /**
+     * Runs a delete-by-filter query with the given data.
+     *
+     * @arg {MutateObject} deleteObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @override
+     */
+    public runDeleteByFilter(
+        deleteObject: MutateObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'deleteservice/byfilter', deleteObject, onSuccess, onError);
+    }
+
+    /**
+     * Runs a delete-by-id query with the given data.
+     *
+     * @arg {MutateObject} deleteObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @override
+     */
+    public runDeleteById(
+        deleteObject: MutateObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'deleteservice/byid', deleteObject, onSuccess, onError);
+    }
+
+    /**
      * Runs an export query with the given data and format.
      *
      * @arg {any} exportData
@@ -367,7 +446,7 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
     }
 
     /**
-     * Runs an import query with the given data and format.
+     * Runs an import query with the given data.
      *
      * @arg {{ hostName: string, dataStoreType: string, database: string, table: string, source: string[], isNew: boolean }} importData
      * @arg {(response: any) => void} onSuccess
@@ -384,20 +463,20 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
     }
 
     /**
-     * Runs a mutate query with the given data and format.
+     * Runs an insert query with the given data.
      *
-     * @arg {MutateObject} MutateObject,
+     * @arg {MutateObject} insertObject
      * @arg {(response: any) => void} onSuccess
      * @arg {(response: any) => void} [onError]
      * @return {XMLHttpRequest}
      * @override
      */
-    public runMutate(
-        mutateObject: MutateObject,
+    public runInsert(
+        insertObject: MutateObject,
         onSuccess: (response: any) => void,
         onError?: (response: any) => void
     ): XMLHttpRequest {
-        return runRequest('POST', this.dataServerHost + 'mutateservice/byid', mutateObject, onSuccess, onError);
+        return runRequest('POST', this.dataServerHost + 'insertservice/insert', insertObject, onSuccess, onError);
     }
 
     /**
@@ -417,6 +496,40 @@ export class CoreConnection<T extends {} = {}> implements Connection<T> {
         const endpoint = this.dataServerHost + 'queryservice/query/' + encodeURIComponent(this.datastoreHost) + '/' +
             encodeURIComponent(this.datastoreType);
         return runRequest('POST', endpoint, searchObject, onSuccess, onError);
+    }
+
+    /**
+     * Runs an update-by-filter query with the given data.
+     *
+     * @arg {MutateObject} updateObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @override
+     */
+    public runUpdateByFilter(
+        updateObject: MutateObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'mutateservice/byfilter', updateObject, onSuccess, onError);
+    }
+
+    /**
+     * Runs an update-by-id query with the given data.
+     *
+     * @arg {MutateObject} updateObject
+     * @arg {(response: any) => void} onSuccess
+     * @arg {(response: any) => void} [onError]
+     * @return {XMLHttpRequest}
+     * @override
+     */
+    public runUpdateById(
+        updateObject: MutateObject,
+        onSuccess: (response: any) => void,
+        onError?: (response: any) => void
+    ): XMLHttpRequest {
+        return runRequest('POST', this.dataServerHost + 'mutateservice/byid', updateObject, onSuccess, onError);
     }
 
     /**
@@ -472,7 +585,7 @@ export class ConnectionService {
     /**
      * Registers a new HTML server-sent event (EventSource) listener for data updates from the NUCLEUS Data Server.
      */
-    public listenOnDataUpdate(onUpdate: (response: any) => void, reset: boolean = false) {
+    public listenOnDataUpdate(onUpdate: (response: any) => void, reset: boolean = false): void {
         if (!this.dataUpdateSource || reset) {
             this.dataUpdateSource = new EventSource(this.dataServerHost + 'dataset/listen');
             this.dataUpdateSource.addEventListener('message', onUpdate);
